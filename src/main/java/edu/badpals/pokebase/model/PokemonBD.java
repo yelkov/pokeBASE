@@ -55,6 +55,34 @@ public class PokemonBD {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
+                Integer idPokemon = rs.getInt("id");
+                String nombre = rs.getString("nombre");
+                byte[] imagen = rs.getBytes("imagen");
+                byte[] imagenShiny = rs.getBytes("imagen_shiny");
+                byte[] gif = rs.getBytes("gif");
+                String tipo1 = rs.getString("tipo_1");
+                String tipo2 = rs.getString("tipo_2");
+                Integer evolucionaDe = rs.getInt("evoluciona_de");
+                if (evolucionaDe == 0) evolucionaDe = null;
+                String metodoEvolucion = rs.getString("metodo_evolucion");
+                pokemon = new Pokemon(idPokemon,nombre,imagen,imagenShiny,gif,tipo1,tipo2,evolucionaDe,metodoEvolucion);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println("Error al buscar pokemon por id en la base de datos.");
+            e.printStackTrace();
+        }
+        return pokemon;
+    }
+
+    public Pokemon getPokemonByName(String nombrePokemon) {
+        Pokemon pokemon = null;
+        String query = "SELECT * FROM pokemons WHERE nombre = ?";
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setString(1, nombrePokemon);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Integer id = rs.getInt("id");
                 String nombre = rs.getString("nombre");
                 byte[] imagen = rs.getBytes("imagen");
                 byte[] imagenShiny = rs.getBytes("imagen_shiny");
@@ -67,8 +95,8 @@ public class PokemonBD {
                 pokemon = new Pokemon(id,nombre,imagen,imagenShiny,gif,tipo1,tipo2,evolucionaDe,metodoEvolucion);
             }
             rs.close();
-        } catch (SQLException e) {
-            System.out.println("Error al cerrar la base de datos.");
+        }catch (SQLException e) {
+            System.out.println("Error al buscar pokemon por nombre en la base de datos.");
             e.printStackTrace();
         }
         return pokemon;
