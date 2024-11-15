@@ -1,0 +1,39 @@
+import os
+
+dir_imagenes = 'src/main/resources/images'
+
+archivo_salida = 'src/main/resources/imagenes_pokemon_hexadecimal.sql'
+
+def imagen_a_hexadecimal(ruta_imagen):
+    with open(ruta_imagen,"rb") as f:
+        imagen_binaria = f.read()
+        return imagen_binaria.hex()
+
+def generar_sql():
+    with open(archivo_salida,'w') as f_sql:
+        imagenes_por_tipo = {'png':[], 'gif':[]}
+
+        for archivo in os.listdir(dir_imagenes):
+            ruta_imagen = os.path.join(dir_imagenes,archivo)
+            nombre_imagen = os.path.splitext(archivo)[0] #quitar extension
+            nombre_pokemon = nombre_imagen.split('_')[0] #quitar _image o _animated
+            extension_imagen = archivo.split('.')[-1]
+            imagen_hex = imagen_a_hexadecimal(ruta_imagen)
+
+            if extension_imagen in imagenes_por_tipo:
+                imagenes_por_tipo[extension_imagen].append((nombre_pokemon,imagen_hex))
+
+        for tipo, imagenes in imagenes_por_tipo.items():
+            if imagenes:
+                f_sql.write(f"//Imagenes de tipo {tipo.upper()}\n")
+                if tipo == 'png':
+                    for nombre_pokemon, imagen_hex in imagenes:
+                        f_sql.write(f"UPDATE POKEMONS SET IMAGEN = UNHEX('{imagen_hex}') WHERE NOMBRE = '{nombre_pokemon}';\n")
+                    f_sql.write("\n")
+                if tipo == 'gif':
+                    for nombre_pokemon, imagen_hex in imagenes:
+                        f_sql.write(f"UPDATE POKEMONS SET GIF = UNHEX('{imagen_hex}') WHERE NOMBRE = '{nombre_pokemon}';\n")
+                    f_sql.write("\n")
+        print("Archivo generado")
+
+generar_sql()
