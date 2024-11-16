@@ -167,4 +167,19 @@ public class RutaBD {
             System.out.println("Error al hacer la inserción a la base de datos");
         }
     }
+
+    public boolean deleteRuta(int id){
+        try(PreparedStatement statement = connection.prepareStatement("Delete from rutas where id = ?");){
+            statement.setInt(1, id);
+            int numberDeleted = statement.executeUpdate();
+            if (numberDeleted == 1){
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e){
+            System.out.println("Error al borrar de la base de datos");
+            return false;
+        }
+    }
 }

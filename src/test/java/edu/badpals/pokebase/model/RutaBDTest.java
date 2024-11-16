@@ -99,6 +99,18 @@ class RutaBDTest {
         assertTrue(isRuta.isEmpty());
     }
 
+    @Test
+    void deleteRuta(){
+        int numRutas = rutaBD.getRoutesCount();
+        Ruta ruta = new Ruta(0, "Toledo", "España");
+        rutaBD.insertRuta(ruta);
+        assertEquals(numRutas + 1, rutaBD.getRoutesCount());
+        Ruta createdRuta = rutaBD.getRuta("Toledo", "España").get();
+        int id = createdRuta.getId();
+        assertTrue(rutaBD.deleteRuta(id));
+        assertEquals(numRutas, rutaBD.getRoutesCount());
+    }
+
 
 
 }
