@@ -2,6 +2,7 @@ package edu.badpals.pokebase.model;
 
 import org.junit.jupiter.api.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -128,5 +129,75 @@ class RutaBDTest {
         assertEquals(numRutas, rutaBD.getRoutesCount());
     }
 
+    @Test
+    void getRutasByFiler_NoFilter(){
+        Optional<String> empty = Optional.empty();
+        List<Ruta> rutas = rutaBD.getRutasByFilters(empty, empty);
+        assertEquals(rutaBD.getRoutesCount(), rutas.size());
+    }
 
+    @Test
+    void getRutasByFiler_RegionFilter(){
+        Optional<String> empty = Optional.empty();
+        Optional<String> region = Optional.of("Kanto");
+        List<Ruta> rutas = rutaBD.getRutasByFilters(empty, region);
+        assertEquals(38, rutas.size());
+    }
+
+    @Test
+    void getRutasByFiler_RegionFilter_NoResults(){
+        Optional<String> empty = Optional.empty();
+        Optional<String> region = Optional.of("Estonia");
+        List<Ruta> rutas = rutaBD.getRutasByFilters(empty, region);
+        assertEquals(0, rutas.size());
+    }
+
+
+    @Test
+    void getRutasByFiler_PokemonFilter(){
+        Optional<String> empty = Optional.empty();
+        Optional<String> pokemon = Optional.of("Pikachu");
+        List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, empty);
+        assertEquals(1, rutas.size());
+    }
+
+    @Test
+    void getRutasByFiler_PokemonFilter_NoResults(){
+        Optional<String> empty = Optional.empty();
+        Optional<String> pokemon = Optional.of("Volcarona");
+        List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, empty);
+        assertEquals(0, rutas.size());
+    }
+
+    @Test
+    void getRutasByFiler_BothFilters(){
+        Optional<String> region = Optional.of("Kanto");
+        Optional<String> pokemon = Optional.of("Pikachu");
+        List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, region);
+        assertEquals(1, rutas.size());
+    }
+
+    @Test
+    void getRutasByFiler_BothFilters_NoResultsPokemon(){
+        Optional<String> region = Optional.of("Kanto");
+        Optional<String> pokemon = Optional.of("Arceus");
+        List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, region);
+        assertEquals(0, rutas.size());
+    }
+
+    @Test
+    void getRutasByFiler_BothFilters_NoResultsRegion(){
+        Optional<String> region = Optional.of("Alola");
+        Optional<String> pokemon = Optional.of("Pikachu");
+        List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, region);
+        assertEquals(0, rutas.size());
+    }
+
+    @Test
+    void getRutasByFiler_BothFilters_NoResultsBoth(){
+        Optional<String> region = Optional.of("Alola");
+        Optional<String> pokemon = Optional.of("Arceus");
+        List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, region);
+        assertEquals(0, rutas.size());
+    }
 }

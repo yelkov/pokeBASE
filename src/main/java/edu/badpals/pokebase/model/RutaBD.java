@@ -1,6 +1,8 @@
 package edu.badpals.pokebase.model;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class RutaBD {
@@ -10,7 +12,7 @@ public class RutaBD {
     private static final String DEFAULT_DATABASE = "bdpokemon";
 
     private Connection connection;
-    private Statement statement;
+    private Statement statement_1;
 
     public RutaBD() {
     }
@@ -18,7 +20,7 @@ public class RutaBD {
     public void connect(){
         try{
             connection = DriverManager.getConnection(CONNECTION_ROUTE + DEFAULT_DATABASE, USER, PASSWORD);
-            statement = connection.createStatement();
+            statement_1 = connection.createStatement();
 
         } catch (SQLException e){
             System.out.println("Error al conectarse a la base de datos");
@@ -29,7 +31,7 @@ public class RutaBD {
     public void connect(String dbName){
         try{
             connection = DriverManager.getConnection(CONNECTION_ROUTE + dbName, USER, PASSWORD);
-            statement = connection.createStatement();
+            statement_1 = connection.createStatement();
 
         } catch (SQLException e){
             System.out.println("Error al conectarse a la base de datos");
@@ -62,14 +64,14 @@ public class RutaBD {
     }
 
     public void desconectarBD(){
-        if(statement != null){
+        if(statement_1 != null){
             try{
-                statement.close();
+                statement_1.close();
             }catch (SQLException e){
                 System.out.println("Error al cerrar el statement");
                 e.printStackTrace();
             }finally{
-                statement = null;
+                statement_1 = null;
             }
         }if(connection != null){
             try{
@@ -85,7 +87,7 @@ public class RutaBD {
 
     public int getRoutesCount(){
         try{
-            ResultSet resultSet = statement.executeQuery("select countAllRoutes()");
+            ResultSet resultSet = statement_1.executeQuery("select countAllRoutes()");
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException e){
@@ -141,6 +143,37 @@ public class RutaBD {
     public Optional<Ruta> getRuta(String name, String region){
         int id = getRutaId(name, region);
         return getRuta(id);
+    }
+
+    public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region){
+        StringBuilder basicSql = new StringBuilder("select * from rutas");
+        List<Ruta> rutas = new ArrayList<>();
+        List<String> filters = new ArrayList<>();
+
+        if (pokemon.isPresent() || region.isPresent()){
+            basicSql.append(" where ");
+            if (region.isPresent()){
+                filters.add("region = '" + region.get() + "'");
+            }
+            if (pokemon.isPresent()) {
+                filters.add("id in (select ruta from rutas_pokemons where pokemon = (select FN_GET_ID_POKEMON('" + pokemon.get() + "')))");
+            }
+            basicSql.append(String.join(" AND ", filters));
+        }
+
+        try(PreparedStatement statement = connection.prepareStatement(basicSql.toString());){
+            ResultSet resultSet = statement.executeQuery();
+            while(resultSet.next()){
+                int id = resultSet.getInt(1);
+                String nombreRuta = resultSet.getString(2);
+                String nombreRegion = resultSet.getString(3);
+                rutas.add(new Ruta(id, nombreRuta, nombreRegion));
+            }
+        } catch (SQLException e){
+            System.out.println("Error al recuperar la lista de rutas");
+            System.out.println(e.getMessage());
+        }
+        return rutas;
     }
 
     public void insertRuta(Ruta ruta){
