@@ -39,7 +39,7 @@ class RutaBDTest {
     }
 
     @Test
-    void getRuta(){
+    void getRutabyId(){
         Optional<Ruta> isRuta = rutaBD.getRuta(2);
         assertTrue(isRuta.isPresent());
         Ruta ruta = isRuta.get();
@@ -56,6 +56,22 @@ class RutaBDTest {
         assertEquals(39, totalRutas);
         //Problemas con los id's autogenerados
     }
+
+    @Test
+    void getRutabyNameRegion(){
+        Optional<Ruta> isRuta = rutaBD.getRuta("Ruta 1", "Unova");
+        assertTrue(isRuta.isPresent());
+        Ruta ruta = isRuta.get();
+        assertEquals("Ruta 1", ruta.getNombre());
+        assertEquals("Unova", ruta.getRegion());
+    }
+
+    @Test
+    void getRutabyNameRegion_DoesntExist(){
+        Optional<Ruta> isRuta = rutaBD.getRuta("Ruta 10", "Unova");
+        assertTrue(isRuta.isEmpty());
+    }
+
 
     @Test
     void testGetRoutesCount() {

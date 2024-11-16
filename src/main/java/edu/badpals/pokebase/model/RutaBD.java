@@ -119,7 +119,7 @@ public class RutaBD {
         }
     }
 
-    public Optional<Ruta> getRuta(int Id){
+     Optional<Ruta> getRuta(int Id){
         try(PreparedStatement statement = connection.prepareStatement("select * from rutas where id = ?");){
             statement.setInt(1, Id);
             ResultSet results = statement.executeQuery();
@@ -136,6 +136,11 @@ public class RutaBD {
             System.out.println(e.getMessage());
             return Optional.empty();
         }
+    }
+
+    public Optional<Ruta> getRuta(String name, String region){
+        int id = getRutaId(name, region);
+        return getRuta(id);
     }
 
     public void insertRuta(Ruta ruta){
