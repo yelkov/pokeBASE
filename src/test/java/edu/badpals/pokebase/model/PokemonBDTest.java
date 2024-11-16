@@ -2,11 +2,13 @@ package edu.badpals.pokebase.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 class PokemonBDTest {
 
     @Test
-    void getPokemonById_oneType() {
+    void test_getPokemonById_oneType() {
         PokemonBD db = new PokemonBD();
         db.conectarBD();
         Pokemon pokemon = db.getPokemonById(150);
@@ -20,7 +22,7 @@ class PokemonBDTest {
         db.desconectarBD();
     }
     @Test
-    void getPokemonById_twoTypes() {
+    void test_getPokemonById_twoTypes() {
         PokemonBD db = new PokemonBD();
         db.conectarBD();
         Pokemon pokemon = db.getPokemonById(1);
@@ -32,7 +34,7 @@ class PokemonBDTest {
         db.desconectarBD();
     }
     @Test
-    void getPokemonById_evolution() {
+    void test_getPokemonById_evolution() {
         PokemonBD db = new PokemonBD();
         db.conectarBD();
         Pokemon pokemon = db.getPokemonById(2);
@@ -46,7 +48,7 @@ class PokemonBDTest {
         db.desconectarBD();
     }
     @Test
-    void getPokemonByName_oneType() {
+    void test_getPokemonByName_oneType() {
         PokemonBD db = new PokemonBD();
         db.conectarBD();
         Pokemon pokemon = db.getPokemonByName("mew");
@@ -60,7 +62,7 @@ class PokemonBDTest {
         db.desconectarBD();
     }
     @Test
-    void getPokemonByName_twoTypes() {
+    void test_getPokemonByName_twoTypes() {
         PokemonBD db = new PokemonBD();
         db.conectarBD();
         Pokemon pokemon = db.getPokemonByName("pidgey");
@@ -72,7 +74,7 @@ class PokemonBDTest {
         db.desconectarBD();
     }
     @Test
-    void getPokemonByName_evoluciona() {
+    void test_getPokemonByName_evoluciona() {
         PokemonBD db = new PokemonBD();
         db.conectarBD();
         Pokemon pokemon = db.getPokemonByName("charizard");
@@ -84,5 +86,25 @@ class PokemonBDTest {
         assertEquals(5,pokemon.getEvolucionaDe());
         assertEquals("Nivel 36",pokemon.getMetodoEvolucion());
         db.desconectarBD();
+    }
+
+    @Test
+    void test_getPokemonsByType(){
+        PokemonBD db = new PokemonBD();
+        db.conectarBD();
+        List<Pokemon> pokemonsAgua = db.getPokemonsByType("Agua","ID ASC");
+        assertNotNull(pokemonsAgua);
+        assertEquals(32,pokemonsAgua.size());
+        assertEquals(7,pokemonsAgua.get(0).getId());
+    }
+    @Test
+    void test_getPokemonsByTypeOrderName(){
+        PokemonBD db = new PokemonBD();
+        db.conectarBD();
+        List<Pokemon> pokemonsAgua = db.getPokemonsByType("Agua","NOMBRE ASC");
+        assertNotNull(pokemonsAgua);
+        assertEquals(32,pokemonsAgua.size());
+        assertEquals(9,pokemonsAgua.get(0).getId());
+        assertEquals("blastoise",pokemonsAgua.get(0).getNombre());
     }
 }
