@@ -2,6 +2,8 @@ package edu.badpals.pokebase.model;
 
 import org.junit.jupiter.api.*;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class RutaBDTest {
@@ -34,7 +36,16 @@ class RutaBDTest {
         assertEquals(1, ruta1);
         assertEquals(10, ruta10);
         assertEquals(0, rutaNoExiste);
+    }
 
+    @Test
+    void getRuta(){
+        Optional<Ruta> isRuta = rutaBD.getRuta(2);
+        assertTrue(isRuta.isPresent());
+        Ruta ruta = isRuta.get();
+        assertEquals(2, ruta.getId());
+        assertEquals("Ruta 2", ruta.getNombre());
+        assertEquals("Kanto", ruta.getRegion());
     }
 
     @Test

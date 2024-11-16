@@ -1,6 +1,7 @@
 package edu.badpals.pokebase.model;
 
 import java.sql.*;
+import java.util.Optional;
 
 public class RutaBD {
     private static final String CONNECTION_ROUTE = "jdbc:mysql://localhost:3306/";
@@ -118,6 +119,25 @@ public class RutaBD {
         }
     }
 
+    public Optional<Ruta> getRuta(int Id){
+        try(PreparedStatement statement = connection.prepareStatement("select * from rutas where id = ?");){
+            statement.setInt(1, Id);
+            ResultSet results = statement.executeQuery();
+            if (results.next()){
+                int id = results.getInt(1);
+                String name = results.getString(2);
+                String region = results.getString(3);
+                return Optional.of(new Ruta(id,name,region));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e){
+            System.out.println("Error al recuperar la ruta");
+            System.out.println(e.getMessage());
+            return Optional.empty();
+        }
+    }
+
     public void insertRuta(Ruta ruta){
         String sqlSentence = """
             insert into rutas(NOMBRE, REGION)
@@ -130,8 +150,5 @@ public class RutaBD {
         } catch (SQLException e){
             System.out.println("Error al hacer la inserción a la base de datos");
         }
-
     }
-
-
 }
