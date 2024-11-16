@@ -58,12 +58,39 @@ class RutaBDTest {
     }
 
     @Test
-    void getRutabyNameRegion(){
-        Optional<Ruta> isRuta = rutaBD.getRuta("Ruta 1", "Unova");
+    void testGetRoutesCount() {
+        int rutasKanto = rutaBD.getRoutesCount("Kanto");
+        int rutasUnova = rutaBD.getRoutesCount("Unova");
+        int rutasJohto = rutaBD.getRoutesCount("Johto");
+        assertEquals(38, rutasKanto);
+        assertEquals(1, rutasUnova);
+        assertEquals(0, rutasJohto);
+    }
+
+    @Test
+    void getRutabyNameAndRegion(){
+        Optional<Ruta> isRuta = rutaBD.getRuta("Ruta 10", "Kanto");
         assertTrue(isRuta.isPresent());
         Ruta ruta = isRuta.get();
-        assertEquals("Ruta 1", ruta.getNombre());
-        assertEquals("Unova", ruta.getRegion());
+        assertEquals("Ruta 10", ruta.getNombre());
+        assertEquals("Kanto", ruta.getRegion());
+    }
+
+    @Test
+    void modifyRuta(){
+        Ruta ruta  = rutaBD.getRuta("Ruta 1", "Kanto").get();
+        ruta.setNombre("Ruta 5");
+        ruta.setRegion("Alola");
+        int id = ruta.getId();
+        rutaBD.updateRuta(ruta);
+        Optional<Ruta> isRuta = rutaBD.getRuta(id);
+        assertTrue(isRuta.isPresent());
+        Ruta rutaModificada = isRuta.get();
+        assertEquals("Ruta 5", rutaModificada.getNombre());
+        assertEquals("Alola", rutaModificada.getRegion());
+        ruta.setNombre("Ruta 1");
+        ruta.setRegion("Kanto");
+        rutaBD.updateRuta(ruta);
     }
 
     @Test
@@ -73,13 +100,5 @@ class RutaBDTest {
     }
 
 
-    @Test
-    void testGetRoutesCount() {
-        int rutasKanto = rutaBD.getRoutesCount("Kanto");
-        int rutasUnova = rutaBD.getRoutesCount("Unova");
-        int rutasJohto = rutaBD.getRoutesCount("Johto");
-        assertEquals(38, rutasKanto);
-        assertEquals(1, rutasUnova);
-        assertEquals(0, rutasJohto);
-    }
+
 }

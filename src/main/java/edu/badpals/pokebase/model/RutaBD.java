@@ -156,4 +156,15 @@ public class RutaBD {
             System.out.println("Error al hacer la inserción a la base de datos");
         }
     }
+
+    public void updateRuta(Ruta ruta){
+        try(PreparedStatement statement = connection.prepareStatement("Update rutas set nombre = ?, region = ? where id = ?");){
+            statement.setString(1, ruta.getNombre());
+            statement.setString(2, ruta.getRegion());
+            statement.setInt(3, ruta.getId());
+            statement.executeUpdate();
+        } catch (SQLException e){
+            System.out.println("Error al hacer la inserción a la base de datos");
+        }
+    }
 }
