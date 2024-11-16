@@ -51,21 +51,30 @@ class RutaBDTest {
 
     @Test
     void insertRuta() {
-        Ruta ruta = new Ruta(1, "Ruta 1", "Unova");
-        rutaBD.insertRuta(ruta);
         int totalRutas = rutaBD.getRoutesCount();
-        assertEquals(40, totalRutas);
+        Ruta ruta = new Ruta(1, "Ruta 1", "Unova");
+        assertTrue(rutaBD.insertRuta(ruta));
+        assertEquals(totalRutas + 1, rutaBD.getRoutesCount());
         //Problemas con los id's autogenerados
     }
 
     @Test
-    void testGetRoutesCount() {
+    void insertRuta_YaExiste() {
+        int totalRutas = rutaBD.getRoutesCount();
+        Ruta ruta = new Ruta(1, "Ruta 1", "Kanto");
+        assertFalse(rutaBD.insertRuta(ruta));
+        assertEquals(totalRutas, rutaBD.getRoutesCount());
+        //Problemas con los id's autogenerados
+    }
+
+    @Test
+    void getRoutesCount_ByRegion() {
         int rutasKanto = rutaBD.getRoutesCount("Kanto");
-        int rutasUnova = rutaBD.getRoutesCount("Unova");
         int rutasJohto = rutaBD.getRoutesCount("Johto");
+        int rutasEstonia = rutaBD.getRoutesCount("Estonia");
         assertEquals(38, rutasKanto);
-        assertEquals(1, rutasUnova);
         assertEquals(1, rutasJohto);
+        assertEquals(0, rutasEstonia);
     }
 
     @Test
@@ -78,27 +87,50 @@ class RutaBDTest {
     }
 
     @Test
+    void getRutabyNameRegion_DoesntExist(){
+        Optional<Ruta> isRuta = rutaBD.getRuta("Ruta 10", "Unova");
+        assertTrue(isRuta.isEmpty());
+    }
+
+    @Test
     void modifyRuta(){
+        int rutasKanto = rutaBD.getRoutesCount("Kanto");
         Ruta ruta  = rutaBD.getRuta("Ruta 1", "Kanto").get();
         ruta.setNombre("Ruta 5");
         ruta.setRegion("Alola");
         int id = ruta.getId();
-        rutaBD.updateRuta(ruta);
+        assertTrue(rutaBD.updateRuta(ruta));
+        assertEquals(rutasKanto - 1, rutaBD.getRoutesCount("Kanto"));
         Optional<Ruta> isRuta = rutaBD.getRuta(id);
         assertTrue(isRuta.isPresent());
         Ruta rutaModificada = isRuta.get();
         assertEquals("Ruta 5", rutaModificada.getNombre());
         assertEquals("Alola", rutaModificada.getRegion());
+
+        //deshacemos los cambios
         ruta.setNombre("Ruta 1");
         ruta.setRegion("Kanto");
         rutaBD.updateRuta(ruta);
     }
 
     @Test
-    void getRutabyNameRegion_DoesntExist(){
-        Optional<Ruta> isRuta = rutaBD.getRuta("Ruta 10", "Unova");
-        assertTrue(isRuta.isEmpty());
+    void modifyRuta_AlreadyExists(){
+        int rutasKanto = rutaBD.getRoutesCount("Kanto");
+        Ruta ruta  = rutaBD.getRuta("Ruta 1", "Kanto").get();
+        int id = ruta.getId();
+
+        ruta.setNombre("Ruta 101");
+        ruta.setRegion("Johto");
+
+        assertFalse(rutaBD.updateRuta(ruta));
+        assertEquals(rutasKanto, rutaBD.getRoutesCount("Kanto"));
+        Optional<Ruta> isRuta = rutaBD.getRuta(id);
+        assertTrue(isRuta.isPresent());
+        Ruta rutaModificada = isRuta.get();
+        assertEquals("Ruta 1", rutaModificada.getNombre());
+        assertEquals("Kanto", rutaModificada.getRegion());
     }
+
 
     @Test
     void deleteRuta(){
@@ -119,6 +151,13 @@ class RutaBDTest {
         rutaBD.insertRuta(ruta);
         assertEquals(numRutas + 1, rutaBD.getRoutesCount());
         assertTrue(rutaBD.deleteRuta("Toledo", "España"));
+        assertEquals(numRutas, rutaBD.getRoutesCount());
+    }
+
+    @Test
+    void deleteRutaByNameAndRegion_doesntExist() {
+        int numRutas = rutaBD.getRoutesCount();
+        assertFalse(rutaBD.deleteRuta("Toledo", "España"));
         assertEquals(numRutas, rutaBD.getRoutesCount());
     }
 

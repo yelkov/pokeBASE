@@ -176,7 +176,7 @@ public class RutaBD {
         return rutas;
     }
 
-    public void insertRuta(Ruta ruta){
+    public boolean insertRuta(Ruta ruta){
         String sqlSentence = """
             insert into rutas(NOMBRE, REGION)
             values (?,?)
@@ -185,19 +185,27 @@ public class RutaBD {
             statement.setString(1, ruta.getNombre());
             statement.setString(2, ruta.getRegion());
             statement.executeUpdate();
+            return true;
+        } catch (SQLIntegrityConstraintViolationException pke){
+            return false;
         } catch (SQLException e){
             System.out.println("Error al hacer la inserción a la base de datos");
+            return false;
         }
     }
 
-    public void updateRuta(Ruta ruta){
+    public boolean updateRuta(Ruta ruta){
         try(PreparedStatement statement = connection.prepareStatement("Update rutas set nombre = ?, region = ? where id = ?");){
             statement.setString(1, ruta.getNombre());
             statement.setString(2, ruta.getRegion());
             statement.setInt(3, ruta.getId());
             statement.executeUpdate();
+            return true;
+        } catch (SQLIntegrityConstraintViolationException ake) {
+            return false;
         } catch (SQLException e){
             System.out.println("Error al hacer la inserción a la base de datos");
+            return false;
         }
     }
 
