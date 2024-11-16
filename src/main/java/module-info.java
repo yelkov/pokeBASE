@@ -1,4 +1,4 @@
-module edu.badpals.pokebase.pokebase {
+module edu.badpals.pokebase {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
