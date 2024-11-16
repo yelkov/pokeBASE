@@ -31,13 +31,10 @@ public class Controller {
     }
 
     public void buscarPokemon() {
-        System.out.println("Buscando pokemon");
-        lblTipo1.setText("hola");
-        lblTipo2.setText("hola");
-        /*String nombrePokemon = txtNombrePokemon.getText();
+        String nombrePokemon = txtNombrePokemon.getText();
         Pokemon pokemon = pokemonBD.getPokemonByName(nombrePokemon);
         lblTipo1.setText(pokemon.getTipo1());
-        lblTipo2.setText(pokemon.getTipo2());*/
+        lblTipo2.setText(pokemon.getTipo2());
 
     }
 
