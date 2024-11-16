@@ -26,7 +26,7 @@ class RutaBDTest {
     @Test
     void getRoutesCount(){
         int totalRutas = rutaBD.getRoutesCount();
-        assertEquals(38, totalRutas);
+        assertEquals(39, totalRutas);
     }
 
     @Test
@@ -54,7 +54,7 @@ class RutaBDTest {
         Ruta ruta = new Ruta(1, "Ruta 1", "Unova");
         rutaBD.insertRuta(ruta);
         int totalRutas = rutaBD.getRoutesCount();
-        assertEquals(39, totalRutas);
+        assertEquals(40, totalRutas);
         //Problemas con los id's autogenerados
     }
 
@@ -65,7 +65,7 @@ class RutaBDTest {
         int rutasJohto = rutaBD.getRoutesCount("Johto");
         assertEquals(38, rutasKanto);
         assertEquals(1, rutasUnova);
-        assertEquals(0, rutasJohto);
+        assertEquals(1, rutasJohto);
     }
 
     @Test
@@ -158,7 +158,7 @@ class RutaBDTest {
         Optional<String> empty = Optional.empty();
         Optional<String> pokemon = Optional.of("Pikachu");
         List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, empty);
-        assertEquals(1, rutas.size());
+        assertEquals(2, rutas.size());
     }
 
     @Test

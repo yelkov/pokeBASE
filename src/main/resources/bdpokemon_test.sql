@@ -245,7 +245,8 @@ INSERT INTO RUTAS (NOMBRE, REGION) VALUES
 ('Ciudad Azulona', 'Kanto'),
 ('Ciudad Fucsia', 'Kanto'),
 ('Pueblo Lavanda', 'Kanto'),
-('Isla Canela', 'Kanto');
+('Isla Canela', 'Kanto'),
+('Ruta 101', 'Johto');
 
 
 INSERT INTO RUTAS_POKEMONS (POKEMON, RUTA, NIVEL_MINIMO, NIVEL_MAXIMO) VALUES
@@ -260,6 +261,7 @@ INSERT INTO RUTAS_POKEMONS (POKEMON, RUTA, NIVEL_MINIMO, NIVEL_MAXIMO) VALUES
 (21, 8, 7, 9),  -- Spearow aparece en la Ruta 8 entre los niveles 7 y 9
 (23, 9, 6, 10), -- Ekans aparece en la Ruta 9 entre los niveles 6 y 10
 (25, 10, 10, 12), -- Pikachu aparece en la Ruta 10 entre los niveles 10 y 12
+(25, 39, 10, 12), -- Pikachu aparece en la Ruta 101 de Johto entre los niveles 10 y 12
 (29, 11, 3, 5), -- Nidoran♀ aparece en la Ruta 11 entre los niveles 3 y 5
 (32, 11, 3, 5), -- Nidoran♂ aparece en la Ruta 11 entre los niveles 3 y 5
 (37, 12, 6, 8), -- Vulpix aparece en la Ruta 12 entre los niveles 6 y 8
