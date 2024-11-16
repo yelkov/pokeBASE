@@ -182,4 +182,9 @@ public class RutaBD {
             return false;
         }
     }
+
+    public boolean deleteRuta(String name, String region){
+        int id = getRutaId(name, region);
+        return deleteRuta(id);
+    }
 }

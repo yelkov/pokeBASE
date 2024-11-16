@@ -111,6 +111,22 @@ class RutaBDTest {
         assertEquals(numRutas, rutaBD.getRoutesCount());
     }
 
+    @Test
+    void deleteRutaByNameAndRegion() {
+        int numRutas = rutaBD.getRoutesCount();
+        Ruta ruta = new Ruta(0, "Toledo", "España");
+        rutaBD.insertRuta(ruta);
+        assertEquals(numRutas + 1, rutaBD.getRoutesCount());
+        assertTrue(rutaBD.deleteRuta("Toledo", "España"));
+        assertEquals(numRutas, rutaBD.getRoutesCount());
+    }
+
+    @Test
+    void deleteRutaByNameAndRegion_DoesntExist() {
+        int numRutas = rutaBD.getRoutesCount();
+        assertFalse(rutaBD.deleteRuta("Praga", "Chequia"));
+        assertEquals(numRutas, rutaBD.getRoutesCount());
+    }
 
 
 }
