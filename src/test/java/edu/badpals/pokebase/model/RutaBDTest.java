@@ -214,6 +214,9 @@ class RutaBDTest {
         Optional<String> pokemon = Optional.of("Pikachu");
         List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, region);
         assertEquals(1, rutas.size());
+        Ruta ruta = rutas.get(0);
+        assertEquals("Ruta 10", ruta.getNombre());
+        assertEquals("Kanto", ruta.getRegion());
     }
 
     @Test
