@@ -40,3 +40,19 @@ BEGIN
             );
 END$$
 
+DROP FUNCTION if exists countAllRoutes$$
+create function countAllRoutes()
+    returns int
+    reads sql data
+begin
+RETURN (select count(*) from rutas);
+end$$
+
+DROP FUNCTION if exists countRoutesInRegion$$
+create function countRoutesInRegion(regionName varchar(30))
+    returns int
+    reads sql data
+begin
+RETURN (select count(*) from rutas where region = regionName);
+end$$
+

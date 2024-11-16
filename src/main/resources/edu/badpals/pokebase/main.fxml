@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" prefHeight="475.0" prefWidth="886.0" spacing="20.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.view.View">
+<VBox alignment="CENTER" prefHeight="475.0" prefWidth="886.0" spacing="20.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.Controller">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -38,14 +38,14 @@
             
                 <Label fx:id="welcomeText" prefHeight="17.0" prefWidth="147.0" text="Nombre o ID del pokemon:" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                <TextField id="txtNombrePokemon" fx:id="txtNombrePokemon" GridPane.columnIndex="1" />
-               <Button id="btnBuscarPokemon" fx:id="btnBuscarPokemon" mnemonicParsing="false" prefHeight="25.0" prefWidth="123.0" text="Buscar" GridPane.columnIndex="5" />
+               <Button id="btnBuscarPokemon" fx:id="btnBuscarPokemon" mnemonicParsing="false" prefHeight="25.0" prefWidth="123.0" text="Buscar" GridPane.columnIndex="5" onAction="#buscarPokemon"/>
                <Label fx:id="lblFiltrado" prefHeight="17.0" prefWidth="67.0" text="Filtrado:" GridPane.rowIndex="1" />
                <Label id="lblTipo1" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                <Label id="lblTipo2" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                <ComboBox fx:id="cmbCriterio" prefHeight="25.0" prefWidth="80.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                <ComboBox fx:id="cmbOrden" prefHeight="25.0" prefWidth="70.0" GridPane.columnIndex="5" GridPane.rowIndex="2" />
                <Label prefHeight="17.0" prefWidth="81.0" text="Ordenar por:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-               <Button fx:id="btnFiltrarPokemon" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Buscar" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+               <Button fx:id="btnFiltrarPokemon" onAction="#filtrarPokemon" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Buscar" GridPane.columnIndex="5" GridPane.rowIndex="3" />
                <Label prefHeight="17.0" prefWidth="42.0" text="Tipo 1:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                <Label prefHeight="17.0" prefWidth="41.0" text="Tipo 2:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                <TextField fx:id="txtTipo1" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -69,11 +69,11 @@
             <children>
                <Label fx:id="welcomeText1" prefHeight="17.0" prefWidth="127.0" text="Nombre de la ruta" />
                <TextField fx:id="txtNombreRuta" GridPane.columnIndex="1" />
-               <Button fx:id="btnBuscarRuta" mnemonicParsing="false" prefHeight="25.0" prefWidth="123.0" text="Buscar" GridPane.columnIndex="3" />
+               <Button fx:id="btnBuscarRuta" onAction="#buscarRuta" mnemonicParsing="false" prefHeight="25.0" prefWidth="123.0" text="Buscar" GridPane.columnIndex="3" />
                <ComboBox fx:id="cmbRegiones" prefWidth="150.0" GridPane.columnIndex="2" />
                <ComboBox fx:id="cmbFiltrarRegiones" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                <Label text="Filtrado:" GridPane.rowIndex="1" />
-               <Button fx:id="btnFiltrarRuta" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Buscar" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+               <Button fx:id="btnFiltrarRuta" onAction="#filtrarRuta" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Buscar" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                <TextField fx:id="txtPokemonRuta" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                <Button fx:id="btnCrearRuta" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="Crear Ruta" GridPane.rowIndex="2" />
             </children>

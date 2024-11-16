@@ -45,10 +45,10 @@ public class Controller {
             cmbRegiones.setValue(regiones.get(0));
         }
 
-        regiones.add("Todos");
+        regiones.add("Todas");
         cmbFiltrarRegiones.setItems(FXCollections.observableArrayList(regiones
         ));
-        cmbRegiones.setValue("Todas");
+        cmbFiltrarRegiones.setValue("Todas");
 
         cmbCriterio.setItems(FXCollections.observableArrayList("id","nombre"));
         cmbCriterio.setValue("id");
@@ -67,12 +67,14 @@ public class Controller {
         } catch (NumberFormatException e){
             pokemon = pokemonBD.getPokemonByName(pokemonSearch);
         }
+        System.out.println(pokemon);
     }
 
     public void buscarRuta(){
         String nombreRuta = txtNombreRuta.getText();
         String nombreRegion = cmbRegiones.getSelectionModel().getSelectedItem();
         Optional<Ruta> ruta = rutaBD.getRuta(nombreRuta, nombreRegion);
+        System.out.println(ruta.get());
     }
 
     public void filtrarPokemon(){
@@ -83,6 +85,7 @@ public class Controller {
         if (!tipo1.equals("")){
             tipo2 = tipo2.equals("")? null : tipo2;
             List<Pokemon> pokemons = pokemonBD.getPokemonsByType(tipo1, tipo2, criterio + " " +orden);
+            System.out.println(pokemons);
         }
     }
 
@@ -91,6 +94,7 @@ public class Controller {
         String regionSeleccionada = cmbFiltrarRegiones.getSelectionModel().getSelectedItem();
         Optional<String> region = regionSeleccionada.equals("Todas")? Optional.empty():Optional.of(regionSeleccionada);
         List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, region);
+        System.out.println(rutas);
 
     }
 
