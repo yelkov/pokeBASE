@@ -105,6 +105,19 @@ public class RutaBD {
         }
     }
 
+    int getRutaId(String name, String region){
+        try(PreparedStatement statement = connection.prepareStatement("Select FN_GET_ID_RUTA(?,?)");){
+            statement.setString(1, name);
+            statement.setString(2, region);
+            ResultSet results = statement.executeQuery();
+            results.next();
+            return results.getInt(1);
+        } catch (SQLException e){
+            System.out.println("Error al recuperar los datos");
+            return 0;
+        }
+    }
+
     public void insertRuta(Ruta ruta){
         String sqlSentence = """
             insert into rutas(NOMBRE, REGION)

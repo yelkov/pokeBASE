@@ -27,11 +27,23 @@ class RutaBDTest {
     }
 
     @Test
+    void getRutaId(){
+        int ruta1 = rutaBD.getRutaId("Ruta 1", "Kanto");
+        int ruta10 = rutaBD.getRutaId("Ruta 10", "Kanto");
+        int rutaNoExiste = rutaBD.getRutaId("Ruta 10", "Unova");
+        assertEquals(1, ruta1);
+        assertEquals(10, ruta10);
+        assertEquals(0, rutaNoExiste);
+
+    }
+
+    @Test
     void insertRuta() {
         Ruta ruta = new Ruta(1, "Ruta 1", "Unova");
         rutaBD.insertRuta(ruta);
         int totalRutas = rutaBD.getRoutesCount();
         assertEquals(39, totalRutas);
+        //Problemas con los id's autogenerados
     }
 
     @Test
