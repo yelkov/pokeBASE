@@ -50,7 +50,7 @@
                <Label prefHeight="17.0" prefWidth="41.0" text="Tipo 2:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                <TextField fx:id="txtTipo1" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                <TextField fx:id="txtTipo2" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-               <Button fx:id="btnCrearPokemon" mnemonicParsing="false" text="Crear Pokémon" GridPane.rowIndex="3" />
+               <Button fx:id="btnCrearPokemon" onAction="#crearPokemon" mnemonicParsing="false" text="Crear Pokémon" GridPane.rowIndex="3" />
             </children>
          </GridPane>
          <Separator orientation="VERTICAL" prefHeight="398.0" prefWidth="90.0" />
@@ -75,7 +75,7 @@
                <Label text="Filtrado:" GridPane.rowIndex="1" />
                <Button fx:id="btnFiltrarRuta" onAction="#filtrarRuta" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Buscar" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                <TextField fx:id="txtPokemonRuta" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-               <Button fx:id="btnCrearRuta" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="Crear Ruta" GridPane.rowIndex="2" />
+               <Button fx:id="btnCrearRuta" onAction="#crearRuta" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="Crear Ruta" GridPane.rowIndex="2" />
             </children>
          </GridPane>
       </children>
