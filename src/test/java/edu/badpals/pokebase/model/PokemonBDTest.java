@@ -1,5 +1,7 @@
 package edu.badpals.pokebase.model;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -7,11 +9,26 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 class PokemonBDTest {
 
+    static PokemonBD pokemonBD;
+    static AccesoBD accesoBD;
+
+    @BeforeAll
+    static void setUp() {
+        accesoBD = new AccesoBD();
+        accesoBD.connect("bdpokemon_test");
+        accesoBD.setAutoCommit(false);
+        pokemonBD = new PokemonBD(accesoBD);
+    }
+
+    @AfterAll
+    static void tearDown() {
+        accesoBD.rollback();
+        accesoBD.desconectarBD();
+    }
+
     @Test
     void test_getPokemonById_oneType() {
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        Pokemon pokemon = db.getPokemonById(150);
+        Pokemon pokemon = pokemonBD.getPokemonById(150);
         assertNotNull(pokemon);
         assertEquals(150,pokemon.getId());
         assertEquals("mewtwo",pokemon.getNombre());
@@ -19,25 +36,19 @@ class PokemonBDTest {
         assertNull(pokemon.getTipo2());
         assertNull(pokemon.getEvolucionaDe());
         assertNull(pokemon.getMetodoEvolucion());
-        db.desconectarBD();
     }
     @Test
     void test_getPokemonById_twoTypes() {
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        Pokemon pokemon = db.getPokemonById(1);
+        Pokemon pokemon = pokemonBD.getPokemonById(1);
         assertNotNull(pokemon);
         assertEquals(1,pokemon.getId());
         assertEquals("bulbasaur",pokemon.getNombre());
         assertEquals("Planta",pokemon.getTipo1());
         assertEquals("Veneno",pokemon.getTipo2());
-        db.desconectarBD();
     }
     @Test
     void test_getPokemonById_evolution() {
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        Pokemon pokemon = db.getPokemonById(2);
+        Pokemon pokemon = pokemonBD.getPokemonById(2);
         assertNotNull(pokemon);
         assertEquals(2,pokemon.getId());
         assertEquals("ivysaur",pokemon.getNombre());
@@ -45,13 +56,10 @@ class PokemonBDTest {
         assertEquals("Veneno",pokemon.getTipo2());
         assertEquals(1,pokemon.getEvolucionaDe());
         assertEquals("Nivel 16",pokemon.getMetodoEvolucion());
-        db.desconectarBD();
     }
     @Test
     void test_getPokemonByName_oneType() {
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        Pokemon pokemon = db.getPokemonByName("mew");
+        Pokemon pokemon = pokemonBD.getPokemonByName("mew");
         assertNotNull(pokemon);
         assertEquals(151,pokemon.getId());
         assertEquals("mew",pokemon.getNombre());
@@ -59,25 +67,19 @@ class PokemonBDTest {
         assertNull(pokemon.getTipo2());
         assertNull(pokemon.getEvolucionaDe());
         assertNull(pokemon.getMetodoEvolucion());
-        db.desconectarBD();
     }
     @Test
     void test_getPokemonByName_twoTypes() {
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        Pokemon pokemon = db.getPokemonByName("pidgey");
+        Pokemon pokemon = pokemonBD.getPokemonByName("pidgey");
         assertNotNull(pokemon);
         assertEquals(16,pokemon.getId());
         assertEquals("pidgey",pokemon.getNombre());
         assertEquals("Normal",pokemon.getTipo1());
         assertEquals("Volador",pokemon.getTipo2());
-        db.desconectarBD();
     }
     @Test
     void test_getPokemonByName_evoluciona() {
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        Pokemon pokemon = db.getPokemonByName("charizard");
+        Pokemon pokemon = pokemonBD.getPokemonByName("charizard");
         assertNotNull(pokemon);
         assertEquals(6,pokemon.getId());
         assertEquals("charizard",pokemon.getNombre());
@@ -85,23 +87,18 @@ class PokemonBDTest {
         assertEquals("Volador",pokemon.getTipo2());
         assertEquals(5,pokemon.getEvolucionaDe());
         assertEquals("Nivel 36",pokemon.getMetodoEvolucion());
-        db.desconectarBD();
     }
 
     @Test
     void test_getPokemonsByType(){
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        List<Pokemon> pokemonsAgua = db.getPokemonsByType("Agua",null,"ID ASC");
+        List<Pokemon> pokemonsAgua = pokemonBD.getPokemonsByType("Agua",null,"ID ASC");
         assertNotNull(pokemonsAgua);
         assertEquals(32,pokemonsAgua.size());
         assertEquals(7,pokemonsAgua.get(0).getId());
     }
     @Test
     void test_getPokemonsByTypeOrderName(){
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        List<Pokemon> pokemonsAgua = db.getPokemonsByType("Agua",null,"NOMBRE ASC");
+        List<Pokemon> pokemonsAgua = pokemonBD.getPokemonsByType("Agua",null,"NOMBRE ASC");
         assertNotNull(pokemonsAgua);
         assertEquals(32,pokemonsAgua.size());
         assertEquals(9,pokemonsAgua.get(0).getId());
@@ -109,9 +106,7 @@ class PokemonBDTest {
     }
     @Test
     void test_getPokemonsByTwoTypes(){
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        List<Pokemon> pokemonsPlantaVeneno = db.getPokemonsByType("Planta","Veneno","ID ASC");
+        List<Pokemon> pokemonsPlantaVeneno = pokemonBD.getPokemonsByType("Planta","Veneno","ID ASC");
         assertNotNull(pokemonsPlantaVeneno);
         assertEquals(9,pokemonsPlantaVeneno.size());
         assertEquals(1,pokemonsPlantaVeneno.get(0).getId());
@@ -119,9 +114,7 @@ class PokemonBDTest {
 
     @Test
     void test_getPokemons2TypesName(){
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        List<Pokemon> pokemonsPlantaVeneno = db.getPokemonsByType("Planta","Veneno","NOMBRE DESC");
+        List<Pokemon> pokemonsPlantaVeneno = pokemonBD.getPokemonsByType("Planta","Veneno","NOMBRE DESC");
         assertNotNull(pokemonsPlantaVeneno);
         assertEquals(9,pokemonsPlantaVeneno.size());
         assertEquals(70,pokemonsPlantaVeneno.get(0).getId());
@@ -131,9 +124,15 @@ class PokemonBDTest {
     /*
     @Test
     void test_getAllPokemon(){
-        PokemonBD db = new PokemonBD();
-        db.conectarBD();
-        List<Pokemon> pokemons = db.getAllPokemons("ID ASC");
+        PokemonBD pokemonBD
+
+        = new PokemonBD();
+        pokemonBD
+
+       .conectarBD();
+        List<Pokemon> pokemons = pokemonBD
+
+       .getAllPokemons("ID ASC");
         assertNotNull(pokemons);
         assertEquals(151,pokemons.size());
         assertEquals(1,pokemons.get(0).getId());

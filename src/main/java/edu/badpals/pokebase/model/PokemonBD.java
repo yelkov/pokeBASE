@@ -6,49 +6,13 @@ import java.util.List;
 import java.util.Properties;
 
 public class PokemonBD {
-    private static final String URL = "jdbc:mysql://localhost:3306/bdpokemon";
-    private static final String USER = "root";
-    private static final String PASS = "root";
+
     private Connection connection = null;
-    private Statement statement = null;
 
-    public void conectarBD(){
-        try{
-            if(connection == null){
-                Properties propiedadesConexion = new Properties();
-                propiedadesConexion.put("user", USER);
-                propiedadesConexion.put("password", PASS);
-                connection = DriverManager.getConnection(URL, propiedadesConexion);
-            }if (statement == null){
-                statement = connection.createStatement();
-            }
-        }catch (SQLException e){
-        System.out.println("Error al conectar la base de datos");
-        e.printStackTrace();
-        }
+    public PokemonBD(AccesoBD accesoBD) {
+        this.connection = accesoBD.getConnection();
     }
 
-    public void desconectarBD(){
-        if(statement != null){
-            try{
-                statement.close();
-            }catch (SQLException e){
-                System.out.println("Error al cerrar el statement");
-                e.printStackTrace();
-            }finally{
-                statement = null;
-            }
-        }if(connection != null){
-            try{
-                connection.close();
-            }catch (SQLException e){
-                System.out.println("Error al cerrar la base de datos.");
-                e.printStackTrace();
-            }finally{
-                connection = null;
-            }
-        }
-    }
 
     public Pokemon getPokemonById(int id) {
         Pokemon pokemon = null;
