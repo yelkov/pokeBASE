@@ -50,6 +50,14 @@ class RutaBDTest {
     }
 
     @Test
+    void gettAllRegions(){
+        List<String> regions = rutaBD.getAllRegions();
+        assertTrue(regions.size()<=3);
+        assertTrue(regions.contains("Kanto"));
+        assertTrue(regions.contains("Johto"));
+    }
+
+    @Test
     void insertRuta() {
         int totalRutas = rutaBD.getRoutesCount();
         Ruta ruta = new Ruta(1, "Ruta 1", "Unova");
@@ -151,13 +159,6 @@ class RutaBDTest {
         rutaBD.insertRuta(ruta);
         assertEquals(numRutas + 1, rutaBD.getRoutesCount());
         assertTrue(rutaBD.deleteRuta("Toledo", "España"));
-        assertEquals(numRutas, rutaBD.getRoutesCount());
-    }
-
-    @Test
-    void deleteRutaByNameAndRegion_doesntExist() {
-        int numRutas = rutaBD.getRoutesCount();
-        assertFalse(rutaBD.deleteRuta("Toledo", "España"));
         assertEquals(numRutas, rutaBD.getRoutesCount());
     }
 

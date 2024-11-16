@@ -176,6 +176,19 @@ public class RutaBD {
         return rutas;
     }
 
+    public List<String> getAllRegions(){
+        List<String> regions = new ArrayList<>();
+        try(PreparedStatement statement = connection.prepareStatement("select distinct region from rutas");){
+            ResultSet resultSet = statement.executeQuery();
+            while(resultSet.next()){
+                regions.add(resultSet.getString(1));
+            }
+        } catch (SQLException e){
+            System.out.println("error al cargar las regiones");
+        }
+        return regions;
+    }
+
     public boolean insertRuta(Ruta ruta){
         String sqlSentence = """
             insert into rutas(NOMBRE, REGION)
