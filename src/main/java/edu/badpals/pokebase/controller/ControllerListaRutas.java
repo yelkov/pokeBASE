@@ -1,5 +1,6 @@
 package edu.badpals.pokebase.controller;
 
+import edu.badpals.pokebase.criteria.CriteriaRuta;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
 import javafx.collections.FXCollections;
@@ -33,6 +34,7 @@ public class ControllerListaRutas {
     private Button btnBuscarRuta, btnFiltrarRutas;
 
     private RutaBD rutaBD;
+    private CriteriaRuta criteriaRuta;
 
     public void initialize(){
         cmbCriterio.setItems(FXCollections.observableArrayList("id", "nombre", "region"));
@@ -47,12 +49,12 @@ public class ControllerListaRutas {
     }
 
     public void refiltrarRutas(){
-        Optional<String> pokemon = txtPokemon.getText().equals("")?Optional.empty():Optional.of(txtPokemon.getText());
+        String pokemon = txtPokemon.getText();
         String regionSeleccionada = cmbRegion.getSelectionModel().getSelectedItem();
-        Optional<String> region = regionSeleccionada.equals("Todas")? Optional.empty():Optional.of(regionSeleccionada);
         String criterio = cmbCriterio.getSelectionModel().getSelectedItem();
         String orden = cmbOrden.getSelectionModel().getSelectedItem();
-        List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, region, criterio, orden);
+        criteriaRuta = new CriteriaRuta(pokemon, regionSeleccionada, criterio, orden);
+        List<Ruta> rutas = rutaBD.getRutasByFilters(criteriaRuta);
         setRutas(rutas);
     }
 
@@ -65,6 +67,19 @@ public class ControllerListaRutas {
         cmbRegion.setValue("Todas");
     }
 
+    public void setCriteria(CriteriaRuta criteria){
+        if(criteria.getPokemon().isPresent()){
+            txtPokemon.setText(criteria.getPokemon().get());
+        }
+        if(criteria.getRegion().isPresent()){
+            cmbRegion.setValue(criteria.getRegion().get());
+        } else{
+            cmbRegion.setValue("Todas");
+        }
+        cmbCriterio.setValue(criteria.getCriterio());
+        cmbOrden.setValue(criteria.getOrden());
+    }
+
     public void showRuta(ActionEvent actionEvent){
         try {
             Ruta ruta = listaRutas.getSelectionModel().getSelectedItem();
@@ -75,7 +90,7 @@ public class ControllerListaRutas {
                 controllerRuta.setRuta(ruta);
                 List<Ruta> rutas = listaRutas.getItems().stream().toList();
                 int index = rutas.indexOf(ruta);
-                controllerRuta.setPartOfList(rutas, index, "");
+                controllerRuta.setPartOfList(rutas, index, criteriaRuta);
             } else{
                 System.out.println("no se ha clickado bien");
             }

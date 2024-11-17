@@ -1,5 +1,7 @@
 package edu.badpals.pokebase.model;
 
+import edu.badpals.pokebase.criteria.CriteriaRuta;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +77,10 @@ public class RutaBD {
 
     public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region) {
         return getRutasByFilters(pokemon, region, "id", "ASC");
+    }
+
+    public List<Ruta> getRutasByFilters(CriteriaRuta criteriaRuta){
+        return getRutasByFilters(criteriaRuta.getPokemon(), criteriaRuta.getRegion(), criteriaRuta.getCriterio(),criteriaRuta.getOrden());
     }
 
     public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region, String criterio, String orden){

@@ -1,5 +1,6 @@
 package edu.badpals.pokebase.controller;
 
+import edu.badpals.pokebase.criteria.CriteriaRuta;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
 import javafx.collections.FXCollections;
@@ -41,6 +42,7 @@ public class ControllerRuta {
     private RutaBD rutaBD;
     private List<Ruta> rutas;
     private int currentIndex;
+    private CriteriaRuta criteriaRuta;
 
     public void initialize() {
 
@@ -64,11 +66,12 @@ public class ControllerRuta {
         }
     }
 
-    public void setPartOfList(List<Ruta> rutas, int currentIndex, String criteria){
+    public void setPartOfList(List<Ruta> rutas, int currentIndex, CriteriaRuta criteria){
         this.rutas = rutas;
         this.currentIndex = currentIndex;
         showNode(menuParteLista, true);
-        lblCriterios.setText(criteria);
+        criteriaRuta = criteria;
+        lblCriterios.setText(criteria.toString());
         if (rutas.size()==1){
             btnAnterior.setDisable(true);
             btnSiguiente.setDisable(true);
@@ -101,6 +104,7 @@ public class ControllerRuta {
             ControllerListaRutas controller = loader.getController();
             controller.setRutas(rutas);
             controller.setAcceso(rutaBD);
+            controller.setCriteria(criteriaRuta);
         } catch (IOException e){
             System.out.println("Error");
         }
