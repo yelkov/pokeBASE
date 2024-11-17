@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -12,12 +13,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.Tooltip?>
 <VBox xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.ControllerPokemon">
    <children>
       <HBox prefHeight="3.0" prefWidth="560.0" spacing="15.0">
          <children>
             <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#handleVolver" text="Volver" />
+            <Button fx:id="btnLimpiar" onAction="#limpiarPanel" mnemonicParsing="false" text="Limpiar" />
             <Region HBox.hgrow="ALWAYS" />
             <Button fx:id="btnLogIn" text="Log in" />
             <Button fx:id="btnRegistrarse" text="Registrarse" />
@@ -44,7 +45,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <ImageView fx:id="imgPokemon" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imgPokemon" pickOnBounds="true" preserveRatio="true" visible="false" managed="false"/>
                   <Label fx:id="lblNombrePokemon" />
                   <HBox alignment="CENTER" prefHeight="21.0" prefWidth="560.0" spacing="15.0">
                      <children>
@@ -59,7 +60,7 @@
                         <Label fx:id="lblTipo2" />
                      </children>
                   </HBox>
-                  <GridPane fx:id="gridEvolucionaDe" prefHeight="33.0" prefWidth="200.0" vgap="20.0" visible="false" managed="false">
+                  <GridPane fx:id="gridEvolucionaDe" managed="false" prefHeight="33.0" prefWidth="200.0" vgap="20.0" visible="false">
                     <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -72,7 +73,7 @@
                         <Label text="Evoluciona de:" />
                         <Label text="Método de evolución:" GridPane.columnIndex="1" />
                         <Label fx:id="lblMetodo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Button fx:id="btnEvolucionaDe" onAction="#cambiarPokemon" mnemonicParsing="false" GridPane.rowIndex="1" />
+                        <Button fx:id="btnEvolucionaDe" mnemonicParsing="false" onAction="#cambiarPokemon" GridPane.rowIndex="1" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -86,14 +87,14 @@
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
             </VBox>
-            <Button fx:id="btnMostrarAnterior"  onAction="#cambiarPokemon" minHeight="50.0" mnemonicParsing="false" text="&lt;" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <Button fx:id="btnMostrarAnterior" minHeight="50.0" mnemonicParsing="false" disable="true" onAction="#cambiarPokemon" text="&lt;" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <tooltip>
-                  <Tooltip text="Mostrar pokémon anterior"/>
+                  <Tooltip text="Mostrar pokémon anterior" />
                </tooltip>
             </Button>
-            <Button fx:id="btnMostrarPosterior" onAction="#cambiarPokemon" minHeight="50.0" mnemonicParsing="false" text="&gt;" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <Button fx:id="btnMostrarPosterior" minHeight="50.0" mnemonicParsing="false" disable="true" onAction="#cambiarPokemon" text="&gt;" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <tooltip>
-                  <Tooltip text="Mostrar pokémon posterior"/>
+                  <Tooltip text="Mostrar pokémon posterior" />
                </tooltip>
             </Button>
             <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
@@ -120,7 +121,7 @@
                      <children>
                         <Button fx:id="btnCrear" mnemonicParsing="false" text="Crear nuevo " />
                         <Button fx:id="btnModificar" mnemonicParsing="false" text="Modificar Pokémon" />
-                        <Button fx:id="btnEliminar" mnemonicParsing="false" text="Eliminar Pokémon" />
+                        <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#eliminarPokemon" text="Eliminar Pokémon" />
                      </children>
                   </HBox>
                </children>

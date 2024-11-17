@@ -7,19 +7,18 @@ import edu.badpals.pokebase.model.RutaBD;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
+import java.util.Optional;
 
 public class ControllerPokemon {
     @FXML
-    private Button btnVolver, btnNuevaBusqueda, btnEvolucionaDe,btnMostrarAnterior,btnMostrarPosterior, btnCrear, btnModificar, btnEliminar;
+    private Button btnVolver, btnLimpiar, btnNuevaBusqueda, btnEvolucionaDe,btnMostrarAnterior,btnMostrarPosterior, btnCrear, btnModificar, btnEliminar;
     @FXML
     private ImageView imgPokemon;
     @FXML
@@ -52,6 +51,43 @@ public class ControllerPokemon {
         nodo.setManaged(managed);
     }
 
+    public void habilitarBotonesLaterales(){
+        if(this.pokemonAnterior != null){
+            btnMostrarAnterior.setDisable(false);
+        }else{
+            btnMostrarAnterior.setDisable(true);
+        }
+        if(this.pokemonPosterior != null){
+            btnMostrarPosterior.setDisable(false);
+        }else{
+            btnMostrarPosterior.setDisable(true);
+        }
+    }
+
+    public void lanzarMensajeError(String titulo, String cabecera, String mensaje){
+        Alert error = new Alert(Alert.AlertType.ERROR);
+        error.setTitle(titulo);
+        error.setHeaderText(cabecera);
+        error.setContentText(mensaje);
+
+        error.showAndWait();
+    }
+
+    public Optional<ButtonType> lanzarMensajeConfirmacion(String titulo, String cabecera, String mensaje){
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle(titulo);
+        confirmacion.setHeaderText(cabecera);
+        confirmacion.setContentText(mensaje);
+
+        ButtonType btnSi = new ButtonType("Sí");
+        ButtonType btnNo = new ButtonType("No");
+        confirmacion.getButtonTypes().setAll(btnSi, btnNo);
+
+
+        Optional<ButtonType> respuesta = confirmacion.showAndWait();
+        return respuesta;
+    }
+
     private void establecerSiguientesPokemon() {
         int anteriorId = pokemon.getId()-1;
         int siguienteId = pokemon.getId()+1;
@@ -73,6 +109,7 @@ public class ControllerPokemon {
             visualizarDatos();
             establecerSiguientesPokemon();
         }
+        habilitarBotonesLaterales();
     }
 
     public void visualizarDatos() {
@@ -102,9 +139,11 @@ public class ControllerPokemon {
         this.pokemon = pokemon;
         visualizarDatos();
         establecerSiguientesPokemon();
+        habilitarBotonesLaterales();
     }
 
     public void setImage() {
+        mostrar(imgPokemon,true,true);
         Image image = null;
         if(pokemon.getGif() != null) {
             ByteArrayInputStream bais = new ByteArrayInputStream(pokemon.getGif());
@@ -128,6 +167,11 @@ public class ControllerPokemon {
         if(nuevoPokemon != null){
             this.pokemon = nuevoPokemon;
             visualizarDatos();
+            establecerSiguientesPokemon();
+            habilitarBotonesLaterales();
+
+        }else{
+            lanzarMensajeError("Error","Pokémon no encontrado.","En la base de datos no se encuentra el nombre del pokémon o el id introducido.");
         }
     }
 
@@ -135,5 +179,23 @@ public class ControllerPokemon {
     private void handleVolver(ActionEvent event) {
         Stage stage = (Stage) btnVolver.getScene().getWindow();
         stage.close();
+    }
+
+    public void limpiarPanel(){
+        this.pokemon = null;
+        this.pokemonPosterior = null;
+        this.pokemonAnterior = null;
+        this.pokemonPreEvolucion = null;
+        habilitarBotonesLaterales();
+        mostrar(imgPokemon,false,false);
+        lblNombrePokemon.setText("");
+        lblId.setText("");
+        lblTipo1.setText("");
+        lblTipo2.setText("");
+        mostrar(gridEvolucionaDe,false,false);
+    }
+
+    public void eliminarPokemon(){
+        Optional<ButtonType> respuesta = lanzarMensajeConfirmacion("Eliminar","Se va a eliminar un pokémon.","¿Está seguro de que desea eliminar el pokémon actual de la base de datos? Esta operación es irreversible.");
     }
 }
