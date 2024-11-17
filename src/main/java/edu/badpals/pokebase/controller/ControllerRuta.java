@@ -170,6 +170,12 @@ public class ControllerRuta {
         }
     }
 
+    public void toMenuCrearRuta(){
+        configureMenu(false);
+        cleanFields();
+        showNode(menuParteLista, false);
+    }
+
     public void cleanFields(){
         lblRutaId.setText("");
         txtRutaNombre.setText("");
