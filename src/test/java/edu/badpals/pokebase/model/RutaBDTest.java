@@ -9,18 +9,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RutaBDTest {
     static RutaBD rutaBD;
+    static AccesoBD accesoBD;
 
     @BeforeAll
     static void setUp() {
-        rutaBD = new RutaBD();
-        rutaBD.connect("bdpokemon_test");
-        rutaBD.setAutoCommit(false);
+        accesoBD = new AccesoBD();
+        accesoBD.connect("bdpokemon_test");
+        accesoBD.setAutoCommit(false);
+        rutaBD = new RutaBD(accesoBD);
     }
 
     @AfterAll
     static void tearDown() {
-        rutaBD.rollback();
-        rutaBD.desconectarBD();
+        accesoBD.rollback();
+        accesoBD.desconectarBD();
     }
 
     @Test
