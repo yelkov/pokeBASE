@@ -73,6 +73,9 @@ public class ControllerListaRutas {
                 ControllerRuta controllerRuta = loader.getController();
                 controllerRuta.setAcceso(rutaBD);
                 controllerRuta.setRuta(ruta);
+                List<Ruta> rutas = listaRutas.getItems().stream().toList();
+                int index = rutas.indexOf(ruta);
+                controllerRuta.setPartOfList(rutas, index, "");
             } else{
                 System.out.println("no se ha clickado bien");
             }
@@ -81,6 +84,11 @@ public class ControllerListaRutas {
         } catch (Exception todas){
             todas.getMessage();
         }
+    }
+
+    public String getSelectedCriteria(){
+        StringBuilder criteria = new StringBuilder();
+        return criteria.toString();
     }
 
     public void activateBotonBuscar(){

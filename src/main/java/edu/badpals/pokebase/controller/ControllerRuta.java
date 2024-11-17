@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -23,7 +24,7 @@ public class ControllerRuta {
     private TextField txtRutaNombre, txtRutaRegion;
 
     @FXML
-    private Label lblRutaId;
+    private Label lblRutaId, lblCriterios;
 
     @FXML
     private ListView<String> listPokemonsRuta;
@@ -32,9 +33,14 @@ public class ControllerRuta {
     private HBox menuRutaCargada, menuRutaNueva;
 
     @FXML
-    private VBox menuPokemon;
+    private VBox menuPokemon, menuParteLista;
+
+    @FXML
+    private Button btnAnterior, btnSiguiente;
 
     private RutaBD rutaBD;
+    private List<Ruta> rutas;
+    private int currentIndex;
 
     public void initialize() {
 
@@ -56,6 +62,58 @@ public class ControllerRuta {
         } else {
             showNode(menuPokemon, false);
         }
+    }
+
+    public void setPartOfList(List<Ruta> rutas, int currentIndex, String criteria){
+        this.rutas = rutas;
+        this.currentIndex = currentIndex;
+        showNode(menuParteLista, true);
+        lblCriterios.setText(criteria);
+        if (rutas.size()==1){
+            btnAnterior.setDisable(true);
+            btnSiguiente.setDisable(true);
+        }
+    }
+
+    public void siguienteRuta(){
+        currentIndex++;
+        try{
+            setRuta(rutas.get(currentIndex));
+        } catch (IndexOutOfBoundsException e){
+            currentIndex = 0;
+            setRuta(rutas.get(currentIndex));
+        }
+    }
+
+    public void anteriorRuta(){
+        currentIndex--;
+        try{
+            setRuta(rutas.get(currentIndex));
+        } catch (IndexOutOfBoundsException e){
+            currentIndex = rutas.size()-1;
+            setRuta(rutas.get(currentIndex));
+        }
+    }
+
+    public void volverListaRutas(ActionEvent actionEvent){
+        try{
+            FXMLLoader loader = getFxmlLoader(actionEvent, "listaRutas.fxml");
+            ControllerListaRutas controller = loader.getController();
+            controller.setRutas(rutas);
+            controller.setAcceso(rutaBD);
+        } catch (IOException e){
+            System.out.println("Error");
+        }
+    }
+
+    private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
+        Scene scene = new Scene(loader.load(),900,900);
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
+        // Crear una nueva escena con el contenido cargado
+        stage.setScene(scene); // Establecer la nueva escena en el Stage
+        stage.show();
+        return loader;
     }
 
     public void showNode(Node node, boolean shown){

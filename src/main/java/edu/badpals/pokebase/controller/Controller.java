@@ -99,8 +99,6 @@ public class Controller {
                 e.printStackTrace();
             }
         }
-
-
     }
 
     private FXMLLoader getFxmlLoader(ActionEvent actionEvent,String sceneFxml) throws IOException {
