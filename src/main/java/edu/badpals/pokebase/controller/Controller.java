@@ -66,7 +66,9 @@ public class Controller {
     }
     public void crearRuta(ActionEvent actionEvent) {
         try{
-            getFxmlLoader(actionEvent,"datosRuta.fxml");
+            FXMLLoader loader = getFxmlLoader(actionEvent,"datosRuta.fxml");
+            ControllerRuta controller = loader.getController();
+            controller.setAcceso(rutaBD);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -120,6 +122,7 @@ public class Controller {
                 FXMLLoader loader = getFxmlLoader(actionEvent,"datosRuta.fxml");
                 ControllerRuta controller = loader.getController();
                 controller.setRuta(ruta.get());
+                controller.setAcceso(rutaBD);
             }catch (IOException e) {
                 e.printStackTrace();
             }
@@ -158,6 +161,7 @@ public class Controller {
             FXMLLoader loader = getFxmlLoader(actionEvent,"listaRutas.fxml");
             ControllerListaRutas controller = loader.getController();
             controller.setRutas(rutas);
+            controller.setAcceso(rutaBD);
         }catch (IOException e) {
             e.printStackTrace();
         }
