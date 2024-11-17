@@ -121,8 +121,8 @@ public class Controller {
             try{
                 FXMLLoader loader = getFxmlLoader(actionEvent,"datosRuta.fxml");
                 ControllerRuta controller = loader.getController();
-                controller.setRuta(ruta.get());
                 controller.setAcceso(rutaBD);
+                controller.setRuta(ruta.get());
             }catch (IOException e) {
                 e.printStackTrace();
             }

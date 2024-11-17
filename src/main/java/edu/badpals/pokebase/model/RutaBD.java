@@ -73,7 +73,11 @@ public class RutaBD {
         return getRuta(id);
     }
 
-    public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region){
+    public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region) {
+        return getRutasByFilters(pokemon, region, "id", "ASC");
+    }
+
+    public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region, String criterio, String orden){
         StringBuilder basicSql = new StringBuilder("select * from rutas");
         List<Ruta> rutas = new ArrayList<>();
         List<String> filters = new ArrayList<>();
@@ -88,6 +92,11 @@ public class RutaBD {
             }
             basicSql.append(String.join(" AND ", filters));
         }
+
+        basicSql.append(" Order by ")
+                .append(criterio)
+                .append(" ")
+                .append(orden);
 
         try(PreparedStatement statement = connection.prepareStatement(basicSql.toString());){
             ResultSet resultSet = statement.executeQuery();
@@ -168,5 +177,19 @@ public class RutaBD {
     public boolean deleteRuta(String name, String region){
         int id = getRutaId(name, region);
         return deleteRuta(id);
+    }
+
+    public List<String> getPokemons(int rutaId){
+        List<String> pokemons = new ArrayList<>();
+        try(PreparedStatement statement = connection.prepareStatement("select p.nombre from pokemons as p inner join rutas_pokemons as rt on p.id = rt.pokemon and rt.ruta = ?");){
+            statement.setInt(1, rutaId);
+            ResultSet results = statement.executeQuery();
+            while (results.next()){
+                pokemons.add(results.getString(1));
+            }
+        } catch (SQLException e){
+            System.out.println("error al realizar la operación");
+        }
+        return pokemons;
     }
 }
