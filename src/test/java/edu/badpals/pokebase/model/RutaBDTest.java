@@ -268,11 +268,24 @@ class RutaBDTest {
     void addPokemon(){
         Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
         int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
-        assertTrue(rutaBD.addPokemon(ruta.getId(), "Pikachu"));
+        assertTrue(rutaBD.addPokemon(ruta.getId(), "Caterpie"));
         List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
         assertEquals(numberPkRuta + 1, pokemonsRuta.size());
-        RutaPokemon pokemon = new RutaPokemon("pikachu", ruta.getId(), 0 ,0);
+        RutaPokemon pokemon = new RutaPokemon("caterpie", ruta.getId(), 0 ,100);
         assertTrue(pokemonsRuta.contains(pokemon));
+    }
+
+    @Test
+    void addPokemonConNiveles(){
+        Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
+        int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
+        assertTrue(rutaBD.addPokemon(ruta.getId(), "Pikachu", 3, 5));
+        List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
+        RutaPokemon pokemon = pokemonsRuta.get(1);
+        assertEquals("pikachu", pokemon.getPokemon());
+        assertEquals(3, pokemon.getNivel_minimo());
+        assertEquals(5, pokemon.getNivel_maximo());
+
     }
 
     @Test

@@ -206,11 +206,17 @@ public class RutaBD {
     }
 
     public boolean addPokemon(int rutaId, String pokemonName){
+        return addPokemon(rutaId, pokemonName, 0, 100);
+    }
+
+    public boolean addPokemon(int rutaId, String pokemonName, int nivel_minimo, int nivel_maximo){
         Pokemon pokemon = pokemonBD.getPokemonByName(pokemonName);
         if (pokemon != null) {
-            try (PreparedStatement statement = connection.prepareStatement("insert into rutas_pokemons(pokemon, ruta) values(?,?)");) {
+            try (PreparedStatement statement = connection.prepareStatement("insert into rutas_pokemons(pokemon, ruta, NIVEL_MINIMO, NIVEL_MAXIMO) values(?,?, ?, ?)");) {
                 statement.setInt(1, pokemon.getId());
                 statement.setInt(2, rutaId);
+                statement.setInt(3, nivel_minimo);
+                statement.setInt(4, nivel_maximo);
                 int rowsAffected = statement.executeUpdate();
                 if (rowsAffected == 1) {
                     return true;
