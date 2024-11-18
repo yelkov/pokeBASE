@@ -125,11 +125,55 @@ public class PokemonBD {
             ps.setInt(9, pokemon.getId());
             ps.executeUpdate();
 
-            ps.close();
             return true;
         }catch (SQLException e) {
             System.out.println("Error al modificar pokemon en la base de datos.");
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean insertPokemon(Pokemon pokemon){
+        String query = """
+                        INSERT INTO pokemons(ID,NOMBRE,IMAGEN,IMAGEN_SHINY,GIF,TIPO_1,TIPO_2,EVOLUCIONA_DE,METODO_EVOLUCION)
+                        VALUES (?,?,?,?,?,?,?,?,?)
+                        """;
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setInt(1, pokemon.getId());
+            ps.setString(2, pokemon.getNombre());
+            ps.setBytes(3, pokemon.getImagen());
+            ps.setBytes(4, pokemon.getImagenShiny());
+            ps.setBytes(5, pokemon.getGif());
+            ps.setString(6, pokemon.getTipo1());
+            ps.setString(7, pokemon.getTipo2());
+            ps.setInt(8, pokemon.getEvolucionaDe());
+            ps.setString(9, pokemon.getMetodoEvolucion());
+            ps.executeUpdate();
+
+            return true;
+
+        }catch (SQLException e) {
+            System.out.println("Error al insertar pokemon en la base de datos.");
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+    public boolean deletePokemon(Pokemon pokemon) {
+        String query = """
+                    
+                DELETE FROM pokemons
+                    WHERE ID = ?""";
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setInt(1, pokemon.getId());
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al borrar pokemon en la base de datos.");
+            e.printStackTrace();
+
             return false;
         }
     }

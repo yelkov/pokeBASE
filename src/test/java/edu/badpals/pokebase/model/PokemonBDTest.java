@@ -146,6 +146,24 @@ class PokemonBDTest {
         ivysaurModificado.setMetodoEvolucion("Nivel 16");
         pokemonBD.updatePokemon(ivysaurModificado);
     }
+    @Test
+    public void test_insertPokemon(){
+        Pokemon pokemon = new Pokemon(152,"inventado",null,null,null,"Psíquico",null,151,"Nivel 50");
+        assertTrue(pokemonBD.insertPokemon(pokemon));
+        Pokemon inventado = pokemonBD.getPokemonByName("inventado");
+        assertNotNull(inventado);
+        assertEquals("inventado",inventado.getNombre());
+        assertNull(inventado.getTipo2());
+    }
+
+    @Test
+    public void test_deletePokemon(){
+        Pokemon inventado = pokemonBD.getPokemonByName("inventado");
+        assertTrue(pokemonBD.deletePokemon(inventado));
+
+        Pokemon inventado2 = pokemonBD.getPokemonByName("inventado");
+        assertNull(inventado2);
+    }
 
     /*
     @Test
