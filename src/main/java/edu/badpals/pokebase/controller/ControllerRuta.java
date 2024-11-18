@@ -24,7 +24,7 @@ import java.util.List;
 
 public class ControllerRuta {
     @FXML
-    private TextField txtRutaNombre, txtRutaRegion, txtPokemonAnadir, txtNiveles;
+    private TextField txtRutaNombre, txtRutaRegion, txtPokemonAnadir, txtNiveles, txtMinimoNivel, txtMaximoNivel;
 
     @FXML
     private Label lblRutaId, lblCriterios;
@@ -75,13 +75,21 @@ public class ControllerRuta {
     public void addPokemonRuta(){
         int id = Integer.valueOf(lblRutaId.getText());
         String nombre = txtPokemonAnadir.getText();
-        if (!nombre.equals("")){
-            boolean isAddOk = rutaBD.addPokemon(id, nombre);
-            if (isAddOk){
-                setPokemonList(id);
+        try{
+            int minimo = Integer.valueOf(txtMinimoNivel.getText());
+            int maximo = Integer.valueOf(txtMaximoNivel.getText());
+            if (!nombre.equals("")){
+                boolean isAddOk = rutaBD.addPokemon(id, nombre, minimo, maximo);
+                if (isAddOk){
+                    setPokemonList(id);
+                }
             }
+        } catch (NumberFormatException e){
+
         }
         txtPokemonAnadir.setText("");
+        txtMaximoNivel.setText("");
+        txtMinimoNivel.setText("");
     }
 
     public void modificarNiveles(){
@@ -90,10 +98,8 @@ public class ControllerRuta {
             int niveles = Integer.valueOf(txtNiveles.getText());
             boolean isModificarOk = rutaBD.subirNivelesRuta(id, niveles);
             if (isModificarOk){
-                System.out.println("Hola");
                 setPokemonList(id);
             } else {
-                System.out.println("Mal");
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();

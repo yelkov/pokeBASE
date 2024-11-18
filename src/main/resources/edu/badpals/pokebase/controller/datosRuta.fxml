@@ -22,10 +22,14 @@
       <Label text="Región:"/>
       <TextField fx:id="txtRutaRegion"/>
    </HBox>
+   <Label text="Añadir un pokemon a la ruta:"/>
    <HBox alignment="CENTER" spacing="10.0">
-      <Label text="Añadir un pokemon a la ruta:"/>
       <Label text="Nombre: "/>
       <TextField fx:id="txtPokemonAnadir"/>
+      <Label text="Mínimo Nivel: "/>
+      <TextField fx:id="txtMinimoNivel"/>
+      <Label text="Máximo Niver: "/>
+      <TextField fx:id="txtMaximoNivel"/>
       <Button text="Añadir pokemon" onAction="#addPokemonRuta"/>
    </HBox>
    <VBox fx:id="menuPokemon" managed="false" visible="false" alignment="CENTER" spacing="10.0">
