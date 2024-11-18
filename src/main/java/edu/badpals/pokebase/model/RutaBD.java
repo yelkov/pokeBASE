@@ -16,6 +16,9 @@ public class RutaBD {
         pokemonBD = new PokemonBD(accesoBD);
     }
 
+    public PokemonBD getPokemonBD() {
+        return pokemonBD;
+    }
 
     public int getRoutesCount(){
         try(Statement statement = connection.createStatement();){

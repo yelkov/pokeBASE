@@ -101,10 +101,6 @@ public class ControllerListaRutas {
         }
     }
 
-    public String getSelectedCriteria(){
-        StringBuilder criteria = new StringBuilder();
-        return criteria.toString();
-    }
 
     public void activateBotonBuscar(){
         Ruta ruta = listaRutas.getSelectionModel().getSelectedItem();

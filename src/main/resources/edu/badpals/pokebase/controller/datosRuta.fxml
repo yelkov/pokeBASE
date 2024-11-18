@@ -30,7 +30,8 @@
    </HBox>
    <VBox fx:id="menuPokemon" managed="false" visible="false" alignment="CENTER" spacing="10.0">
       <Label text="Lista de pokemons"/>
-      <ListView fx:id="listPokemonsRuta" maxWidth="400" maxHeight="200"></ListView>
+      <ListView fx:id="listPokemonsRuta" maxWidth="400" maxHeight="200" onMouseClicked="#activateBotonBuscar"></ListView>
+      <Button fx:id="btnBuscarPokemon" text="Buscar Pokemon" disable="true" onAction="#buscarInfoPokemon"/>
    </VBox>
    <VBox fx:id="menuParteLista" managed="false" visible="false" alignment="CENTER" spacing="10.0">
       <Label text="Estabas buscando rutas con los siguientes criterios:"/>

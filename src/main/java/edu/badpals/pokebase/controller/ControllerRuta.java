@@ -1,6 +1,7 @@
 package edu.badpals.pokebase.controller;
 
 import edu.badpals.pokebase.criteria.CriteriaRuta;
+import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
 import javafx.collections.FXCollections;
@@ -37,7 +38,7 @@ public class ControllerRuta {
     private VBox menuPokemon, menuParteLista;
 
     @FXML
-    private Button btnAnterior, btnSiguiente;
+    private Button btnAnterior, btnSiguiente, btnBuscarPokemon;
 
     private RutaBD rutaBD;
     private List<Ruta> rutas;
@@ -82,6 +83,20 @@ public class ControllerRuta {
         txtPokemonAnadir.setText("");
     }
 
+    public void buscarInfoPokemon(ActionEvent actionEvent){
+        try{
+            FXMLLoader loader = getFxmlLoader(actionEvent, "datosPokemon.fxml");
+            ControllerPokemon controller = loader.getController();
+            String pokemonName = listPokemonsRuta.getSelectionModel().getSelectedItem();
+            Pokemon pokemon = rutaBD.getPokemonBD().getPokemonByName(pokemonName);
+            controller.setPokemon(pokemon);
+        } catch (IOException e){
+            System.out.println("Error");
+        }
+    }
+
+
+
     public void setPartOfList(List<Ruta> rutas, int currentIndex, CriteriaRuta criteria){
         this.rutas = rutas;
         this.currentIndex = currentIndex;
@@ -91,6 +106,15 @@ public class ControllerRuta {
         if (rutas.size()==1){
             btnAnterior.setDisable(true);
             btnSiguiente.setDisable(true);
+        }
+    }
+
+    public void activateBotonBuscar(){
+        String pokemon = listPokemonsRuta.getSelectionModel().getSelectedItem();
+        if(pokemon!= null){
+            btnBuscarPokemon.setDisable(false);
+        } else {
+            btnBuscarPokemon.setDisable(true);
         }
     }
 
