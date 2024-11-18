@@ -37,6 +37,7 @@ public class Controller {
     private AccesoBD accesoBD;
     private PokemonBD pokemonBD;
     private RutaBD rutaBD;
+    private Stage primaryStage;
 
     @FXML
     public void initialize() {
@@ -64,6 +65,11 @@ public class Controller {
         cmbCriterio.setValue("asc");
 
     }
+
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
     public void crearRuta(ActionEvent actionEvent) {
         try{
             FXMLLoader loader = getFxmlLoader(actionEvent,"datosRuta.fxml");
@@ -94,7 +100,7 @@ public class Controller {
             try{
                 FXMLLoader loader = getFxmlLoader(actionEvent,"datosPokemon.fxml");
                 ControllerPokemon pokemonController = loader.getController();
-                pokemonController.setPokemon(pokemon);
+                pokemonController.setPokemon(pokemon,primaryStage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -142,7 +148,7 @@ public class Controller {
             try{
                 FXMLLoader loader = getFxmlLoader(actionEvent,"listaPokemon.fxml");
                 ControllerListaPokemon controller = loader.getController();
-                controller.setPokemons(pokemons);
+                controller.setPokemons(pokemons,primaryStage);
             }catch (IOException e) {
                 e.printStackTrace();
             }

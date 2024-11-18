@@ -7,6 +7,7 @@ import edu.badpals.pokebase.model.RutaBD;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,7 +34,7 @@ public class ControllerPokemon {
     private Pokemon pokemonAnterior;
     private Pokemon pokemonPreEvolucion;
 
-    private Stage primaryStage;
+    private Stage previousStage;
     private AccesoBD accesoBD;
     private PokemonBD pokemonBD;
     private RutaBD rutaBD;
@@ -135,7 +136,8 @@ public class ControllerPokemon {
         setImage();
     }
 
-    public void setPokemon(Pokemon pokemon) {
+    public void setPokemon(Pokemon pokemon, Stage previousStage) {
+        this.previousStage = previousStage;
         this.pokemon = pokemon;
         visualizarDatos();
         establecerSiguientesPokemon();
@@ -178,7 +180,10 @@ public class ControllerPokemon {
     @FXML
     private void handleVolver(ActionEvent event) {
         Stage stage = (Stage) btnVolver.getScene().getWindow();
-        stage.close();
+        stage.hide();
+        if (previousStage != null) {
+            previousStage.show();
+        }
     }
 
     public void limpiarPanel(){
