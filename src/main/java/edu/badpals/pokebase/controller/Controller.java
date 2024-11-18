@@ -64,6 +64,8 @@ public class Controller {
         cmbCriterio.setValue("asc");
 
     }
+
+
     public void crearRuta(ActionEvent actionEvent) {
         try{
             FXMLLoader loader = getFxmlLoader(actionEvent,"datosRuta.fxml");
