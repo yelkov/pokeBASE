@@ -2,6 +2,15 @@ DELIMITER $$
 
 use bdpokemon_test$$
 
+drop procedure if exists MODIFCIAR_NIVELES_EN_RUTA$$
+create procedure MODIFCIAR_NIVELES_EN_RUTA(IN RUTA_ID INT, IN SUBIDA INT)
+BEGIN
+	UPDATE RUTAS_POKEMONS
+    SET NIVEL_MINIMO = NIVEL_MINIMO + SUBIDA,
+    NIVEL_MAXIMO = NIVEL_MAXIMO + SUBIDA
+    WHERE RUTA = RUTA_ID;
+END$$
+
 DROP FUNCTION if exists countAllRoutes$$
 create function countAllRoutes()
 returns int

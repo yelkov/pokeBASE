@@ -226,4 +226,16 @@ public class RutaBD {
         }
         return false;
     }
+
+    public boolean subirNivelesRuta(int rutaId, int niveles){
+        try(CallableStatement statement = connection.prepareCall("{call MODIFCIAR_NIVELES_EN_RUTA(?,?)}");){
+            statement.setInt(1, rutaId);
+            statement.setInt(2, niveles);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }
