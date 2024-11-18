@@ -22,7 +22,7 @@ import java.util.List;
 
 public class ControllerRuta {
     @FXML
-    private TextField txtRutaNombre, txtRutaRegion;
+    private TextField txtRutaNombre, txtRutaRegion, txtPokemonAnadir;
 
     @FXML
     private Label lblRutaId, lblCriterios;
@@ -57,13 +57,29 @@ public class ControllerRuta {
         lblRutaId.setText(String.valueOf(ruta.getId()));
         txtRutaNombre.setText(ruta.getNombre());
         txtRutaRegion.setText(ruta.getRegion());
-        List<String> pokemons = rutaBD.getPokemons(ruta.getId());
+        setPokemonList(ruta.getId());
+    }
+
+    private void setPokemonList(int rutaId){
+        List<String> pokemons = rutaBD.getPokemons(rutaId);
         if (pokemons.size() > 0){
             showNode(menuPokemon, true);
             listPokemonsRuta.setItems(FXCollections.observableArrayList(pokemons));
         } else {
             showNode(menuPokemon, false);
         }
+    }
+
+    public void addPokemonRuta(){
+        int id = Integer.valueOf(lblRutaId.getText());
+        String nombre = txtPokemonAnadir.getText();
+        if (!nombre.equals("")){
+            boolean isAddOk = rutaBD.addPokemon(id, nombre);
+            if (isAddOk){
+                setPokemonList(id);
+            }
+        }
+        txtPokemonAnadir.setText("");
     }
 
     public void setPartOfList(List<Ruta> rutas, int currentIndex, CriteriaRuta criteria){

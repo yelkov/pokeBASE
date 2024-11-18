@@ -9,9 +9,11 @@ import java.util.Optional;
 
 public class RutaBD {
     private Connection connection;
+    private PokemonBD pokemonBD;
 
     public RutaBD(AccesoBD accesoBD) {
         this.connection = accesoBD.getConnection();
+        pokemonBD = new PokemonBD(accesoBD);
     }
 
 
@@ -197,5 +199,27 @@ public class RutaBD {
             System.out.println("error al realizar la operación");
         }
         return pokemons;
+    }
+
+    public boolean addPokemon(int rutaId, String pokemonName){
+        Pokemon pokemon = pokemonBD.getPokemonByName(pokemonName);
+        if (pokemon != null) {
+            try (PreparedStatement statement = connection.prepareStatement("insert into rutas_pokemons(pokemon, ruta) values(?,?)");) {
+                statement.setInt(1, pokemon.getId());
+                statement.setInt(2, rutaId);
+                int rowsAffected = statement.executeUpdate();
+                if (rowsAffected == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (SQLIntegrityConstraintViolationException pk) {
+                return false;
+            } catch (SQLException e) {
+                System.out.println("Error");
+                return false;
+            }
+        }
+        return false;
     }
 }
