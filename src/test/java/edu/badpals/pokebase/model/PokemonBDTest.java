@@ -27,6 +27,14 @@ class PokemonBDTest {
     }
 
     @Test
+    void test_isIdPresent(){
+        int idPresent = 1;
+        int idNotPresent = 2000;
+        assertTrue(pokemonBD.isIdPresent(idPresent));
+        assertFalse(pokemonBD.isIdPresent(idNotPresent));
+    }
+
+    @Test
     void test_getPokemonById_oneType() {
         Pokemon pokemon = pokemonBD.getPokemonById(150);
         assertNotNull(pokemon);

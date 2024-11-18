@@ -13,6 +13,23 @@ public class PokemonBD {
         this.connection = accesoBD.getConnection();
     }
 
+    public boolean isIdPresent(int id){
+        String query = "SELECT 1 FROM pokemons WHERE id = ?";
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (SQLException e) {
+            System.out.println("Error al comprobar existencia de id.");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public Pokemon getPokemonById(int id) {
         Pokemon pokemon = null;
