@@ -11,10 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -33,10 +30,10 @@ public class ControllerRuta {
     private ListView<RutaPokemon> listPokemonsRuta;
 
     @FXML
-    private HBox menuRutaCargada, menuRutaNueva;
+    private HBox menuRutaNueva;
 
     @FXML
-    private VBox menuPokemon, menuParteLista;
+    private VBox menuPokemon, menuParteLista, menuRutaCargada;
 
     @FXML
     private Button btnAnterior, btnSiguiente, btnBuscarPokemon;
@@ -82,10 +79,14 @@ public class ControllerRuta {
                 boolean isAddOk = rutaBD.addPokemon(id, nombre, minimo, maximo);
                 if (isAddOk){
                     setPokemonList(id);
+                } else{
+                    lanzarMensajeError("Error", "Inserción fallida", "No se ha podido añadir el pokemon a la ruta. Es posible que el pokemon no existe o ya se encuentre registrado en esta ruta");
                 }
+            } else{
+                lanzarMensajeError("Error", "Formato incorrecto", "Debe introducir el nombre del pokemon a añadir");
             }
         } catch (NumberFormatException e){
-
+            lanzarMensajeError("Error", "Formato incorrecto", "Los niveles de las rutas deben ser número");
         }
         txtPokemonAnadir.setText("");
         txtMaximoNivel.setText("");
@@ -100,9 +101,10 @@ public class ControllerRuta {
             if (isModificarOk){
                 setPokemonList(id);
             } else {
+                lanzarMensajeError("Error", "Modificación de niveles abortada", "No se ha podido realizar la operación correctamente");
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            lanzarMensajeError("Error", "Formato incorrecto", "La variación de niveles debes ser un número");
         } finally {
             txtNiveles.setText("");
         }
@@ -207,6 +209,8 @@ public class ControllerRuta {
         if (wasRutaCreated){
             Ruta rutaLoaded = rutaBD.getRuta(nombre, region).get();
             setRuta(rutaLoaded);
+        } else {
+            lanzarMensajeError("Error", "Error al insertar la nueva ruta", "Compruebe si ya está registrada en la base de datos");
         }
     }
 
@@ -218,6 +222,8 @@ public class ControllerRuta {
         boolean wasRutaUpdated = rutaBD.updateRuta(rutaUpdated);
         if(wasRutaUpdated){
             setRuta(rutaUpdated);
+        } else{
+            lanzarMensajeError("Error", "Er", "No se ha modificar la ruta");
         }
     }
 
@@ -231,7 +237,7 @@ public class ControllerRuta {
                 cleanFields();
             }
         } catch (NumberFormatException e){
-            System.out.println("No se ha podido borrar la ruta");
+            lanzarMensajeError("Error", "Er", "No se ha podido borrar a la ruta");
         }
     }
 
@@ -246,6 +252,15 @@ public class ControllerRuta {
         txtRutaNombre.setText("");
         txtRutaRegion.setText("");
         showNode(menuPokemon, false);
+    }
+
+    public void lanzarMensajeError(String titulo, String cabecera, String mensaje){
+        Alert error = new Alert(Alert.AlertType.ERROR);
+        error.setTitle(titulo);
+        error.setHeaderText(cabecera);
+        error.setContentText(mensaje);
+
+        error.showAndWait();
     }
 
 }
