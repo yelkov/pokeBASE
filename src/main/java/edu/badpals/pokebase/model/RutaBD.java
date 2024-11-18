@@ -190,13 +190,14 @@ public class RutaBD {
         return deleteRuta(id);
     }
 
-    public List<String> getPokemons(int rutaId){
-        List<String> pokemons = new ArrayList<>();
-        try(PreparedStatement statement = connection.prepareStatement("select p.nombre from pokemons as p inner join rutas_pokemons as rt on p.id = rt.pokemon and rt.ruta = ?");){
+    public List<RutaPokemon> getPokemons(int rutaId){
+        List<RutaPokemon> pokemons = new ArrayList<>();
+        try(PreparedStatement statement = connection.prepareStatement("select p.nombre, rt.NIVEL_MINIMO, rt.NIVEL_MAXIMO from pokemons as p inner join rutas_pokemons as rt on p.id = rt.pokemon and rt.ruta = ?");){
             statement.setInt(1, rutaId);
             ResultSet results = statement.executeQuery();
             while (results.next()){
-                pokemons.add(results.getString(1));
+                RutaPokemon newPokemon = new RutaPokemon(results.getString(1), rutaId, results.getInt(2),results.getInt(3));
+                pokemons.add(newPokemon);
             }
         } catch (SQLException e){
             System.out.println("error al realizar la operación");

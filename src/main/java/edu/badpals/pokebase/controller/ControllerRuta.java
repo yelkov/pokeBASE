@@ -4,6 +4,7 @@ import edu.badpals.pokebase.criteria.CriteriaRuta;
 import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.model.RutaPokemon;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,7 +30,7 @@ public class ControllerRuta {
     private Label lblRutaId, lblCriterios;
 
     @FXML
-    private ListView<String> listPokemonsRuta;
+    private ListView<RutaPokemon> listPokemonsRuta;
 
     @FXML
     private HBox menuRutaCargada, menuRutaNueva;
@@ -62,7 +63,7 @@ public class ControllerRuta {
     }
 
     private void setPokemonList(int rutaId){
-        List<String> pokemons = rutaBD.getPokemons(rutaId);
+        List<RutaPokemon> pokemons = rutaBD.getPokemons(rutaId);
         if (pokemons.size() > 0){
             showNode(menuPokemon, true);
             listPokemonsRuta.setItems(FXCollections.observableArrayList(pokemons));
@@ -87,7 +88,7 @@ public class ControllerRuta {
         try{
             FXMLLoader loader = getFxmlLoader(actionEvent, "datosPokemon.fxml");
             ControllerPokemon controller = loader.getController();
-            String pokemonName = listPokemonsRuta.getSelectionModel().getSelectedItem();
+            String pokemonName = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
             Pokemon pokemon = rutaBD.getPokemonBD().getPokemonByName(pokemonName);
             controller.setPokemon(pokemon);
         } catch (IOException e){
@@ -110,7 +111,7 @@ public class ControllerRuta {
     }
 
     public void activateBotonBuscar(){
-        String pokemon = listPokemonsRuta.getSelectionModel().getSelectedItem();
+        String pokemon = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
         if(pokemon!= null){
             btnBuscarPokemon.setDisable(false);
         } else {

@@ -249,16 +249,18 @@ class RutaBDTest {
     @Test
     void getPokemons(){
         int rutaId = 11;
-        List<String> pokemons = rutaBD.getPokemons(rutaId);
+        List<RutaPokemon> pokemons = rutaBD.getPokemons(rutaId);
         assertEquals(2, pokemons.size());
-        assertTrue(pokemons.contains("nidoran-f"));
-        assertTrue(pokemons.contains("nidoran-m"));
+        RutaPokemon pokemon1 = new RutaPokemon("nidoran-f", 11,3, 5);
+        RutaPokemon pokemon2 = new RutaPokemon("nidoran-m", 11,3, 5);
+        assertTrue(pokemons.contains(pokemon1));
+        assertTrue(pokemons.contains(pokemon2));
     }
 
     @Test
     void getPokemons_NoPokemons(){
         int rutaId = 17;
-        List<String> pokemons = rutaBD.getPokemons(rutaId);
+        List<RutaPokemon> pokemons = rutaBD.getPokemons(rutaId);
         assertEquals(0, pokemons.size());
     }
 
@@ -267,9 +269,10 @@ class RutaBDTest {
         Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
         int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
         assertTrue(rutaBD.addPokemon(ruta.getId(), "Pikachu"));
-        List<String> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
+        List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
         assertEquals(numberPkRuta + 1, pokemonsRuta.size());
-        assertTrue(pokemonsRuta.contains("pikachu"));
+        RutaPokemon pokemon = new RutaPokemon("pikachu", ruta.getId(), 0 ,0);
+        assertTrue(pokemonsRuta.contains(pokemon));
     }
 
     @Test
@@ -277,7 +280,7 @@ class RutaBDTest {
         Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
         int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
         assertFalse(rutaBD.addPokemon(ruta.getId(), "Bulbasaur"));
-        List<String> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
+        List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
         assertEquals(numberPkRuta , pokemonsRuta.size());
     }
 
@@ -286,7 +289,7 @@ class RutaBDTest {
         Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
         int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
         assertFalse(rutaBD.addPokemon(ruta.getId(), "Jajbse"));
-        List<String> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
+        List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
         assertEquals(numberPkRuta , pokemonsRuta.size());
     }
 }
