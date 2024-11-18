@@ -21,4 +21,5 @@
    </HBox>
    <ListView fx:id="listaRutas" onMouseClicked="#activateBotonBuscar" maxHeight="250.0" maxWidth="300.0"/>
    <Button fx:id="btnBuscarRuta" disable="true" onAction="#showRuta" text="Buscar Ruta" />
+   <Button text="Volver Al Menú Principal" onAction="#volverAlInicio"/>
 </VBox>

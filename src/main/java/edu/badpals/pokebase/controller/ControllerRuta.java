@@ -177,9 +177,17 @@ public class ControllerRuta {
         }
     }
 
+    public void volverAlInicio(ActionEvent actionEvent){
+        try {
+            FXMLLoader loader = getFxmlLoader(actionEvent, "main.fxml");
+        } catch (IOException e){
+            lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
+        }
+    }
+
     private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
-        Scene scene = new Scene(loader.load(),900,900);
+        Scene scene = new Scene(loader.load(), 900, 1080);
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
         // Crear una nueva escena con el contenido cargado
         stage.setScene(scene); // Establecer la nueva escena en el Stage
