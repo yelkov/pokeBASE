@@ -8,7 +8,8 @@ BEGIN
 	UPDATE RUTAS_POKEMONS
     SET NIVEL_MINIMO = NIVEL_MINIMO + SUBIDA,
     NIVEL_MAXIMO = NIVEL_MAXIMO + SUBIDA
-    WHERE RUTA = RUTA_ID;
+    WHERE RUTA = RUTA_ID
+    and nivel_maximo is not null and nivel_minimo is not null;
 END$$
 
 DROP FUNCTION if exists countAllRoutes$$

@@ -24,7 +24,7 @@ import java.util.List;
 
 public class ControllerRuta {
     @FXML
-    private TextField txtRutaNombre, txtRutaRegion, txtPokemonAnadir;
+    private TextField txtRutaNombre, txtRutaRegion, txtPokemonAnadir, txtNiveles;
 
     @FXML
     private Label lblRutaId, lblCriterios;
@@ -82,6 +82,24 @@ public class ControllerRuta {
             }
         }
         txtPokemonAnadir.setText("");
+    }
+
+    public void modificarNiveles(){
+        int id = Integer.valueOf(lblRutaId.getText());
+        try{
+            int niveles = Integer.valueOf(txtNiveles.getText());
+            boolean isModificarOk = rutaBD.subirNivelesRuta(id, niveles);
+            if (isModificarOk){
+                System.out.println("Hola");
+                setPokemonList(id);
+            } else {
+                System.out.println("Mal");
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } finally {
+            txtNiveles.setText("");
+        }
     }
 
     public void buscarInfoPokemon(ActionEvent actionEvent){
