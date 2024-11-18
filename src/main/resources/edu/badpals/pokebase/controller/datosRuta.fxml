@@ -43,7 +43,7 @@
 
    <VBox fx:id="menuPokemon" managed="false" visible="false" alignment="CENTER" spacing="10.0">
       <Label text="Lista de pokemons"/>
-      <ListView fx:id="listPokemonsRuta" maxWidth="400" maxHeight="200" onMouseClicked="#activateBotonBuscar"></ListView>
+      <ListView fx:id="listPokemonsRuta" maxWidth="150" maxHeight="200" onMouseClicked="#activateBotonBuscar"></ListView>
       <HBox alignment="CENTER" spacing="10.0">
          <Label text="Niveles a subir"/>
          <TextField fx:id="txtNiveles"/>

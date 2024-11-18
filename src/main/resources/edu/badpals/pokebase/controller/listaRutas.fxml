@@ -19,6 +19,6 @@
       <ComboBox fx:id="cmbOrden"/>
       <Button fx:id="btnFiltrarRutas" text="Buscar" onAction="#refiltrarRutas"/>
    </HBox>
-   <ListView fx:id="listaRutas" onMouseClicked="#activateBotonBuscar" prefHeight="248.0" prefWidth="600.0"/>
+   <ListView fx:id="listaRutas" onMouseClicked="#activateBotonBuscar" maxHeight="250.0" maxWidth="300.0"/>
    <Button fx:id="btnBuscarRuta" disable="true" onAction="#showRuta" text="Buscar Ruta" />
 </VBox>

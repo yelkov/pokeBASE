@@ -33,11 +33,10 @@ public class RutaPokemon {
 
     @Override
     public String toString() {
-        return "RutaPokemon{" +
-                "pokemon='" + pokemon + '\'' +
-                ", nivel_minimo=" + nivel_minimo +
-                ", nivel_maximo=" + nivel_maximo +
-                '}';
+        return getPokemon() +
+                " [" + nivel_minimo +
+                "," + nivel_maximo +
+                ']';
     }
 
     @Override
