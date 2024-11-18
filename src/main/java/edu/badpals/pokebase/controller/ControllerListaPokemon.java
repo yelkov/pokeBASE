@@ -33,7 +33,6 @@ public class ControllerListaPokemon {
     private AccesoBD accesoBD;
     private PokemonBD pokemonBD;
     private RutaBD rutaBD;
-    private Stage previousStage;
 
     public void initialize() {
         accesoBD = new AccesoBD();
@@ -44,8 +43,7 @@ public class ControllerListaPokemon {
         cmbOrden.setItems(FXCollections.observableArrayList("Ascendente","Descendente"));
     }
 
-    public void setPokemons(List<Pokemon> listaPokemon, Stage previousStage) {
-        this.previousStage = previousStage;
+    public void setPokemons(List<Pokemon> listaPokemon) {
         this.listaPokemon = listaPokemon;
         lvPokemon.setItems(FXCollections.observableArrayList(listaPokemon));
         accesoBD = new AccesoBD();
@@ -70,7 +68,7 @@ public class ControllerListaPokemon {
             if(pokemon != null){
                 FXMLLoader loader = getFxmlLoader(actionEvent, "datosPokemon.fxml");
                 ControllerPokemon controllerPokemon = loader.getController();
-                controllerPokemon.setPokemon(pokemon,previousStage);
+                controllerPokemon.setPokemon(pokemon);
 
             }
         }catch (IOException e){

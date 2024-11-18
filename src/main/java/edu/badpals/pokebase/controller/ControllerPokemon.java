@@ -34,7 +34,6 @@ public class ControllerPokemon {
     private Pokemon pokemonAnterior;
     private Pokemon pokemonPreEvolucion;
 
-    private Stage previousStage;
     private AccesoBD accesoBD;
     private PokemonBD pokemonBD;
     private RutaBD rutaBD;
@@ -136,8 +135,7 @@ public class ControllerPokemon {
         setImage();
     }
 
-    public void setPokemon(Pokemon pokemon, Stage previousStage) {
-        this.previousStage = previousStage;
+    public void setPokemon(Pokemon pokemon) {
         this.pokemon = pokemon;
         visualizarDatos();
         establecerSiguientesPokemon();
@@ -181,9 +179,6 @@ public class ControllerPokemon {
     private void handleVolver(ActionEvent event) {
         Stage stage = (Stage) btnVolver.getScene().getWindow();
         stage.hide();
-        if (previousStage != null) {
-            previousStage.show();
-        }
     }
 
     public void limpiarPanel(){
