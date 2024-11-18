@@ -120,6 +120,32 @@ class PokemonBDTest {
         assertEquals(70,pokemonsPlantaVeneno.get(0).getId());
         assertEquals("weepinbell",pokemonsPlantaVeneno.get(0).getNombre());
     }
+    @Test
+    void test_modificarPokemon(){
+        Pokemon ivysaur = pokemonBD.getPokemonByName("ivysaur");
+        ivysaur.setNombre("ivysaurcito");
+        ivysaur.setTipo1("Agua");
+        ivysaur.setTipo2("Tierra");
+        ivysaur.setEvolucionaDe(10);
+        ivysaur.setMetodoEvolucion("Nivel 2");
+        assertTrue(pokemonBD.updatePokemon(ivysaur));
+
+        Pokemon ivysaurModificado = pokemonBD.getPokemonByName("ivysaurcito");
+        assertNotNull(ivysaurModificado);
+        assertEquals("ivysaurcito",ivysaurModificado.getNombre());
+        assertEquals("Agua",ivysaurModificado.getTipo1());
+        assertEquals("Tierra",ivysaurModificado.getTipo2());
+        assertEquals(10,ivysaurModificado.getEvolucionaDe());
+        assertEquals("Nivel 2",ivysaurModificado.getMetodoEvolucion());
+
+        //Deshacemos los cambios
+        ivysaurModificado.setNombre("ivysaur");
+        ivysaurModificado.setTipo1("Planta");
+        ivysaurModificado.setTipo2("Veneno");
+        ivysaurModificado.setEvolucionaDe(1);
+        ivysaurModificado.setMetodoEvolucion("Nivel 16");
+        pokemonBD.updatePokemon(ivysaurModificado);
+    }
 
     /*
     @Test
