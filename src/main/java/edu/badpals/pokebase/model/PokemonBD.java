@@ -148,22 +148,23 @@ public class PokemonBD {
         return pokemons;
     }
 
-    public boolean updatePokemon(Pokemon pokemon) {
+    public boolean updatePokemon(Integer antiguoId, Pokemon pokemon) {
         String query = """
                         UPDATE pokemons
-                        SET NOMBRE = ?, IMAGEN = ?, IMAGEN_SHINY = ?, GIF = ?, TIPO_1 = ?, TIPO_2 = ?, EVOLUCIONA_DE = ?, METODO_EVOLUCION = ?
+                        SET NOMBRE = ?, ID = ? , IMAGEN = ?, IMAGEN_SHINY = ?, GIF = ?, TIPO_1 = ?, TIPO_2 = ?, EVOLUCIONA_DE = ?, METODO_EVOLUCION = ?
                         WHERE ID = ?
                         """;
         try(PreparedStatement ps = connection.prepareStatement(query)){
             ps.setString(1, pokemon.getNombre());
-            ps.setBytes(2, pokemon.getImagen());
-            ps.setBytes(3, pokemon.getImagenShiny());
-            ps.setBytes(4, pokemon.getGif());
-            ps.setString(5, pokemon.getTipo1());
-            ps.setString(6, pokemon.getTipo2());
-            ps.setInt(7, pokemon.getEvolucionaDe());
-            ps.setString(8, pokemon.getMetodoEvolucion());
-            ps.setInt(9, pokemon.getId());
+            ps.setInt(2, pokemon.getId());
+            ps.setBytes(3, pokemon.getImagen());
+            ps.setBytes(4, pokemon.getImagenShiny());
+            ps.setBytes(5, pokemon.getGif());
+            ps.setString(6, pokemon.getTipo1());
+            ps.setString(7, pokemon.getTipo2());
+            ps.setInt(8, pokemon.getEvolucionaDe());
+            ps.setString(9, pokemon.getMetodoEvolucion());
+            ps.setInt(10, antiguoId);
             ps.executeUpdate();
 
             return true;

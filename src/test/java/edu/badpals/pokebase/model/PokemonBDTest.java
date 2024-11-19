@@ -138,29 +138,34 @@ class PokemonBDTest {
     }
     @Test
     void test_modificarPokemon(){
-        Pokemon ivysaur = pokemonBD.getPokemonByName("ivysaur");
-        ivysaur.setNombre("ivysaurcito");
-        ivysaur.setTipo1("Agua");
-        ivysaur.setTipo2("Tierra");
-        ivysaur.setEvolucionaDe(10);
-        ivysaur.setMetodoEvolucion("Nivel 2");
-        assertTrue(pokemonBD.updatePokemon(ivysaur));
+        Pokemon dragonite = pokemonBD.getPokemonByName("dragonite");
+        Integer antiguoId = dragonite.getId();
+        dragonite.setNombre("otro");
+        dragonite.setId(250);
+        dragonite.setTipo1("Agua");
+        dragonite.setTipo2("Tierra");
+        dragonite.setEvolucionaDe(10);
+        dragonite.setMetodoEvolucion("Nivel 2");
+        assertTrue(pokemonBD.updatePokemon(antiguoId,dragonite));
 
-        Pokemon ivysaurModificado = pokemonBD.getPokemonByName("ivysaurcito");
-        assertNotNull(ivysaurModificado);
-        assertEquals("ivysaurcito",ivysaurModificado.getNombre());
-        assertEquals("Agua",ivysaurModificado.getTipo1());
-        assertEquals("Tierra",ivysaurModificado.getTipo2());
-        assertEquals(10,ivysaurModificado.getEvolucionaDe());
-        assertEquals("Nivel 2",ivysaurModificado.getMetodoEvolucion());
+        Pokemon dragoniteModif = pokemonBD.getPokemonByName("otro");
+        assertNotNull(dragoniteModif);
+        assertEquals("otro",dragoniteModif.getNombre());
+        assertEquals(250,dragoniteModif.getId());
+        assertEquals("Agua",dragoniteModif.getTipo1());
+        assertEquals("Tierra",dragoniteModif.getTipo2());
+        assertEquals(10,dragoniteModif.getEvolucionaDe());
+        assertEquals("Nivel 2",dragoniteModif.getMetodoEvolucion());
 
         //Deshacemos los cambios
-        ivysaurModificado.setNombre("ivysaur");
-        ivysaurModificado.setTipo1("Planta");
-        ivysaurModificado.setTipo2("Veneno");
-        ivysaurModificado.setEvolucionaDe(1);
-        ivysaurModificado.setMetodoEvolucion("Nivel 16");
-        pokemonBD.updatePokemon(ivysaurModificado);
+        Integer idModificado = dragoniteModif.getId();
+        dragoniteModif.setNombre("dragonite");
+        dragoniteModif.setId(149);
+        dragoniteModif.setTipo1("Dragón");
+        dragoniteModif.setTipo2("Volador");
+        dragoniteModif.setEvolucionaDe(148);
+        dragoniteModif.setMetodoEvolucion("Nivel 55");
+        pokemonBD.updatePokemon(idModificado,dragoniteModif);
     }
     @Test
     public void test_insertPokemon(){
