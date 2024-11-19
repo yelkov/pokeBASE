@@ -1,5 +1,6 @@
 package edu.badpals.pokebase.controller;
 
+import edu.badpals.pokebase.criteria.CriteriaRuta;
 import edu.badpals.pokebase.model.*;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -68,7 +69,7 @@ public class Controller {
 
     public void crearRuta(ActionEvent actionEvent) {
         try{
-            FXMLLoader loader = getFxmlLoader(actionEvent,"datosRuta.fxml");
+            FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"datosRuta.fxml",this.getClass(),500,900);
             ControllerRuta controller = loader.getController();
             controller.setAcceso(rutaBD);
         } catch (IOException e) {
@@ -77,7 +78,7 @@ public class Controller {
     }
     public void crearPokemon(ActionEvent actionEvent) {
         try{
-            getFxmlLoader(actionEvent,"datosPokemon.fxml");
+            Controller.getFxmlLoader(actionEvent,"datosPokemon.fxml",this.getClass(),600,600);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -94,7 +95,7 @@ public class Controller {
         }
         if(pokemon != null){
             try{
-                FXMLLoader loader = getFxmlLoader(actionEvent,"datosPokemon.fxml");
+                FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"datosPokemon.fxml",this.getClass(), 600,500);
                 ControllerPokemon pokemonController = loader.getController();
                 pokemonController.setPokemon(pokemon);
             } catch (IOException e) {
@@ -103,9 +104,9 @@ public class Controller {
         }
     }
 
-    private FXMLLoader getFxmlLoader(ActionEvent actionEvent,String sceneFxml) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
-        Scene scene = new Scene(loader.load(),900,900);
+    public static FXMLLoader getFxmlLoader(ActionEvent actionEvent,String sceneFxml, Class clase, int ancho, int largo) throws IOException {
+        FXMLLoader loader = new FXMLLoader(clase.getResource(sceneFxml));
+        Scene scene = new Scene(loader.load(),ancho,largo);
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
         // Crear una nueva escena con el contenido cargado
         stage.setScene(scene); // Establecer la nueva escena en el Stage
@@ -119,7 +120,7 @@ public class Controller {
         Optional<Ruta> ruta = rutaBD.getRuta(nombreRuta, nombreRegion);
         if (ruta.isPresent()){
             try{
-                FXMLLoader loader = getFxmlLoader(actionEvent,"datosRuta.fxml");
+                FXMLLoader loader =Controller.getFxmlLoader(actionEvent,"datosRuta.fxml",this.getClass(), 600,700);
                 ControllerRuta controller = loader.getController();
                 controller.setAcceso(rutaBD);
                 controller.setRuta(ruta.get());
@@ -142,7 +143,7 @@ public class Controller {
             List<Pokemon> pokemons = pokemonBD.getPokemonsByType(tipo1, tipo2, criterio + " " +orden);
             System.out.println(pokemons);
             try{
-                FXMLLoader loader = getFxmlLoader(actionEvent,"listaPokemon.fxml");
+                FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"listaPokemon.fxml",this.getClass(),1000,700);
                 ControllerListaPokemon controller = loader.getController();
                 controller.setPokemons(pokemons);
             }catch (IOException e) {
@@ -153,15 +154,16 @@ public class Controller {
     }
 
     public void filtrarRuta(ActionEvent actionEvent){
-        Optional<String> pokemon = txtPokemonRuta.getText().equals("")?Optional.empty():Optional.of(txtPokemonRuta.getText());
+        String pokemon = txtPokemonRuta.getText();
         String regionSeleccionada = cmbFiltrarRegiones.getSelectionModel().getSelectedItem();
-        Optional<String> region = regionSeleccionada.equals("Todas")? Optional.empty():Optional.of(regionSeleccionada);
-        List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, region);
+        CriteriaRuta criteriaRuta = new CriteriaRuta(pokemon, regionSeleccionada);
+        List<Ruta> rutas = rutaBD.getRutasByFilters(criteriaRuta);
         try{
-            FXMLLoader loader = getFxmlLoader(actionEvent,"listaRutas.fxml");
+            FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"listaRutas.fxml",this.getClass(),550,600);
             ControllerListaRutas controller = loader.getController();
             controller.setRutas(rutas);
             controller.setAcceso(rutaBD);
+            controller.setCriteria(criteriaRuta);
         }catch (IOException e) {
             e.printStackTrace();
         }

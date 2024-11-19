@@ -1,6 +1,7 @@
 package edu.badpals.pokebase.controller;
 
 import edu.badpals.pokebase.model.*;
+import edu.badpals.pokebase.view.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -119,19 +120,19 @@ public class ControllerEditarPokemon {
     public void crearPokemon(){
         String nombre = tfNombre.getText();
         if(pokemonBD.isNombrePresent(nombre)){
-            lanzarMensajeError("Error","Nombre de pokémon no válido","El nombre introducido ya se encuentra en la base de datos.");
+            View.lanzarMensajeError("Error","Nombre de pokémon no válido","El nombre introducido ya se encuentra en la base de datos.");
             return;
         }
         int id = Integer.parseInt(tfId.getText());
         if(pokemonBD.isIdPresent(id)){
-            lanzarMensajeError("Error","Id no válido","El id introducido ya se encuentra en la base de datos.");
+            View.lanzarMensajeError("Error","Id no válido","El id introducido ya se encuentra en la base de datos.");
             return;
         }
         String tipo1 = tfTipo1.getText();
         String tipo2 = tfTipo2.getText();
         int evolucionaDe = Integer.parseInt(tfEvolucionaDe.getText());
         if(!pokemonBD.isIdPresent(evolucionaDe)){
-            lanzarMensajeError("Error","Preevolución no válida","El id introducido en 'Evoluciona de' no existe en la base de datos.");
+            View.lanzarMensajeError("Error","Preevolución no válida","El id introducido en 'Evoluciona de' no existe en la base de datos.");
             return;
         }
         String metodoEvolucion = tfMetodoEvolucion.getText();
@@ -143,9 +144,9 @@ public class ControllerEditarPokemon {
         Pokemon nuevoPokemon = new Pokemon(id,nombre,imagen,gif,shiny,tipo1,tipo2,evolucionaDe,metodoEvolucion);
         this.pokemon = nuevoPokemon;
         if(pokemonBD.insertPokemon(nuevoPokemon)){
-            lanzarMensajeAviso("Aviso","Pokemon creado","Se completó la creación con éxito.");
+            View.lanzarMensajeAviso("Aviso","Pokemon creado","Se completó la creación con éxito.");
         }else{
-            lanzarMensajeError("Error","No se ha creado al Pokémon","Se ha producido un error inesperado y el proceso ha sido abortado.");
+            View.lanzarMensajeError("Error","No se ha creado al Pokémon","Se ha producido un error inesperado y el proceso ha sido abortado.");
         }
 
     }
@@ -169,47 +170,15 @@ public class ControllerEditarPokemon {
 
     public void eliminarPokemon() {
         if(this.pokemon == null){
-            lanzarMensajeError("Error","Error al eliminar pokémon","No se encuentra seleccionado ningún pokémon.");
+            View.lanzarMensajeError("Error","Error al eliminar pokémon","No se encuentra seleccionado ningún pokémon.");
             return;
         }
-        Optional<ButtonType> respuesta = lanzarMensajeConfirmacion("Eliminar","Se va a eliminar un pokémon.","¿Está seguro de que desea eliminar el pokémon actual de la base de datos? Esta operación es irreversible.");
-        if(respuesta.isPresent()){
+        Optional<ButtonType> respuesta = View.lanzarMensajeConfirmacion("Eliminar","Se va a eliminar un pokémon.","¿Está seguro de que desea eliminar el pokémon actual de la base de datos? Esta operación es irreversible.");
+        if(respuesta.isPresent() && respuesta.get().getText().equals("Sí")){
             pokemonBD.deletePokemon(pokemon);
-            lanzarMensajeAviso("Aviso","Eliminación completada","Se ha borrado al pokémon exitosamente");
+            View.lanzarMensajeAviso("Aviso","Eliminación completada","Se ha borrado al pokémon exitosamente");
             limpiarPanel();
         }
     }
 
-    public void lanzarMensajeAviso(String titulo, String cabecera, String mensaje){
-        Alert error = new Alert(Alert.AlertType.INFORMATION);
-        error.setTitle(titulo);
-        error.setHeaderText(cabecera);
-        error.setContentText(mensaje);
-
-        error.showAndWait();
-    }
-
-    public void lanzarMensajeError(String titulo, String cabecera, String mensaje){
-        Alert error = new Alert(Alert.AlertType.ERROR);
-        error.setTitle(titulo);
-        error.setHeaderText(cabecera);
-        error.setContentText(mensaje);
-
-        error.showAndWait();
-    }
-
-    public Optional<ButtonType> lanzarMensajeConfirmacion(String titulo, String cabecera, String mensaje){
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle(titulo);
-        confirmacion.setHeaderText(cabecera);
-        confirmacion.setContentText(mensaje);
-
-        ButtonType btnSi = new ButtonType("Sí");
-        ButtonType btnNo = new ButtonType("No");
-        confirmacion.getButtonTypes().setAll(btnSi, btnNo);
-
-
-        Optional<ButtonType> respuesta = confirmacion.showAndWait();
-        return respuesta;
-    }
 }

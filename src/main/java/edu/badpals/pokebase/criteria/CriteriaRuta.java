@@ -15,6 +15,13 @@ public class CriteriaRuta {
         this.orden = orden;
     }
 
+    public CriteriaRuta(String pokemon, String region){
+        this.pokemon = pokemon.equals("")?Optional.empty():Optional.of(pokemon);
+        this.region = region.equals("Todas")?Optional.empty():Optional.of(region);
+        this.criterio = "id";
+        this.orden = "ASC";
+    }
+
     public Optional<String> getPokemon() {
         return pokemon;
     }
