@@ -62,7 +62,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </HBox>
-            <ComboBox fx:id="cmbOrden" maxWidth="120.0" minWidth="100.0">
+            <ComboBox fx:id="cmbOrden" maxWidth="80.0" minWidth="80.0">
                <HBox.margin>
                   <Insets left="-15.0" />
                </HBox.margin></ComboBox>
@@ -73,7 +73,7 @@
             <Label text="Total de pokémon en la búsqueda: " />
             <Label fx:id="lblTotal" />
             <Region prefWidth="100.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnFiltrar" onAction="#filtrarPokemon" mnemonicParsing="false" text="Aplicar filtros" />
+            <Button fx:id="btnFiltrar" mnemonicParsing="false" onAction="#filtrarPokemon" text="Aplicar filtros" />
          </children>
          <VBox.margin>
             <Insets bottom="10.0" top="15.0" />

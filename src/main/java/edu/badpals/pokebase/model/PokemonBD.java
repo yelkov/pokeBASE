@@ -1,5 +1,7 @@
 package edu.badpals.pokebase.model;
 
+import edu.badpals.pokebase.criteria.CriteriaPokemon;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +102,11 @@ public class PokemonBD {
             e.printStackTrace();
         }
         return pokemon;
+    }
+
+    public List<Pokemon> getPokemonByFilters(CriteriaPokemon criteria){
+        String ordenacion = criteria.getCriterio() + " " + criteria.getOrden();
+        return getPokemonsByType(criteria.getTipo1(), criteria.getTipo2(), ordenacion);
     }
 
     public List<Pokemon> getPokemonsByType(String tipo1, String tipo2 , String ordenacion) {

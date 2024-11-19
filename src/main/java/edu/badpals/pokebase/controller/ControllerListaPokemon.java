@@ -1,5 +1,6 @@
 package edu.badpals.pokebase.controller;
 
+import edu.badpals.pokebase.criteria.CriteriaPokemon;
 import edu.badpals.pokebase.model.AccesoBD;
 import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.PokemonBD;
@@ -36,7 +37,7 @@ public class ControllerListaPokemon {
     @FXML
     private Label lblTotal;
 
-
+    private CriteriaPokemon criteria;
     private List<Pokemon> listaPokemon;
     private AccesoBD accesoBD;
     private PokemonBD pokemonBD;
@@ -49,8 +50,8 @@ public class ControllerListaPokemon {
         rutaBD = new RutaBD(accesoBD);
         cmbCriterio.setItems(FXCollections.observableArrayList("---","Id","Nombre"));
         cmbCriterio.setValue("---");
-        cmbOrden.setItems(FXCollections.observableArrayList("Ascendente","Descendente"));
-        cmbOrden.setValue("Ascendente");
+        cmbOrden.setItems(FXCollections.observableArrayList("ASC","DESC"));
+        cmbOrden.setValue("ASC");
 
         tableListaPokemon.widthProperty().addListener((obs, oldWidth, newWidth) -> {
             double totalWidth = newWidth.doubleValue();
@@ -62,7 +63,7 @@ public class ControllerListaPokemon {
         });
     }
 
-    public void setPokemons(List<Pokemon> listaPokemon) {
+    public void setPokemons(List<Pokemon> listaPokemon, CriteriaPokemon criteria) {
         this.listaPokemon = listaPokemon;
         accesoBD = new AccesoBD();
         accesoBD.connect();
@@ -70,6 +71,15 @@ public class ControllerListaPokemon {
 
 
         setTablaPokemon();
+        setCriteria(criteria);
+    }
+
+    public void setCriteria(CriteriaPokemon criteriaPokemon){
+        this.criteria = criteriaPokemon;
+        txtTipo1.setText(criteria.getTipo1());
+        txtTipo2.setText((criteria.getTipo2() == null ? "" : criteria.getTipo2()));
+        cmbCriterio.setValue(criteria.getCriterio());
+        cmbOrden.setValue(criteria.getOrden());
     }
 
 
@@ -122,17 +132,17 @@ public class ControllerListaPokemon {
 
     public void filtrarPokemon() {
         String tipo1 = txtTipo1.getText();
-        String tipo2 = txtTipo2.getText();
-        String criterio = cmbCriterio.getSelectionModel().getSelectedItem();
-        String orden = cmbOrden.getSelectionModel().getSelectedItem();
-        if (!tipo1.equals("")){
-            tipo2 = tipo2.equals("")? null : tipo2;
-            criterio = criterio.equals("---")? "ID" : criterio;
-            orden = orden.equals("Ascendente")? "ASC" : "DESC";
-            List<Pokemon> pokemons = pokemonBD.getPokemonsByType(tipo1, tipo2, criterio + " " +orden);
 
-            this.listaPokemon = pokemons;
+        if (!tipo1.equals("")){
+            String tipo2 = txtTipo2.getText();
+            String criterio = cmbCriterio.getSelectionModel().getSelectedItem();
+            String orden = cmbOrden.getSelectionModel().getSelectedItem();
+            CriteriaPokemon criteriaPokemon = new CriteriaPokemon(tipo1,tipo2,criterio,orden);
+            this.listaPokemon = pokemonBD.getPokemonByFilters(criteriaPokemon);
+
             setTablaPokemon();
+            setCriteria(criteriaPokemon);
+
         }else{
             View.lanzarMensajeError("Error","Tipo no seleccionado","Para realizar una búsqueda, es imprescindible introducir un tipo en la primera casilla (tipo 1)");
         }

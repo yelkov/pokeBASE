@@ -1,7 +1,9 @@
 package edu.badpals.pokebase.controller;
 
+import edu.badpals.pokebase.criteria.CriteriaPokemon;
 import edu.badpals.pokebase.criteria.CriteriaRuta;
 import edu.badpals.pokebase.model.*;
+import edu.badpals.pokebase.view.View;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -58,11 +60,11 @@ public class Controller {
         ));
         cmbFiltrarRegiones.setValue("Todas");
 
-        cmbCriterio.setItems(FXCollections.observableArrayList("id","nombre"));
-        cmbCriterio.setValue("id");
+        cmbCriterio.setItems(FXCollections.observableArrayList("---","Id","Nombre"));
+        cmbCriterio.setValue("---");
 
-        cmbOrden.setItems(FXCollections.observableArrayList("asc","desc"));
-        cmbCriterio.setValue("asc");
+        cmbOrden.setItems(FXCollections.observableArrayList("ASC","DESC"));
+        cmbOrden.setValue("ASC");
 
     }
 
@@ -135,19 +137,22 @@ public class Controller {
 
     public void filtrarPokemon(ActionEvent actionEvent) {
         String tipo1 = txtTipo1.getText();
-        String tipo2 = txtTipo2.getText();
-        String criterio = cmbCriterio.getSelectionModel().getSelectedItem();
-        String orden = cmbOrden.getSelectionModel().getSelectedItem();
+
         if (!tipo1.equals("")){
-            tipo2 = tipo2.equals("")? null : tipo2;
-            List<Pokemon> pokemons = pokemonBD.getPokemonsByType(tipo1, tipo2, criterio + " " +orden);
+            String tipo2 = txtTipo2.getText();
+            String criterio = cmbCriterio.getSelectionModel().getSelectedItem();
+            String orden = cmbOrden.getSelectionModel().getSelectedItem();
+            CriteriaPokemon criteria = new CriteriaPokemon(tipo1,tipo2,criterio,orden);
+            List<Pokemon> pokemons = pokemonBD.getPokemonByFilters(criteria);
             try{
                 FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"listaPokemon.fxml",this.getClass(),800,650);
                 ControllerListaPokemon controller = loader.getController();
-                controller.setPokemons(pokemons);
+                controller.setPokemons(pokemons,criteria);
             }catch (IOException e) {
                 e.printStackTrace();
             }
+        }else{
+            View.lanzarMensajeError("Error","Tipo no seleccionado","Para realizar un filtrado de pokemon, es imprescindible introducir un tipo en la primera casilla (tipo 1)");
         }
 
     }
