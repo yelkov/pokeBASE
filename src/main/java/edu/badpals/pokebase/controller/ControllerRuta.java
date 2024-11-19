@@ -5,6 +5,7 @@ import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
 import edu.badpals.pokebase.model.RutaPokemon;
+import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -18,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 public class ControllerRuta {
@@ -81,43 +83,46 @@ public class ControllerRuta {
     public void addPokemonRuta(){
         int id = Integer.valueOf(lblRutaId.getText());
         String nombre = txtPokemonAnadir.getText();
-        try{
-            int minimo = Integer.valueOf(txtMinimoNivel.getText());
-            int maximo = Integer.valueOf(txtMaximoNivel.getText());
-            if (!nombre.equals("")){
+        if (!nombre.equals("")){
+            try{
+                int minimo = Integer.valueOf(txtMinimoNivel.getText());
+                int maximo = Integer.valueOf(txtMaximoNivel.getText());
                 boolean isAddOk = rutaBD.addPokemon(id, nombre, minimo, maximo);
                 if (isAddOk){
                     setPokemonList(id);
                 } else{
-                    View.lanzarMensajeError("Error", "Inserción fallida", "No se ha podido añadir el pokemon a la ruta. Es posible que el pokemon no existe o ya se encuentre registrado en esta ruta");
+                    View.lanzarMensajeError("Error", "Inserción fallida", "No se ha podido añadir el pokemon a la ruta porque el pokemon no existe en la base de datos, debe crearlo primero. Para otros posibles motivos consulte el log");
                 }
-            } else{
-                View.lanzarMensajeError("Error", "Formato incorrecto", "Debe introducir el nombre del pokemon a añadir");
+            } catch (SQLIntegrityConstraintViolationException e){
+                View.lanzarMensajeError("Error", "Inserción fallida", "El pokemon no se puede añadir a la ruta porque ya está registrado en ella");
+            } catch (NumberFormatException e){
+                View.lanzarMensajeError("Error", "Error de formato", "Los campos de nivel mínimo y máximo son obligatorios");
             }
-        } catch (NumberFormatException e){
-            View.lanzarMensajeError("Error", "Formato incorrecto", "Los niveles de las rutas deben ser número");
+        } else{
+            View.lanzarMensajeError("Error", "Formato incorrecto", "Debe introducir el nombre del pokemon a añadir");
         }
         txtPokemonAnadir.setText("");
         txtMaximoNivel.setText("");
         txtMinimoNivel.setText("");
     }
 
-    public void modificarNiveles(){
+    public void modificarNiveles() {
         int id = Integer.valueOf(lblRutaId.getText());
         try{
             int niveles = Integer.valueOf(txtNiveles.getText());
             boolean isModificarOk = rutaBD.subirNivelesRuta(id, niveles);
-            if (isModificarOk){
+            if (isModificarOk) {
                 setPokemonList(id);
             } else {
-                View.lanzarMensajeError("Error", "Modificación de niveles abortada", "No se ha podido realizar la operación correctamente");
+                View.lanzarMensajeError("Error", "Modificación de niveles abortada", "No se ha podido realizar la operación correctamente, consulte los motivos en el archivo de log");
             }
-        } catch (NumberFormatException e) {
-            View.lanzarMensajeError("Error", "Formato incorrecto", "La variación de niveles debes ser un número");
-        } finally {
             txtNiveles.setText("");
+        } catch (NumberFormatException e){
+            View.lanzarMensajeError("Error", "Error de formato", "Debe introducir el número de niveles a modificar");
         }
+
     }
+
 
     public void buscarInfoPokemon(ActionEvent actionEvent){
         try{
@@ -127,7 +132,8 @@ public class ControllerRuta {
             Pokemon pokemon = rutaBD.getPokemonBD().getPokemonByName(pokemonName);
             controller.setPokemon(pokemon);
         } catch (IOException e){
-            System.out.println("Error");
+            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
+            ErrorLogger.saveErrorLog(e.getMessage());
         }
     }
 
@@ -180,7 +186,8 @@ public class ControllerRuta {
             controller.setAcceso(rutaBD);
             controller.setCriteria(criteriaRuta);
         } catch (IOException e){
-            System.out.println("Error");
+            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
+            ErrorLogger.saveErrorLog(e.getMessage());
         }
     }
 
@@ -188,7 +195,8 @@ public class ControllerRuta {
         try {
             FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "main.fxml", this.getClass(), 800, 600);
         } catch (IOException e){
-            View.lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
+            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
+            ErrorLogger.saveErrorLog(e.getMessage());
         }
     }
 
@@ -210,12 +218,16 @@ public class ControllerRuta {
         String nombre = txtRutaNombre.getText();
         String region = txtRutaRegion.getText();
         Ruta rutaNueva = new Ruta(0,nombre, region);
-        boolean wasRutaCreated = rutaBD.insertRuta(rutaNueva);
-        if (wasRutaCreated){
-            Ruta rutaLoaded = rutaBD.getRuta(nombre, region).get();
-            setRuta(rutaLoaded);
-        } else {
-            View.lanzarMensajeError("Error", "Error al insertar la nueva ruta", "Compruebe si ya está registrada en la base de datos");
+        try{
+            boolean wasRutaCreated = rutaBD.insertRuta(rutaNueva);
+            if (wasRutaCreated){
+                Ruta rutaLoaded = rutaBD.getRuta(nombre, region).get();
+                setRuta(rutaLoaded);
+            } else {
+                View.lanzarMensajeError("Error", "Error al insertar la nueva ruta", "No se ha podido realizar el insert en la base de datos, consulte los motivos en el archivo log");
+            }
+        } catch (SQLIntegrityConstraintViolationException e){
+            View.lanzarMensajeError("Error", "Error al insertar la nueva ruta", "La ruta que se ha intentado crear ya existe en la base de datos");
         }
     }
 
@@ -224,25 +236,27 @@ public class ControllerRuta {
         String nombre = txtRutaNombre.getText();
         String region = txtRutaRegion.getText();
         Ruta rutaUpdated = new Ruta(id, nombre, region);
-        boolean wasRutaUpdated = rutaBD.updateRuta(rutaUpdated);
-        if(wasRutaUpdated){
-            setRuta(rutaUpdated);
-        } else{
-            View.lanzarMensajeError("Error", "Er", "No se ha modificar la ruta");
+        try {
+            boolean wasRutaUpdated = rutaBD.updateRuta(rutaUpdated);
+            if (wasRutaUpdated) {
+                setRuta(rutaUpdated);
+            } else {
+                View.lanzarMensajeError("Error", "Error al modificar la ruta", "No se ha podido realizar el update en la base de datos, consulte los motivos en el archivo log");
+            }
+        } catch (SQLIntegrityConstraintViolationException e){
+            View.lanzarMensajeError("Error", "Error al modificar la ruta", "Ya existe una ruta diferente con el nombre y región indicados");
         }
     }
 
     public void borrarRuta(){
         String idValue = lblRutaId.getText();
-        try{
-            int id = Integer.parseInt(idValue);
-            boolean wasRutaDeleted = rutaBD.deleteRuta(id);
-            if(wasRutaDeleted){
-                configureMenu(false);
-                cleanFields();
-            }
-        } catch (NumberFormatException e){
-            View.lanzarMensajeError("Error", "Er", "No se ha podido borrar a la ruta");
+        int id = Integer.parseInt(idValue);
+        boolean wasRutaDeleted = rutaBD.deleteRuta(id);
+        if(wasRutaDeleted){
+            configureMenu(false);
+            cleanFields();
+        } else {
+            View.lanzarMensajeError("Error", "Error al borrar la ruta", "No se ha podido realizar el delete en la base de datos, consulte los motivos en el archivo log");
         }
     }
 
@@ -258,6 +272,4 @@ public class ControllerRuta {
         txtRutaRegion.setText("");
         showNode(menuPokemon, false);
     }
-
-
 }

@@ -1,6 +1,7 @@
 package edu.badpals.pokebase.model;
 
 import edu.badpals.pokebase.criteria.CriteriaRuta;
+import edu.badpals.pokebase.service.ErrorLogger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -26,24 +27,24 @@ public class RutaBD {
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException e){
-            System.out.println("Error al ejecutar la query");
+            ErrorLogger.saveErrorLog("Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: " + e.getMessage());
             return 0;
         }
     }
 
-    public int getRoutesCount(String Region){
+    public int getRoutesCount(String region){
         try(PreparedStatement statement = connection.prepareStatement("select countRoutesInRegion(?)")){
-            statement.setString(1, Region);
+            statement.setString(1, region);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException e){
-            System.out.println("Error al ejecutar la query");
+            ErrorLogger.saveErrorLog("Error al ejecutar la query 'select countAllRoutes(region)' como parte del método getRoutesCount(String region) de RutaBD: " + e.getMessage());
             return 0;
         }
     }
 
-    int getRutaId(String name, String region){
+    public int getRutaId(String name, String region){
         try(PreparedStatement statement = connection.prepareStatement("Select FN_GET_ID_RUTA(?,?)");){
             statement.setString(1, name);
             statement.setString(2, region);
@@ -51,12 +52,12 @@ public class RutaBD {
             results.next();
             return results.getInt(1);
         } catch (SQLException e){
-            System.out.println("Error al recuperar los datos");
+            ErrorLogger.saveErrorLog("Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: " + e.getMessage());
             return 0;
         }
     }
 
-     Optional<Ruta> getRuta(int Id){
+     public Optional<Ruta> getRuta(int Id){
         try(PreparedStatement statement = connection.prepareStatement("select * from rutas where id = ?");){
             statement.setInt(1, Id);
             ResultSet results = statement.executeQuery();
@@ -69,8 +70,7 @@ public class RutaBD {
                 return Optional.empty();
             }
         } catch (SQLException e){
-            System.out.println("Error al recuperar la ruta");
-            System.out.println(e.getMessage());
+            ErrorLogger.saveErrorLog("Error al ejecutar la query 'select * from rutas where id = id' como parte del método getRuta(int Id) de RutaBD: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -78,14 +78,6 @@ public class RutaBD {
     public Optional<Ruta> getRuta(String name, String region){
         int id = getRutaId(name, region);
         return getRuta(id);
-    }
-
-    public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region) {
-        return getRutasByFilters(pokemon, region, "id", "ASC");
-    }
-
-    public List<Ruta> getRutasByFilters(CriteriaRuta criteriaRuta){
-        return getRutasByFilters(criteriaRuta.getPokemon(), criteriaRuta.getRegion(), criteriaRuta.getCriterio(),criteriaRuta.getOrden());
     }
 
     public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region, String criterio, String orden){
@@ -118,10 +110,17 @@ public class RutaBD {
                 rutas.add(new Ruta(id, nombreRuta, nombreRegion));
             }
         } catch (SQLException e){
-            System.out.println("Error al recuperar la lista de rutas");
-            System.out.println(e.getMessage());
+            ErrorLogger.saveErrorLog("Error al ejecutar la query 'select * from rutas...' como parte del método getRutasByFilters(...) de RutaBD: " + e.getMessage());
         }
         return rutas;
+    }
+
+    public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region) {
+        return getRutasByFilters(pokemon, region, "id", "ASC");
+    }
+
+    public List<Ruta> getRutasByFilters(CriteriaRuta criteriaRuta){
+        return getRutasByFilters(criteriaRuta.getPokemon(), criteriaRuta.getRegion(), criteriaRuta.getCriterio(),criteriaRuta.getOrden());
     }
 
     public List<String> getAllRegions(){
@@ -132,12 +131,12 @@ public class RutaBD {
                 regions.add(resultSet.getString(1));
             }
         } catch (SQLException e){
-            System.out.println("error al cargar las regiones");
+            ErrorLogger.saveErrorLog("Error al ejecutar la query 'select distinct region from rutas' como parte del método getAllRegions() de RutaBD: " + e.getMessage());
         }
         return regions;
     }
 
-    public boolean insertRuta(Ruta ruta){
+    public boolean insertRuta(Ruta ruta) throws SQLIntegrityConstraintViolationException{
         String sqlSentence = """
             insert into rutas(NOMBRE, REGION)
             values (?,?)
@@ -148,14 +147,14 @@ public class RutaBD {
             statement.executeUpdate();
             return true;
         } catch (SQLIntegrityConstraintViolationException pke){
-            return false;
+            throw pke;
         } catch (SQLException e){
-            System.out.println("Error al hacer la inserción a la base de datos");
-            return false;
+            ErrorLogger.saveErrorLog("Error al realizar el insert como parte del método insertRuta(Ruta ruta) de RutaBD: " + e.getMessage());
         }
+        return false;
     }
 
-    public boolean updateRuta(Ruta ruta){
+    public boolean updateRuta(Ruta ruta) throws SQLIntegrityConstraintViolationException{
         try(PreparedStatement statement = connection.prepareStatement("Update rutas set nombre = ?, region = ? where id = ?");){
             statement.setString(1, ruta.getNombre());
             statement.setString(2, ruta.getRegion());
@@ -163,11 +162,11 @@ public class RutaBD {
             statement.executeUpdate();
             return true;
         } catch (SQLIntegrityConstraintViolationException ake) {
-            return false;
+            throw ake;
         } catch (SQLException e){
-            System.out.println("Error al hacer la inserción a la base de datos");
-            return false;
+            ErrorLogger.saveErrorLog("Error al realizar el insert como parte del método insertRuta(Ruta ruta) de RutaBD: " + e.getMessage());
         }
+        return false;
     }
 
     public boolean deleteRuta(int id){
@@ -180,7 +179,7 @@ public class RutaBD {
                 return false;
             }
         } catch (SQLException e){
-            System.out.println("Error al borrar de la base de datos");
+            ErrorLogger.saveErrorLog("Error al realizar el delete como parte del método deleteRuta(...) de RutaBD: " + e.getMessage());
             return false;
         }
     }
@@ -200,16 +199,12 @@ public class RutaBD {
                 pokemons.add(newPokemon);
             }
         } catch (SQLException e){
-            System.out.println("error al realizar la operación");
+            ErrorLogger.saveErrorLog("Error al realizar la query 'select p.nombre, rt.NIVEL_MINIMO, rt.NIVEL_MAXIMO from pokemons as p inner join rutas_pokemons as rt on p.id = rt.pokemon and rt.ruta = rutaId' como parte del método getPokemons(int rutaId) de RutaBD: " + e.getMessage());
         }
         return pokemons;
     }
 
-    public boolean addPokemon(int rutaId, String pokemonName){
-        return addPokemon(rutaId, pokemonName, 0, 100);
-    }
-
-    public boolean addPokemon(int rutaId, String pokemonName, int nivel_minimo, int nivel_maximo){
+    public boolean addPokemon(int rutaId, String pokemonName, int nivel_minimo, int nivel_maximo) throws SQLIntegrityConstraintViolationException {
         Pokemon pokemon = pokemonBD.getPokemonByName(pokemonName);
         if (pokemon != null) {
             try (PreparedStatement statement = connection.prepareStatement("insert into rutas_pokemons(pokemon, ruta, NIVEL_MINIMO, NIVEL_MAXIMO) values(?,?, ?, ?)");) {
@@ -224,13 +219,17 @@ public class RutaBD {
                     return false;
                 }
             } catch (SQLIntegrityConstraintViolationException pk) {
-                return false;
+                throw pk;
             } catch (SQLException e) {
-                System.out.println("Error");
-                return false;
+                ErrorLogger.saveErrorLog("Error al realizar la query 'insert into rutas_pokemons(pokemon, ruta, NIVEL_MINIMO, NIVEL_MAXIMO) values(rutaId,pokemonName, nivel_minimo, nivel_maximo)' como parte del método addPokemon(int rutaId, String pokemonName, int nivel_minimo, int nivel_maximo) de RutaBD: " + e.getMessage());
             }
+            return false;
         }
         return false;
+    }
+
+    public boolean addPokemon(int rutaId, String pokemonName) throws SQLIntegrityConstraintViolationException{
+        return addPokemon(rutaId, pokemonName, 0, 100);
     }
 
     public boolean subirNivelesRuta(int rutaId, int niveles){
@@ -240,7 +239,7 @@ public class RutaBD {
             statement.executeUpdate();
             return true;
         } catch (SQLException e){
-            System.out.println(e.getMessage());
+            ErrorLogger.saveErrorLog("Error al realizar la query 'call MODIFCIAR_NIVELES_EN_RUTA(rutaId, niveles)' como parte del método subirNivelesRuta(int rutaId, int niveles) de RutaBD: " + e.getMessage());
             return false;
         }
     }

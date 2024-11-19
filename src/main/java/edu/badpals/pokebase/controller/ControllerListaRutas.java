@@ -3,6 +3,7 @@ package edu.badpals.pokebase.controller;
 import edu.badpals.pokebase.criteria.CriteriaRuta;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -90,10 +91,10 @@ public class ControllerListaRutas {
                 List<Ruta> rutas = listaRutas.getItems().stream().toList();
                 int index = rutas.indexOf(ruta);
                 controllerRuta.setPartOfList(rutas, index, criteriaRuta);
-            } else{
             }
         } catch (IOException e){
-            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", e.getMessage());
+            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
+            ErrorLogger.saveErrorLog(e.getMessage());
         }
     }
 
@@ -111,7 +112,8 @@ public class ControllerListaRutas {
         try {
             FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "main.fxml", this.getClass(), 800, 600);
         } catch (IOException e){
-            View.lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
+            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
+            ErrorLogger.saveErrorLog(e.getMessage());
         }
     }
 
