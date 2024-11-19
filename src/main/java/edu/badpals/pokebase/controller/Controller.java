@@ -78,7 +78,7 @@ public class Controller {
     }
     public void crearPokemon(ActionEvent actionEvent) {
         try{
-            Controller.getFxmlLoader(actionEvent,"datosPokemon.fxml",this.getClass(),600,600);
+            Controller.getFxmlLoader(actionEvent,"editarPokemon.fxml",this.getClass(),600,500);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,9 +141,8 @@ public class Controller {
         if (!tipo1.equals("")){
             tipo2 = tipo2.equals("")? null : tipo2;
             List<Pokemon> pokemons = pokemonBD.getPokemonsByType(tipo1, tipo2, criterio + " " +orden);
-            System.out.println(pokemons);
             try{
-                FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"listaPokemon.fxml",this.getClass(),1000,700);
+                FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"listaPokemon.fxml",this.getClass(),800,650);
                 ControllerListaPokemon controller = loader.getController();
                 controller.setPokemons(pokemons);
             }catch (IOException e) {

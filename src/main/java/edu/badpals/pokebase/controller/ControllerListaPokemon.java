@@ -4,6 +4,7 @@ import edu.badpals.pokebase.model.AccesoBD;
 import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.PokemonBD;
 import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.view.View;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class ControllerListaPokemon {
     @FXML
-    ComboBox cmbCriterio, cmbOrden;
+    ComboBox<String> cmbCriterio, cmbOrden;
     @FXML
     Button btnVerPokemon;
     @FXML
@@ -30,6 +31,10 @@ public class ControllerListaPokemon {
     private TableColumn<Pokemon, String> columnaNombre, columnaTipo1, columnaTipo2, columnaEvoluciona, columnaMetodo;
     @FXML
     private TableColumn<Pokemon, Integer> columnaId;
+    @FXML
+    private TextField txtTipo1, txtTipo2;
+    @FXML
+    private Label lblTotal;
 
 
     private List<Pokemon> listaPokemon;
@@ -63,7 +68,7 @@ public class ControllerListaPokemon {
         accesoBD.connect();
         pokemonBD = new PokemonBD(accesoBD);
 
-        tableListaPokemon.setItems(FXCollections.observableArrayList(listaPokemon));
+
         setTablaPokemon();
     }
 
@@ -89,6 +94,11 @@ public class ControllerListaPokemon {
 
 
     private void setTablaPokemon(){
+        tableListaPokemon.setItems(FXCollections.observableArrayList());
+
+        tableListaPokemon.setItems(FXCollections.observableArrayList(listaPokemon));
+
+
         columnaNombre.setCellValueFactory(new PropertyValueFactory<Pokemon, String>("nombre"));
         columnaId.setCellValueFactory(new PropertyValueFactory<Pokemon,Integer>("id"));
         columnaTipo1.setCellValueFactory(new PropertyValueFactory<Pokemon,String>("tipo1"));
@@ -106,6 +116,26 @@ public class ControllerListaPokemon {
             return new SimpleStringProperty("");
         });
         columnaMetodo.setCellValueFactory(new PropertyValueFactory<Pokemon,String>("metodoEvolucion"));
+
+        lblTotal.setText(String.valueOf(listaPokemon.size()));
+    }
+
+    public void filtrarPokemon() {
+        String tipo1 = txtTipo1.getText();
+        String tipo2 = txtTipo2.getText();
+        String criterio = cmbCriterio.getSelectionModel().getSelectedItem();
+        String orden = cmbOrden.getSelectionModel().getSelectedItem();
+        if (!tipo1.equals("")){
+            tipo2 = tipo2.equals("")? null : tipo2;
+            criterio = criterio.equals("---")? "ID" : criterio;
+            orden = orden.equals("Ascendente")? "ASC" : "DESC";
+            List<Pokemon> pokemons = pokemonBD.getPokemonsByType(tipo1, tipo2, criterio + " " +orden);
+
+            this.listaPokemon = pokemons;
+            setTablaPokemon();
+        }else{
+            View.lanzarMensajeError("Error","Tipo no seleccionado","Para realizar una búsqueda, es imprescindible introducir un tipo en la primera casilla (tipo 1)");
+        }
 
     }
 }
