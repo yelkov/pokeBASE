@@ -80,7 +80,7 @@ public class Controller {
     }
     public void crearPokemon(ActionEvent actionEvent) {
         try{
-            Controller.getFxmlLoader(actionEvent,"editarPokemon.fxml",this.getClass(),600,500);
+            Controller.getFxmlLoader(actionEvent,"editarPokemon.fxml",this.getClass(),500,500);
         } catch (IOException e) {
             e.printStackTrace();
         }

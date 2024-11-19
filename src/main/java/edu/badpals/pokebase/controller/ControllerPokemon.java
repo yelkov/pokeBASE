@@ -192,7 +192,7 @@ public class ControllerPokemon {
 
     public void editarPokemon(ActionEvent actionEvent){
         try{
-            FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"editarPokemon.fxml", this.getClass(), 600,500);
+            FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"editarPokemon.fxml", this.getClass(), 500,500);
             ControllerEditarPokemon controller = loader.getController();
             if(actionEvent.getSource() == btnCrear){
                 controller.setPokemon(null);

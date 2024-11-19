@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="488.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.ControllerEditarPokemon">
+<VBox prefHeight="493.0" prefWidth="488.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.ControllerEditarPokemon">
    <children>
       <HBox prefHeight="3.0" prefWidth="560.0" spacing="15.0">
          <children>
@@ -37,59 +37,73 @@
             <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" />
          </rowConstraints>
          <children>
-            <VBox alignment="CENTER" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="319.0" prefWidth="409.0" spacing="10.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+            <VBox maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="319.0" prefWidth="409.0" spacing="10.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                <children>
-                  <HBox alignment="CENTER_LEFT">
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                      <children>
-                        <Label text="Nombre:    " />
-                        <TextField fx:id="tfNombre" />
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label text="Nombre:*    " />
+                                    <TextField fx:id="tfNombre" maxWidth="100.0" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="127.0" spacing="10.0">
+                                 <children>
+                                    <Label text="Id:* " />
+                                    <TextField fx:id="tfId" maxWidth="70.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <Label text="Tipos:*    " />
+                              <TextField fx:id="tfTipo1" maxWidth="100.0" />
+                              <TextField fx:id="tfTipo2" maxWidth="100.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <Label text="Evoluciona de (nombre o id):    " />
+                              <TextField fx:id="tfEvolucionaDe" maxWidth="100.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <Label text="Método de evolución:" />
+                              <TextField fx:id="tfMetodoEvolucion" />
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" prefHeight="21.0" prefWidth="560.0" spacing="15.0">
-                     <children>
-                        <Label text="Id:          " />
-                        <TextField fx:id="tfId" maxWidth="50.0" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="560.0" spacing="15.0">
-                     <children>
-                        <Label text="Tipos:    " />
-                        <TextField fx:id="tfTipo1" maxWidth="100.0" />
-                        <TextField fx:id="tfTipo2" maxWidth="100.0" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="15.0">
-                     <children>
-                        <Label text="Evoluciona de (introduzca id): " />
-                        <TextField fx:id="tfEvolucionaDe" maxWidth="50.0" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="15.0">
-                     <children>
-                        <Label text="Método de evolución:" />
-                        <TextField fx:id="tfMetodoEvolucion" />
-                     </children>
-                  </HBox>
-                  <Separator prefWidth="200.0" />
+                     <padding>
+                        <Insets left="40.0" />
+                     </padding>
+                  </VBox>
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin></Separator>
                   <HBox alignment="CENTER_LEFT" spacing="15.0">
                      <children>
                         <Label text="Cargar imagen:           " />
                         <TextField fx:id="tfImagen" />
-                        <Button fx:id="btnCargarImagen" onAction="#cargarImagen" mnemonicParsing="false" text="Explorar..." />
+                        <Button fx:id="btnCargarImagen" mnemonicParsing="false" onAction="#cargarImagen" text="Explorar..." />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" spacing="15.0">
                      <children>
                         <Label text="Cargar gif:                   " />
                         <TextField fx:id="tfGif" />
-                        <Button fx:id="btnCargarGif" onAction="#cargarImagen" mnemonicParsing="false" text="Explorar..." />
+                        <Button fx:id="btnCargarGif" mnemonicParsing="false" onAction="#cargarImagen" text="Explorar..." />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" spacing="15.0">
                      <children>
                         <Label text="Cargar imagen shiny:  " />
                         <TextField fx:id="tfShiny" />
-                        <Button fx:id="btnCargarShiny" onAction="#cargarImagen" mnemonicParsing="false" text="Explorar..." />
+                        <Button fx:id="btnCargarShiny" mnemonicParsing="false" onAction="#cargarImagen" text="Explorar..." />
                      </children>
                   </HBox>
                   <Separator prefWidth="200.0" />
@@ -110,9 +124,9 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="47.0" prefWidth="560.0" spacing="20.0">
                      <children>
-                        <Button fx:id="btnCrear" onAction="#crearPokemon" mnemonicParsing="false" text="Crear" />
+                        <Button fx:id="btnCrear" mnemonicParsing="false" onAction="#crearPokemon" text="Crear" />
                         <Button fx:id="btnModificar" mnemonicParsing="false" text="Modificar" />
-                        <Button fx:id="btnEliminar"  onAction="#eliminarPokemon" mnemonicParsing="false" text="Eliminar" />
+                        <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#eliminarPokemon" text="Eliminar" />
                      </children>
                   </HBox>
                </children>

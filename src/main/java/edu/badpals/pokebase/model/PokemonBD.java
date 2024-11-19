@@ -187,7 +187,13 @@ public class PokemonBD {
             ps.setBytes(5, pokemon.getGif());
             ps.setString(6, pokemon.getTipo1());
             ps.setString(7, pokemon.getTipo2());
-            ps.setInt(8, pokemon.getEvolucionaDe());
+
+            Integer evolucionaDe = pokemon.getEvolucionaDe();
+            if (evolucionaDe != null) {
+                ps.setInt(8, evolucionaDe);
+            } else {
+                ps.setObject(8, null, java.sql.Types.INTEGER);
+            }
             ps.setString(9, pokemon.getMetodoEvolucion());
             ps.executeUpdate();
 

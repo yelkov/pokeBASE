@@ -35,7 +35,6 @@ public class ControllerEditarPokemon {
         rutaBD = new RutaBD(accesoBD);
 
         permitirSoloEnteros(tfId);
-        permitirSoloEnteros(tfEvolucionaDe);
 
     }
 
@@ -118,37 +117,135 @@ public class ControllerEditarPokemon {
     }
 
     public void crearPokemon(){
-        String nombre = tfNombre.getText();
-        if(pokemonBD.isNombrePresent(nombre)){
-            View.lanzarMensajeError("Error","Nombre de pokémon no válido","El nombre introducido ya se encuentra en la base de datos.");
-            return;
-        }
-        int id = Integer.parseInt(tfId.getText());
-        if(pokemonBD.isIdPresent(id)){
-            View.lanzarMensajeError("Error","Id no válido","El id introducido ya se encuentra en la base de datos.");
-            return;
-        }
-        String tipo1 = tfTipo1.getText();
-        String tipo2 = tfTipo2.getText();
-        int evolucionaDe = Integer.parseInt(tfEvolucionaDe.getText());
-        if(!pokemonBD.isIdPresent(evolucionaDe)){
-            View.lanzarMensajeError("Error","Preevolución no válida","El id introducido en 'Evoluciona de' no existe en la base de datos.");
-            return;
-        }
-        String metodoEvolucion = tfMetodoEvolucion.getText();
-        byte[] imagen = ImageToBytes.toByteArray(tfImagen.getText());
-        byte[] gif = ImageToBytes.toByteArray(tfGif.getText());
-        byte[] shiny = ImageToBytes.toByteArray(tfShiny.getText());
+        //Comprobamos que tenga todos los campos obligatorios (Nombre, Id y Tipo 1)
+        if(tieneCamposObligatorios()){
+
+            String nombre = tfNombre.getText();
+            //Comprobamos si el nombre ya existe en la BD
+            if(pokemonBD.isNombrePresent(nombre)){
+                View.lanzarMensajeError(
+                        "Error",
+                        "Nombre de pokémon no válido",
+                        "El nombre introducido ya se encuentra en la base de datos.");
+                return;
+            }
 
 
-        Pokemon nuevoPokemon = new Pokemon(id,nombre,imagen,gif,shiny,tipo1,tipo2,evolucionaDe,metodoEvolucion);
-        this.pokemon = nuevoPokemon;
-        if(pokemonBD.insertPokemon(nuevoPokemon)){
-            View.lanzarMensajeAviso("Aviso","Pokemon creado","Se completó la creación con éxito.");
+            int id = Integer.parseInt(tfId.getText());
+            //Comprobamos si el Id ya existe en la BD
+            if(pokemonBD.isIdPresent(id)){
+                View.lanzarMensajeError(
+                        "Error",
+                        "Id no válido",
+                        "El id introducido ya se encuentra en la base de datos.");
+                return;
+            }
+
+            //Obtenemos los tipos
+            String tipo1 = tfTipo1.getText();
+            String tipo2 = tfTipo2.getText();
+            if(tipo2.equals("")){
+                tipo2 = null;
+            }
+
+            Integer idPreEvolucion;
+            String evolucionaDe = tfEvolucionaDe.getText();
+            String metodoEvolucion = tfMetodoEvolucion.getText();
+
+            //Si la pre-evolucion es introducida, comprobamos que exista en la BD
+            if (!evolucionaDe.equals("")) {
+                idPreEvolucion = obtenerIdPreEvolucion(evolucionaDe);
+                if (idPreEvolucion == null) {
+                    return;
+                }
+                if (metodoEvolucion.equals("")) {
+                    View.lanzarMensajeError(
+                            "Error",
+                            "Método de evolución no presente",
+                            "Para añadir la pre-evolución de un pokémon es necesario indicar el método de evolución."
+                    );
+                    return;
+                }
+            } else {
+                //En caso de que no sea introducida la pre-evolucion, seteamos a null los valores
+                idPreEvolucion = null;
+                metodoEvolucion = null;
+            }
+
+            byte[][] imagenes = obtenerImagenes();
+
+            Pokemon nuevoPokemon = new Pokemon(id,nombre,imagenes[0],imagenes[1],imagenes[2],tipo1,tipo2,idPreEvolucion,metodoEvolucion);
+
+            if(pokemonBD.insertPokemon(nuevoPokemon)){
+                this.pokemon = nuevoPokemon;
+                View.lanzarMensajeAviso(
+                        "Aviso",
+                        "Pokemon creado",
+                        "Se completó la creación con éxito.");
+            }else{
+                View.lanzarMensajeError(
+                        "Error",
+                        "No se ha creado al Pokémon",
+                        "Se ha producido un error inesperado y el proceso ha sido abortado.");
+            }
+
         }else{
-            View.lanzarMensajeError("Error","No se ha creado al Pokémon","Se ha producido un error inesperado y el proceso ha sido abortado.");
+            View.lanzarMensajeError(
+                    "Error",
+                    "No es posible crear pokémon",
+                    "Alguno de los campos obligatorios no está cubierto.");
         }
+    }
 
+    private Integer obtenerIdPreEvolucion(String evolucionaDe) {
+        try {
+            int idPosible = Integer.parseInt(evolucionaDe);
+            if (pokemonBD.isIdPresent(idPosible)) {
+                return idPosible;
+            } else {
+                View.lanzarMensajeError(
+                        "Error",
+                        "Pre-evolución no válida.",
+                        "El id introducido como pre-evolución no se encuentra en la base de datos."
+                );
+            }
+        } catch (NumberFormatException e) {
+            if (pokemonBD.isNombrePresent(evolucionaDe)) {
+                Pokemon preEvolucion = pokemonBD.getPokemonByName(evolucionaDe);
+                return preEvolucion.getId();
+            } else {
+                View.lanzarMensajeError(
+                        "Error",
+                        "Pre-evolución no válida.",
+                        "El nombre introducido como pre-evolución no se encuentra en la base de datos."
+                );
+            }
+        }
+        return null;
+    }
+
+    private byte[][] obtenerImagenes() {
+        byte[][] imagenes = new byte[3][];
+        String imagenTxt = tfImagen.getText();
+        String gifTxt = tfGif.getText();
+        String shinyTxt = tfShiny.getText();
+
+        if(!imagenTxt.equals("")){
+            imagenes[0] = ImageToBytes.toByteArray(imagenTxt);
+        }else{
+            imagenes[0] = null;
+        }
+        if(!gifTxt.equals("")){
+            imagenes[1] = ImageToBytes.toByteArray(gifTxt);
+        }else{
+            imagenes[1] = null;
+        }
+        if(!shinyTxt.equals("")){
+            imagenes[2] = ImageToBytes.toByteArray(shinyTxt);
+        }else{
+            imagenes[2] = null;
+        }
+        return imagenes;
     }
 
     public void limpiarPanel() {
@@ -166,6 +263,19 @@ public class ControllerEditarPokemon {
     }
 
     public void handleVolver(ActionEvent actionEvent) {
+    }
+
+    public boolean tieneCamposObligatorios(){
+        String nombre = tfNombre.getText();
+        String id = tfId.getText();
+        String tipo1 = tfTipo1.getText();
+
+        if(nombre == "" || id == "" || tipo1 == ""){
+            return false;
+        }else{
+            return true;
+        }
+
     }
 
     public void eliminarPokemon() {
