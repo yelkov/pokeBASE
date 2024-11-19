@@ -1,0 +1,37 @@
+Error al realizar la query 'call MODIFCIAR_NIVELES_EN_RUTA(rutaId, niveles)' como parte del método subirNivelesRuta(int rutaId, int niveles) de RutaBD: Data truncation: BIGINT UNSIGNED value is out of range in '(`bdpokemon`.`rutas_pokemons`.`NIVEL_MINIMO` + SUBIDA@1)' - 2024-11-19 18:15:50
+Error al realizar la query 'call MODIFCIAR_NIVELES_EN_RUTA(rutaId, niveles)' como parte del método subirNivelesRuta(int rutaId, int niveles) de RutaBD: PROCEDURE bdpokemon.MODIFCIAR_NIVELES_EN_RUTA does not exist - 2024-11-19 18:17:52
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:07
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:07
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:07
+Error al ejecutar la query 'select * from rutas...' como parte del método getRutasByFilters(...) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_POKEMON does not exist - 2024-11-19 18:18:07
+Error al ejecutar la query 'select * from rutas...' como parte del método getRutasByFilters(...) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_POKEMON does not exist - 2024-11-19 18:18:07
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:07
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:07
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:07
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:07
+Error al ejecutar la query 'select countAllRoutes(region)' como parte del método getRoutesCount(String region) de RutaBD: FUNCTION bdpokemon_test.countRoutesInRegion does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes(region)' como parte del método getRoutesCount(String region) de RutaBD: FUNCTION bdpokemon_test.countRoutesInRegion does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes(region)' como parte del método getRoutesCount(String region) de RutaBD: FUNCTION bdpokemon_test.countRoutesInRegion does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes(region)' como parte del método getRoutesCount(String region) de RutaBD: FUNCTION bdpokemon_test.countRoutesInRegion does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes(region)' como parte del método getRoutesCount(String region) de RutaBD: FUNCTION bdpokemon_test.countRoutesInRegion does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_RUTA does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select * from rutas...' como parte del método getRutasByFilters(...) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_POKEMON does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select * from rutas...' como parte del método getRutasByFilters(...) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_POKEMON does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select countAllRoutes()' como parte del método getRoutesCount() de RutaBD: FUNCTION bdpokemon_test.countAllRoutes does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select * from rutas...' como parte del método getRutasByFilters(...) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_POKEMON does not exist - 2024-11-19 18:18:08
+Error al ejecutar la query 'select * from rutas...' como parte del método getRutasByFilters(...) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_POKEMON does not exist - 2024-11-19 18:18:08
