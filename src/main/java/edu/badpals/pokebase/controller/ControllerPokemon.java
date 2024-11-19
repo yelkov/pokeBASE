@@ -4,8 +4,10 @@ import edu.badpals.pokebase.model.AccesoBD;
 import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.PokemonBD;
 import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.view.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -15,6 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Optional;
 
 public class ControllerPokemon {
@@ -46,6 +49,14 @@ public class ControllerPokemon {
 
     }
 
+    public void setPokemon(Pokemon pokemon) {
+        this.pokemon = pokemon;
+        visualizarDatos();
+        establecerSiguientesPokemon();
+        habilitarBotonesLaterales();
+    }
+
+
     public void mostrar(Node nodo, boolean visibility, boolean managed){
         nodo.setVisible(visibility);
         nodo.setManaged(managed);
@@ -64,29 +75,7 @@ public class ControllerPokemon {
         }
     }
 
-    public void lanzarMensajeError(String titulo, String cabecera, String mensaje){
-        Alert error = new Alert(Alert.AlertType.ERROR);
-        error.setTitle(titulo);
-        error.setHeaderText(cabecera);
-        error.setContentText(mensaje);
 
-        error.showAndWait();
-    }
-
-    public Optional<ButtonType> lanzarMensajeConfirmacion(String titulo, String cabecera, String mensaje){
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle(titulo);
-        confirmacion.setHeaderText(cabecera);
-        confirmacion.setContentText(mensaje);
-
-        ButtonType btnSi = new ButtonType("Sí");
-        ButtonType btnNo = new ButtonType("No");
-        confirmacion.getButtonTypes().setAll(btnSi, btnNo);
-
-
-        Optional<ButtonType> respuesta = confirmacion.showAndWait();
-        return respuesta;
-    }
 
     private void establecerSiguientesPokemon() {
         int anteriorId = pokemon.getId()-1;
@@ -135,13 +124,6 @@ public class ControllerPokemon {
         setImage();
     }
 
-    public void setPokemon(Pokemon pokemon) {
-        this.pokemon = pokemon;
-        visualizarDatos();
-        establecerSiguientesPokemon();
-        habilitarBotonesLaterales();
-    }
-
     public void setImage() {
         mostrar(imgPokemon,true,true);
         Image image = null;
@@ -171,7 +153,7 @@ public class ControllerPokemon {
             habilitarBotonesLaterales();
 
         }else{
-            lanzarMensajeError("Error","Pokémon no encontrado.","En la base de datos no se encuentra el nombre del pokémon o el id introducido.");
+            View.lanzarMensajeError("Error","Pokémon no encontrado.","En la base de datos no se encuentra el nombre del pokémon o el id introducido.");
         }
     }
 
@@ -196,6 +178,41 @@ public class ControllerPokemon {
     }
 
     public void eliminarPokemon(){
-        Optional<ButtonType> respuesta = lanzarMensajeConfirmacion("Eliminar","Se va a eliminar un pokémon.","¿Está seguro de que desea eliminar el pokémon actual de la base de datos? Esta operación es irreversible.");
+        if(this.pokemon == null){
+            View.lanzarMensajeError("Error","Error al eliminar pokémon","No se encuentra seleccionado ningún pokémon.");
+            return;
+        }
+        Optional<ButtonType> respuesta = View.lanzarMensajeConfirmacion("Eliminar","Se va a eliminar un pokémon.","¿Está seguro de que desea eliminar el pokémon actual de la base de datos? Esta operación es irreversible.");
+        if(respuesta.isPresent() && respuesta.get().getText().equals("Sí")){
+            pokemonBD.deletePokemon(pokemon);
+            View.lanzarMensajeAviso("Aviso","Eliminación completada","Se ha borrado al pokémon exitosamente");
+            limpiarPanel();
+        }
     }
+
+    public void editarPokemon(ActionEvent actionEvent){
+        try{
+            FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"editarPokemon.fxml", this.getClass(), 600,500);
+            ControllerEditarPokemon controller = loader.getController();
+            if(actionEvent.getSource() == btnCrear){
+                controller.setPokemon(null);
+            }else if(actionEvent.getSource() == btnModificar){
+                controller.setPokemon(pokemon);
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
+        Scene scene = new Scene(loader.load(),600,500);
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+
+        stage.setScene(scene);
+        stage.show();
+        return loader;
+    }
+
 }

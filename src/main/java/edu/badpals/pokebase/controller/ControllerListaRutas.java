@@ -3,6 +3,7 @@ package edu.badpals.pokebase.controller;
 import edu.badpals.pokebase.criteria.CriteriaRuta;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.view.View;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -75,6 +76,7 @@ public class ControllerListaRutas {
         }
         cmbCriterio.setValue(criteria.getCriterio());
         cmbOrden.setValue(criteria.getOrden());
+        this.criteriaRuta = criteria;
     }
 
     public void showRuta(ActionEvent actionEvent){
@@ -91,7 +93,7 @@ public class ControllerListaRutas {
             } else{
             }
         } catch (IOException e){
-            lanzarMensajeError("Error", "No se ha podido cambiar de ventana", e.getMessage());
+            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", e.getMessage());
         }
     }
 
@@ -109,7 +111,7 @@ public class ControllerListaRutas {
         try {
             FXMLLoader loader = getFxmlLoader(actionEvent, "main.fxml");
         } catch (IOException e){
-            lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
+            View.lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
         }
     }
 
@@ -123,12 +125,4 @@ public class ControllerListaRutas {
         return loader;
     }
 
-    public void lanzarMensajeError(String titulo, String cabecera, String mensaje){
-        Alert error = new Alert(Alert.AlertType.ERROR);
-        error.setTitle(titulo);
-        error.setHeaderText(cabecera);
-        error.setContentText(mensaje);
-
-        error.showAndWait();
-    }
 }

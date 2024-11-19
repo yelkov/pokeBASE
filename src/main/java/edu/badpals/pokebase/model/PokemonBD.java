@@ -13,6 +13,40 @@ public class PokemonBD {
         this.connection = accesoBD.getConnection();
     }
 
+    public boolean isIdPresent(int id){
+        String query = "SELECT 1 FROM pokemons WHERE id = ?";
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (SQLException e) {
+            System.out.println("Error al comprobar existencia de id.");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isNombrePresent(String nombre){
+        String query = "SELECT 1 FROM pokemons WHERE NOMBRE = ?";
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setString(1, nombre);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (SQLException e) {
+            System.out.println("Error al comprobar existencia de nombre.");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public Pokemon getPokemonById(int id) {
         Pokemon pokemon = null;
@@ -105,5 +139,76 @@ public class PokemonBD {
             e.printStackTrace();
         }
         return pokemons;
+    }
+
+    public boolean updatePokemon(Pokemon pokemon) {
+        String query = """
+                        UPDATE pokemons
+                        SET NOMBRE = ?, IMAGEN = ?, IMAGEN_SHINY = ?, GIF = ?, TIPO_1 = ?, TIPO_2 = ?, EVOLUCIONA_DE = ?, METODO_EVOLUCION = ?
+                        WHERE ID = ?
+                        """;
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setString(1, pokemon.getNombre());
+            ps.setBytes(2, pokemon.getImagen());
+            ps.setBytes(3, pokemon.getImagenShiny());
+            ps.setBytes(4, pokemon.getGif());
+            ps.setString(5, pokemon.getTipo1());
+            ps.setString(6, pokemon.getTipo2());
+            ps.setInt(7, pokemon.getEvolucionaDe());
+            ps.setString(8, pokemon.getMetodoEvolucion());
+            ps.setInt(9, pokemon.getId());
+            ps.executeUpdate();
+
+            return true;
+        }catch (SQLException e) {
+            System.out.println("Error al modificar pokemon en la base de datos.");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean insertPokemon(Pokemon pokemon){
+        String query = """
+                        INSERT INTO pokemons(ID,NOMBRE,IMAGEN,IMAGEN_SHINY,GIF,TIPO_1,TIPO_2,EVOLUCIONA_DE,METODO_EVOLUCION)
+                        VALUES (?,?,?,?,?,?,?,?,?)
+                        """;
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setInt(1, pokemon.getId());
+            ps.setString(2, pokemon.getNombre());
+            ps.setBytes(3, pokemon.getImagen());
+            ps.setBytes(4, pokemon.getImagenShiny());
+            ps.setBytes(5, pokemon.getGif());
+            ps.setString(6, pokemon.getTipo1());
+            ps.setString(7, pokemon.getTipo2());
+            ps.setInt(8, pokemon.getEvolucionaDe());
+            ps.setString(9, pokemon.getMetodoEvolucion());
+            ps.executeUpdate();
+
+            return true;
+
+        }catch (SQLException e) {
+            System.out.println("Error al insertar pokemon en la base de datos.");
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+    public boolean deletePokemon(Pokemon pokemon) {
+        String query = """
+                    
+                DELETE FROM pokemons
+                    WHERE ID = ?""";
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setInt(1, pokemon.getId());
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al borrar pokemon en la base de datos.");
+            e.printStackTrace();
+
+            return false;
+        }
     }
 }

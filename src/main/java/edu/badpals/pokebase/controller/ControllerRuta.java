@@ -5,6 +5,7 @@ import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
 import edu.badpals.pokebase.model.RutaPokemon;
+import edu.badpals.pokebase.view.View;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -80,13 +81,13 @@ public class ControllerRuta {
                 if (isAddOk){
                     setPokemonList(id);
                 } else{
-                    lanzarMensajeError("Error", "Inserción fallida", "No se ha podido añadir el pokemon a la ruta. Es posible que el pokemon no existe o ya se encuentre registrado en esta ruta");
+                    View.lanzarMensajeError("Error", "Inserción fallida", "No se ha podido añadir el pokemon a la ruta. Es posible que el pokemon no existe o ya se encuentre registrado en esta ruta");
                 }
             } else{
-                lanzarMensajeError("Error", "Formato incorrecto", "Debe introducir el nombre del pokemon a añadir");
+                View.lanzarMensajeError("Error", "Formato incorrecto", "Debe introducir el nombre del pokemon a añadir");
             }
         } catch (NumberFormatException e){
-            lanzarMensajeError("Error", "Formato incorrecto", "Los niveles de las rutas deben ser número");
+            View.lanzarMensajeError("Error", "Formato incorrecto", "Los niveles de las rutas deben ser número");
         }
         txtPokemonAnadir.setText("");
         txtMaximoNivel.setText("");
@@ -101,10 +102,10 @@ public class ControllerRuta {
             if (isModificarOk){
                 setPokemonList(id);
             } else {
-                lanzarMensajeError("Error", "Modificación de niveles abortada", "No se ha podido realizar la operación correctamente");
+                View.lanzarMensajeError("Error", "Modificación de niveles abortada", "No se ha podido realizar la operación correctamente");
             }
         } catch (NumberFormatException e) {
-            lanzarMensajeError("Error", "Formato incorrecto", "La variación de niveles debes ser un número");
+            View.lanzarMensajeError("Error", "Formato incorrecto", "La variación de niveles debes ser un número");
         } finally {
             txtNiveles.setText("");
         }
@@ -121,8 +122,6 @@ public class ControllerRuta {
             System.out.println("Error");
         }
     }
-
-
 
     public void setPartOfList(List<Ruta> rutas, int currentIndex, CriteriaRuta criteria){
         this.rutas = rutas;
@@ -181,7 +180,7 @@ public class ControllerRuta {
         try {
             FXMLLoader loader = getFxmlLoader(actionEvent, "main.fxml");
         } catch (IOException e){
-            lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
+            View.lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
         }
     }
 
@@ -218,7 +217,7 @@ public class ControllerRuta {
             Ruta rutaLoaded = rutaBD.getRuta(nombre, region).get();
             setRuta(rutaLoaded);
         } else {
-            lanzarMensajeError("Error", "Error al insertar la nueva ruta", "Compruebe si ya está registrada en la base de datos");
+            View.lanzarMensajeError("Error", "Error al insertar la nueva ruta", "Compruebe si ya está registrada en la base de datos");
         }
     }
 
@@ -231,7 +230,7 @@ public class ControllerRuta {
         if(wasRutaUpdated){
             setRuta(rutaUpdated);
         } else{
-            lanzarMensajeError("Error", "Er", "No se ha modificar la ruta");
+            View.lanzarMensajeError("Error", "Er", "No se ha modificar la ruta");
         }
     }
 
@@ -245,7 +244,7 @@ public class ControllerRuta {
                 cleanFields();
             }
         } catch (NumberFormatException e){
-            lanzarMensajeError("Error", "Er", "No se ha podido borrar a la ruta");
+            View.lanzarMensajeError("Error", "Er", "No se ha podido borrar a la ruta");
         }
     }
 
@@ -262,13 +261,5 @@ public class ControllerRuta {
         showNode(menuPokemon, false);
     }
 
-    public void lanzarMensajeError(String titulo, String cabecera, String mensaje){
-        Alert error = new Alert(Alert.AlertType.ERROR);
-        error.setTitle(titulo);
-        error.setHeaderText(cabecera);
-        error.setContentText(mensaje);
-
-        error.showAndWait();
-    }
 
 }

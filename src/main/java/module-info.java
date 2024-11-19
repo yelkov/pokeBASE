@@ -2,6 +2,7 @@ module edu.badpals.pokebase {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires java.desktop;
 
 
     opens edu.badpals.pokebase to javafx.fxml;
