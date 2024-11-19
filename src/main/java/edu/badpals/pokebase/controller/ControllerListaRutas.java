@@ -9,10 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.w3c.dom.events.MouseEvent;
 
@@ -92,19 +89,12 @@ public class ControllerListaRutas {
                 int index = rutas.indexOf(ruta);
                 controllerRuta.setPartOfList(rutas, index, criteriaRuta);
             } else{
-                System.out.println("no se ha clickado bien");
             }
         } catch (IOException e){
-            System.out.println("Error al cambiar de ventara" + e.getMessage());
-        } catch (Exception todas){
-            todas.getMessage();
+            lanzarMensajeError("Error", "No se ha podido cambiar de ventana", e.getMessage());
         }
     }
 
-    public String getSelectedCriteria(){
-        StringBuilder criteria = new StringBuilder();
-        return criteria.toString();
-    }
 
     public void activateBotonBuscar(){
         Ruta ruta = listaRutas.getSelectionModel().getSelectedItem();
@@ -115,13 +105,30 @@ public class ControllerListaRutas {
         }
     }
 
+    public void volverAlInicio(ActionEvent actionEvent){
+        try {
+            FXMLLoader loader = getFxmlLoader(actionEvent, "main.fxml");
+        } catch (IOException e){
+            lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
+        }
+    }
+
     private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
-        Scene scene = new Scene(loader.load(),900,900);
+        Scene scene = new Scene(loader.load(), 900, 1080);
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
         // Crear una nueva escena con el contenido cargado
         stage.setScene(scene); // Establecer la nueva escena en el Stage
         stage.show();
         return loader;
+    }
+
+    public void lanzarMensajeError(String titulo, String cabecera, String mensaje){
+        Alert error = new Alert(Alert.AlertType.ERROR);
+        error.setTitle(titulo);
+        error.setHeaderText(cabecera);
+        error.setContentText(mensaje);
+
+        error.showAndWait();
     }
 }

@@ -37,10 +37,6 @@ public class Ruta {
 
     @Override
     public String toString() {
-        return "Ruta{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", region='" + region + '\'' +
-                '}';
+        return getNombre() + ", " + getRegion();
     }
 }

@@ -9,11 +9,16 @@ import java.util.Optional;
 
 public class RutaBD {
     private Connection connection;
+    private PokemonBD pokemonBD;
 
     public RutaBD(AccesoBD accesoBD) {
         this.connection = accesoBD.getConnection();
+        pokemonBD = new PokemonBD(accesoBD);
     }
 
+    public PokemonBD getPokemonBD() {
+        return pokemonBD;
+    }
 
     public int getRoutesCount(){
         try(Statement statement = connection.createStatement();){
@@ -185,17 +190,58 @@ public class RutaBD {
         return deleteRuta(id);
     }
 
-    public List<String> getPokemons(int rutaId){
-        List<String> pokemons = new ArrayList<>();
-        try(PreparedStatement statement = connection.prepareStatement("select p.nombre from pokemons as p inner join rutas_pokemons as rt on p.id = rt.pokemon and rt.ruta = ?");){
+    public List<RutaPokemon> getPokemons(int rutaId){
+        List<RutaPokemon> pokemons = new ArrayList<>();
+        try(PreparedStatement statement = connection.prepareStatement("select p.nombre, rt.NIVEL_MINIMO, rt.NIVEL_MAXIMO from pokemons as p inner join rutas_pokemons as rt on p.id = rt.pokemon and rt.ruta = ?");){
             statement.setInt(1, rutaId);
             ResultSet results = statement.executeQuery();
             while (results.next()){
-                pokemons.add(results.getString(1));
+                RutaPokemon newPokemon = new RutaPokemon(results.getString(1), rutaId, results.getInt(2),results.getInt(3));
+                pokemons.add(newPokemon);
             }
         } catch (SQLException e){
             System.out.println("error al realizar la operación");
         }
         return pokemons;
+    }
+
+    public boolean addPokemon(int rutaId, String pokemonName){
+        return addPokemon(rutaId, pokemonName, 0, 100);
+    }
+
+    public boolean addPokemon(int rutaId, String pokemonName, int nivel_minimo, int nivel_maximo){
+        Pokemon pokemon = pokemonBD.getPokemonByName(pokemonName);
+        if (pokemon != null) {
+            try (PreparedStatement statement = connection.prepareStatement("insert into rutas_pokemons(pokemon, ruta, NIVEL_MINIMO, NIVEL_MAXIMO) values(?,?, ?, ?)");) {
+                statement.setInt(1, pokemon.getId());
+                statement.setInt(2, rutaId);
+                statement.setInt(3, nivel_minimo);
+                statement.setInt(4, nivel_maximo);
+                int rowsAffected = statement.executeUpdate();
+                if (rowsAffected == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (SQLIntegrityConstraintViolationException pk) {
+                return false;
+            } catch (SQLException e) {
+                System.out.println("Error");
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public boolean subirNivelesRuta(int rutaId, int niveles){
+        try(CallableStatement statement = connection.prepareCall("{call MODIFCIAR_NIVELES_EN_RUTA(?,?)}");){
+            statement.setInt(1, rutaId);
+            statement.setInt(2, niveles);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 }

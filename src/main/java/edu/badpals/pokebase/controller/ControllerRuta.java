@@ -1,18 +1,17 @@
 package edu.badpals.pokebase.controller;
 
 import edu.badpals.pokebase.criteria.CriteriaRuta;
+import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.model.RutaPokemon;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -22,22 +21,22 @@ import java.util.List;
 
 public class ControllerRuta {
     @FXML
-    private TextField txtRutaNombre, txtRutaRegion;
+    private TextField txtRutaNombre, txtRutaRegion, txtPokemonAnadir, txtNiveles, txtMinimoNivel, txtMaximoNivel;
 
     @FXML
     private Label lblRutaId, lblCriterios;
 
     @FXML
-    private ListView<String> listPokemonsRuta;
+    private ListView<RutaPokemon> listPokemonsRuta;
 
     @FXML
-    private HBox menuRutaCargada, menuRutaNueva;
+    private HBox menuRutaNueva;
 
     @FXML
-    private VBox menuPokemon, menuParteLista;
+    private VBox menuPokemon, menuParteLista, menuRutaCargada;
 
     @FXML
-    private Button btnAnterior, btnSiguiente;
+    private Button btnAnterior, btnSiguiente, btnBuscarPokemon;
 
     private RutaBD rutaBD;
     private List<Ruta> rutas;
@@ -57,7 +56,11 @@ public class ControllerRuta {
         lblRutaId.setText(String.valueOf(ruta.getId()));
         txtRutaNombre.setText(ruta.getNombre());
         txtRutaRegion.setText(ruta.getRegion());
-        List<String> pokemons = rutaBD.getPokemons(ruta.getId());
+        setPokemonList(ruta.getId());
+    }
+
+    private void setPokemonList(int rutaId){
+        List<RutaPokemon> pokemons = rutaBD.getPokemons(rutaId);
         if (pokemons.size() > 0){
             showNode(menuPokemon, true);
             listPokemonsRuta.setItems(FXCollections.observableArrayList(pokemons));
@@ -65,6 +68,61 @@ public class ControllerRuta {
             showNode(menuPokemon, false);
         }
     }
+
+    public void addPokemonRuta(){
+        int id = Integer.valueOf(lblRutaId.getText());
+        String nombre = txtPokemonAnadir.getText();
+        try{
+            int minimo = Integer.valueOf(txtMinimoNivel.getText());
+            int maximo = Integer.valueOf(txtMaximoNivel.getText());
+            if (!nombre.equals("")){
+                boolean isAddOk = rutaBD.addPokemon(id, nombre, minimo, maximo);
+                if (isAddOk){
+                    setPokemonList(id);
+                } else{
+                    lanzarMensajeError("Error", "Inserción fallida", "No se ha podido añadir el pokemon a la ruta. Es posible que el pokemon no existe o ya se encuentre registrado en esta ruta");
+                }
+            } else{
+                lanzarMensajeError("Error", "Formato incorrecto", "Debe introducir el nombre del pokemon a añadir");
+            }
+        } catch (NumberFormatException e){
+            lanzarMensajeError("Error", "Formato incorrecto", "Los niveles de las rutas deben ser número");
+        }
+        txtPokemonAnadir.setText("");
+        txtMaximoNivel.setText("");
+        txtMinimoNivel.setText("");
+    }
+
+    public void modificarNiveles(){
+        int id = Integer.valueOf(lblRutaId.getText());
+        try{
+            int niveles = Integer.valueOf(txtNiveles.getText());
+            boolean isModificarOk = rutaBD.subirNivelesRuta(id, niveles);
+            if (isModificarOk){
+                setPokemonList(id);
+            } else {
+                lanzarMensajeError("Error", "Modificación de niveles abortada", "No se ha podido realizar la operación correctamente");
+            }
+        } catch (NumberFormatException e) {
+            lanzarMensajeError("Error", "Formato incorrecto", "La variación de niveles debes ser un número");
+        } finally {
+            txtNiveles.setText("");
+        }
+    }
+
+    public void buscarInfoPokemon(ActionEvent actionEvent){
+        try{
+            FXMLLoader loader = getFxmlLoader(actionEvent, "datosPokemon.fxml");
+            ControllerPokemon controller = loader.getController();
+            String pokemonName = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
+            Pokemon pokemon = rutaBD.getPokemonBD().getPokemonByName(pokemonName);
+            controller.setPokemon(pokemon);
+        } catch (IOException e){
+            System.out.println("Error");
+        }
+    }
+
+
 
     public void setPartOfList(List<Ruta> rutas, int currentIndex, CriteriaRuta criteria){
         this.rutas = rutas;
@@ -75,6 +133,15 @@ public class ControllerRuta {
         if (rutas.size()==1){
             btnAnterior.setDisable(true);
             btnSiguiente.setDisable(true);
+        }
+    }
+
+    public void activateBotonBuscar(){
+        String pokemon = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
+        if(pokemon!= null){
+            btnBuscarPokemon.setDisable(false);
+        } else {
+            btnBuscarPokemon.setDisable(true);
         }
     }
 
@@ -110,9 +177,17 @@ public class ControllerRuta {
         }
     }
 
+    public void volverAlInicio(ActionEvent actionEvent){
+        try {
+            FXMLLoader loader = getFxmlLoader(actionEvent, "main.fxml");
+        } catch (IOException e){
+            lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
+        }
+    }
+
     private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
-        Scene scene = new Scene(loader.load(),900,900);
+        Scene scene = new Scene(loader.load(), 900, 1080);
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
         // Crear una nueva escena con el contenido cargado
         stage.setScene(scene); // Establecer la nueva escena en el Stage
@@ -142,6 +217,8 @@ public class ControllerRuta {
         if (wasRutaCreated){
             Ruta rutaLoaded = rutaBD.getRuta(nombre, region).get();
             setRuta(rutaLoaded);
+        } else {
+            lanzarMensajeError("Error", "Error al insertar la nueva ruta", "Compruebe si ya está registrada en la base de datos");
         }
     }
 
@@ -153,6 +230,8 @@ public class ControllerRuta {
         boolean wasRutaUpdated = rutaBD.updateRuta(rutaUpdated);
         if(wasRutaUpdated){
             setRuta(rutaUpdated);
+        } else{
+            lanzarMensajeError("Error", "Er", "No se ha modificar la ruta");
         }
     }
 
@@ -166,7 +245,7 @@ public class ControllerRuta {
                 cleanFields();
             }
         } catch (NumberFormatException e){
-            System.out.println("No se ha podido borrar la ruta");
+            lanzarMensajeError("Error", "Er", "No se ha podido borrar a la ruta");
         }
     }
 
@@ -181,6 +260,15 @@ public class ControllerRuta {
         txtRutaNombre.setText("");
         txtRutaRegion.setText("");
         showNode(menuPokemon, false);
+    }
+
+    public void lanzarMensajeError(String titulo, String cabecera, String mensaje){
+        Alert error = new Alert(Alert.AlertType.ERROR);
+        error.setTitle(titulo);
+        error.setHeaderText(cabecera);
+        error.setContentText(mensaje);
+
+        error.showAndWait();
     }
 
 }
