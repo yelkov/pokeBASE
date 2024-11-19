@@ -12,11 +12,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -39,7 +37,7 @@ public class ControllerRuta {
     private VBox menuPokemon, menuParteLista, menuRutaCargada;
 
     @FXML
-    private Button btnAnterior, btnSiguiente, btnBuscarPokemon;
+    private Button btnAnterior, btnSiguiente, btnBuscarPokemon, btnRetirarPokemon;
 
     private RutaBD rutaBD;
     private List<Ruta> rutas;
@@ -106,6 +104,19 @@ public class ControllerRuta {
         txtMinimoNivel.setText("");
     }
 
+    public void removePokemonRuta(){
+        int rutaId = Integer.valueOf(lblRutaId.getText());
+        String pokemonName = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
+        Pokemon pokemon = rutaBD.getPokemonBD().getPokemonByName(pokemonName);
+        int pokemonId = pokemon.getId();
+        boolean isOk = rutaBD.removePokemonRuta(rutaId, pokemonId);
+        if(isOk){
+            setPokemonList(rutaId);
+        } else {
+            View.lanzarMensajeError("Error", "Eliminación de pokemon de ruta no realizada", "No se ha podido realizar la operación correctamente, consulte los motivos en el archivo de log");
+        }
+    }
+
     public void modificarNiveles() {
         int id = Integer.valueOf(lblRutaId.getText());
         try{
@@ -149,12 +160,14 @@ public class ControllerRuta {
         }
     }
 
-    public void activateBotonBuscar(){
+    public void activateBotonesPokemon(){
         String pokemon = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
         if(pokemon!= null){
             btnBuscarPokemon.setDisable(false);
+            btnRetirarPokemon.setDisable(false);
         } else {
             btnBuscarPokemon.setDisable(true);
+            btnRetirarPokemon.setDisable(true);
         }
     }
 
