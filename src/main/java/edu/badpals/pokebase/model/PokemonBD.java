@@ -30,6 +30,23 @@ public class PokemonBD {
         }
     }
 
+    public boolean isNombrePresent(String nombre){
+        String query = "SELECT 1 FROM pokemons WHERE NOMBRE = ?";
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setString(1, nombre);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (SQLException e) {
+            System.out.println("Error al comprobar existencia de nombre.");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public Pokemon getPokemonById(int id) {
         Pokemon pokemon = null;

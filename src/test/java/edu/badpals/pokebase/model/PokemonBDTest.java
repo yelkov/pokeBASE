@@ -35,6 +35,14 @@ class PokemonBDTest {
     }
 
     @Test
+    void test_isNombrePresent(){
+        String nombrePresent = "bulbasaur";
+        String nombreNotPresent = "pepito";
+        assertTrue(pokemonBD.isNombrePresent(nombrePresent));
+        assertFalse(pokemonBD.isNombrePresent(nombreNotPresent));
+    }
+
+    @Test
     void test_getPokemonById_oneType() {
         Pokemon pokemon = pokemonBD.getPokemonById(150);
         assertNotNull(pokemon);
