@@ -83,7 +83,7 @@ public class ControllerListaRutas {
         try {
             Ruta ruta = listaRutas.getSelectionModel().getSelectedItem();
             if (ruta!= null) {
-                FXMLLoader loader = getFxmlLoader(actionEvent, "datosRuta.fxml");
+                FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "datosRuta.fxml", this.getClass(), 600, 700);
                 ControllerRuta controllerRuta = loader.getController();
                 controllerRuta.setAcceso(rutaBD);
                 controllerRuta.setRuta(ruta);
@@ -109,20 +109,10 @@ public class ControllerListaRutas {
 
     public void volverAlInicio(ActionEvent actionEvent){
         try {
-            FXMLLoader loader = getFxmlLoader(actionEvent, "main.fxml");
+            FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "main.fxml", this.getClass(), 800, 600);
         } catch (IOException e){
             View.lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
         }
-    }
-
-    private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
-        Scene scene = new Scene(loader.load(), 900, 1080);
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
-        // Crear una nueva escena con el contenido cargado
-        stage.setScene(scene); // Establecer la nueva escena en el Stage
-        stage.show();
-        return loader;
     }
 
 }

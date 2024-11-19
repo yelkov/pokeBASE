@@ -45,11 +45,19 @@ public class ControllerRuta {
     private CriteriaRuta criteriaRuta;
 
     public void initialize() {
-
+        permitirSoloEnteros(txtMaximoNivel);
+        permitirSoloEnteros(txtMinimoNivel);
+        permitirSoloEnteros(txtNiveles);
     }
 
     public void setAcceso(RutaBD rutaBD) {
         this.rutaBD = rutaBD;
+    }
+
+    private void permitirSoloEnteros(TextField textField) {
+        TextFormatter<String> integerFormatter = new TextFormatter<>(change ->
+                change.getControlNewText().matches("\\d*") ? change : null);
+        textField.setTextFormatter(integerFormatter);
     }
 
     public void setRuta(Ruta ruta){
@@ -113,7 +121,7 @@ public class ControllerRuta {
 
     public void buscarInfoPokemon(ActionEvent actionEvent){
         try{
-            FXMLLoader loader = getFxmlLoader(actionEvent, "datosPokemon.fxml");
+            FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "datosPokemon.fxml", this.getClass(), 600, 500);
             ControllerPokemon controller = loader.getController();
             String pokemonName = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
             Pokemon pokemon = rutaBD.getPokemonBD().getPokemonByName(pokemonName);
@@ -166,7 +174,7 @@ public class ControllerRuta {
 
     public void volverListaRutas(ActionEvent actionEvent){
         try{
-            FXMLLoader loader = getFxmlLoader(actionEvent, "listaRutas.fxml");
+            FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "listaRutas.fxml", this.getClass(),550, 600);
             ControllerListaRutas controller = loader.getController();
             controller.setRutas(rutas);
             controller.setAcceso(rutaBD);
@@ -178,20 +186,10 @@ public class ControllerRuta {
 
     public void volverAlInicio(ActionEvent actionEvent){
         try {
-            FXMLLoader loader = getFxmlLoader(actionEvent, "main.fxml");
+            FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "main.fxml", this.getClass(), 800, 600);
         } catch (IOException e){
             View.lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
         }
-    }
-
-    private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
-        Scene scene = new Scene(loader.load(), 900, 1080);
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
-        // Crear una nueva escena con el contenido cargado
-        stage.setScene(scene); // Establecer la nueva escena en el Stage
-        stage.show();
-        return loader;
     }
 
     public void showNode(Node node, boolean shown){
