@@ -245,4 +245,20 @@ class RutaBDTest {
         List<Ruta> rutas = rutaBD.getRutasByFilters(pokemon, region);
         assertEquals(0, rutas.size());
     }
+
+    @Test
+    void getPokemons(){
+        int rutaId = 11;
+        List<String> pokemons = rutaBD.getPokemons(rutaId);
+        assertEquals(2, pokemons.size());
+        assertTrue(pokemons.contains("nidoran-f"));
+        assertTrue(pokemons.contains("nidoran-m"));
+    }
+
+    @Test
+    void getPokemons_NoPokemons(){
+        int rutaId = 17;
+        List<String> pokemons = rutaBD.getPokemons(rutaId);
+        assertEquals(0, pokemons.size());
+    }
 }
