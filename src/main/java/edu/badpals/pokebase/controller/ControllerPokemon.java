@@ -6,6 +6,7 @@ import edu.badpals.pokebase.model.PokemonBD;
 import edu.badpals.pokebase.model.RutaBD;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -15,6 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Optional;
 
 public class ControllerPokemon {
@@ -45,6 +47,14 @@ public class ControllerPokemon {
         rutaBD = new RutaBD(accesoBD);
 
     }
+
+    public void setPokemon(Pokemon pokemon) {
+        this.pokemon = pokemon;
+        visualizarDatos();
+        establecerSiguientesPokemon();
+        habilitarBotonesLaterales();
+    }
+
 
     public void mostrar(Node nodo, boolean visibility, boolean managed){
         nodo.setVisible(visibility);
@@ -135,13 +145,6 @@ public class ControllerPokemon {
         setImage();
     }
 
-    public void setPokemon(Pokemon pokemon) {
-        this.pokemon = pokemon;
-        visualizarDatos();
-        establecerSiguientesPokemon();
-        habilitarBotonesLaterales();
-    }
-
     public void setImage() {
         mostrar(imgPokemon,true,true);
         Image image = null;
@@ -198,4 +201,30 @@ public class ControllerPokemon {
     public void eliminarPokemon(){
         Optional<ButtonType> respuesta = lanzarMensajeConfirmacion("Eliminar","Se va a eliminar un pokémon.","¿Está seguro de que desea eliminar el pokémon actual de la base de datos? Esta operación es irreversible.");
     }
+
+    public void editarPokemon(ActionEvent actionEvent){
+        try{
+            FXMLLoader loader = getFxmlLoader(actionEvent,"editarPokemon.fxml");
+            ControllerEditarPokemon controller = loader.getController();
+            if(actionEvent.getSource() == btnCrear){
+                controller.setPokemon(null);
+            }else if(actionEvent.getSource() == btnModificar){
+                controller.setPokemon(pokemon);
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
+        Scene scene = new Scene(loader.load(),600,500);
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+
+        stage.setScene(scene);
+        stage.show();
+        return loader;
+    }
+
 }
