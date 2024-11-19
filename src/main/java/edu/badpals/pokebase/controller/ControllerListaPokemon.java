@@ -8,6 +8,7 @@ import edu.badpals.pokebase.model.RutaBD;
 import edu.badpals.pokebase.view.View;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -76,10 +77,18 @@ public class ControllerListaPokemon {
 
     public void setCriteria(CriteriaPokemon criteriaPokemon){
         this.criteria = criteriaPokemon;
-        txtTipo1.setText(criteria.getTipo1());
-        txtTipo2.setText((criteria.getTipo2() == null ? "" : criteria.getTipo2()));
-        cmbCriterio.setValue(criteria.getCriterio());
-        cmbOrden.setValue(criteria.getOrden());
+        if(criteria != null){
+            txtTipo1.setText(criteria.getTipo1());
+            txtTipo2.setText((criteria.getTipo2() == null ? "" : criteria.getTipo2()));
+            cmbCriterio.setValue(criteria.getCriterio());
+            cmbOrden.setValue(criteria.getOrden());
+        }else{
+            txtTipo1.setText("");
+            txtTipo2.setText("");
+            cmbCriterio.setValue("---");
+            cmbOrden.setValue("ASC");
+        }
+
     }
 
 
@@ -104,9 +113,14 @@ public class ControllerListaPokemon {
 
 
     private void setTablaPokemon(){
-        tableListaPokemon.setItems(FXCollections.observableArrayList());
-
-        tableListaPokemon.setItems(FXCollections.observableArrayList(listaPokemon));
+        ObservableList oal = FXCollections.observableArrayList();
+        if(listaPokemon != null){
+            oal.addAll(listaPokemon);
+            lblTotal.setText(String.valueOf(listaPokemon.size()));
+        }else{
+            lblTotal.setText("0");
+        }
+        tableListaPokemon.setItems(oal);
 
 
         columnaNombre.setCellValueFactory(new PropertyValueFactory<Pokemon, String>("nombre"));
@@ -127,7 +141,7 @@ public class ControllerListaPokemon {
         });
         columnaMetodo.setCellValueFactory(new PropertyValueFactory<Pokemon,String>("metodoEvolucion"));
 
-        lblTotal.setText(String.valueOf(listaPokemon.size()));
+
     }
 
     public void filtrarPokemon() {
@@ -147,5 +161,12 @@ public class ControllerListaPokemon {
             View.lanzarMensajeError("Error","Tipo no seleccionado","Para realizar una búsqueda, es imprescindible introducir un tipo en la primera casilla (tipo 1)");
         }
 
+    }
+
+    public void limpiar(){
+        this.listaPokemon = null;
+        this.criteria = null;
+        setTablaPokemon();
+        setCriteria(criteria);
     }
 }
