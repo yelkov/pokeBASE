@@ -74,6 +74,15 @@ public class ControllerPokemon {
         }
     }
 
+    public void lanzarMensajeAviso(String titulo, String cabecera, String mensaje){
+        Alert error = new Alert(Alert.AlertType.INFORMATION);
+        error.setTitle(titulo);
+        error.setHeaderText(cabecera);
+        error.setContentText(mensaje);
+
+        error.showAndWait();
+    }
+
     public void lanzarMensajeError(String titulo, String cabecera, String mensaje){
         Alert error = new Alert(Alert.AlertType.ERROR);
         error.setTitle(titulo);
@@ -199,7 +208,16 @@ public class ControllerPokemon {
     }
 
     public void eliminarPokemon(){
+        if(this.pokemon == null){
+            lanzarMensajeError("Error","Error al eliminar pokémon","No se encuentra seleccionado ningún pokémon.");
+            return;
+        }
         Optional<ButtonType> respuesta = lanzarMensajeConfirmacion("Eliminar","Se va a eliminar un pokémon.","¿Está seguro de que desea eliminar el pokémon actual de la base de datos? Esta operación es irreversible.");
+        if(respuesta.isPresent()){
+            pokemonBD.deletePokemon(pokemon);
+            lanzarMensajeAviso("Aviso","Eliminación completada","Se ha borrado al pokémon exitosamente");
+            limpiarPanel();
+        }
     }
 
     public void editarPokemon(ActionEvent actionEvent){

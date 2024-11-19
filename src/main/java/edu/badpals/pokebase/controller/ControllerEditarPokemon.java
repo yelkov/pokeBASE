@@ -6,15 +6,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 public class ControllerEditarPokemon {
 
@@ -143,6 +141,7 @@ public class ControllerEditarPokemon {
 
 
         Pokemon nuevoPokemon = new Pokemon(id,nombre,imagen,gif,shiny,tipo1,tipo2,evolucionaDe,metodoEvolucion);
+        this.pokemon = nuevoPokemon;
         if(pokemonBD.insertPokemon(nuevoPokemon)){
             lanzarMensajeAviso("Aviso","Pokemon creado","Se completó la creación con éxito.");
         }else{
@@ -168,7 +167,17 @@ public class ControllerEditarPokemon {
     public void handleVolver(ActionEvent actionEvent) {
     }
 
-    public void eliminarPokemon(ActionEvent actionEvent) {
+    public void eliminarPokemon() {
+        if(this.pokemon == null){
+            lanzarMensajeError("Error","Error al eliminar pokémon","No se encuentra seleccionado ningún pokémon.");
+            return;
+        }
+        Optional<ButtonType> respuesta = lanzarMensajeConfirmacion("Eliminar","Se va a eliminar un pokémon.","¿Está seguro de que desea eliminar el pokémon actual de la base de datos? Esta operación es irreversible.");
+        if(respuesta.isPresent()){
+            pokemonBD.deletePokemon(pokemon);
+            lanzarMensajeAviso("Aviso","Eliminación completada","Se ha borrado al pokémon exitosamente");
+            limpiarPanel();
+        }
     }
 
     public void lanzarMensajeAviso(String titulo, String cabecera, String mensaje){
@@ -187,5 +196,20 @@ public class ControllerEditarPokemon {
         error.setContentText(mensaje);
 
         error.showAndWait();
+    }
+
+    public Optional<ButtonType> lanzarMensajeConfirmacion(String titulo, String cabecera, String mensaje){
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle(titulo);
+        confirmacion.setHeaderText(cabecera);
+        confirmacion.setContentText(mensaje);
+
+        ButtonType btnSi = new ButtonType("Sí");
+        ButtonType btnNo = new ButtonType("No");
+        confirmacion.getButtonTypes().setAll(btnSi, btnNo);
+
+
+        Optional<ButtonType> respuesta = confirmacion.showAndWait();
+        return respuesta;
     }
 }
