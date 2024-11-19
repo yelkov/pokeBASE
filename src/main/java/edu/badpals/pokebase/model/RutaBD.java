@@ -232,6 +232,22 @@ public class RutaBD {
         return addPokemon(rutaId, pokemonName, 0, 100);
     }
 
+    public boolean removePokemonRuta(int rutaId, int pokemonId){
+        try (PreparedStatement statement = connection.prepareStatement("delete from rutas_pokemons where ruta = ? and pokemon = ?");) {
+            statement.setInt(1, rutaId);
+            statement.setInt(2, pokemonId);
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected == 1) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            ErrorLogger.saveErrorLog("Error al realizar la query 'delete from rutas_pokemons where ruta = rutaId and pokemon = pokemonId' como parte del método removePokemonRuta(int rutaId, int pokemonId) de RutaBD: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean subirNivelesRuta(int rutaId, int niveles){
         try(CallableStatement statement = connection.prepareCall("{call MODIFCIAR_NIVELES_EN_RUTA(?,?)}");){
             statement.setInt(1, rutaId);

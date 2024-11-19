@@ -343,4 +343,20 @@ class RutaBDTest {
         List<RutaPokemon> pokemonRutaNuevo = rutaBD.getPokemons(ruta.getId());
         assertEquals(pokemonRutaViejo.get(0).getNivel_maximo() + 4 , pokemonRutaNuevo.get(0).getNivel_maximo());
     }
+
+    @Test
+    void removePokemonRuta(){
+        int numberPkRuta = rutaBD.getPokemons(12).size();
+        assertTrue(rutaBD.removePokemonRuta(12, 37));
+        int nuevoNumberPkRuta = rutaBD.getPokemons(12).size();
+        assertEquals(numberPkRuta -1, nuevoNumberPkRuta);
+    }
+
+    @Test
+    void removePokemonRuta_NoEsta(){
+        int numberPkRuta = rutaBD.getPokemons(12).size();
+        assertFalse(rutaBD.removePokemonRuta(12, 1));
+        int nuevoNumberPkRuta = rutaBD.getPokemons(12).size();
+        assertEquals(numberPkRuta, nuevoNumberPkRuta);
+    }
 }
