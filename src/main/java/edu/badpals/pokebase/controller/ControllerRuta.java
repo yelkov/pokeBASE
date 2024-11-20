@@ -117,21 +117,34 @@ public class ControllerRuta {
         }
     }
 
-    public void modificarNiveles() {
+    private void modificarNiveles(int id, int niveles) {
+        boolean isModificarOk = rutaBD.subirNivelesRuta(id, niveles);
+        if (isModificarOk) {
+            setPokemonList(id);
+        } else {
+            View.lanzarMensajeError("Error", "Modificación de niveles abortada", "No se ha podido realizar la operación correctamente, consulte los motivos en el archivo de log");
+        }
+        txtNiveles.setText("");
+    }
+
+    public void subirNiveles(){
         int id = Integer.valueOf(lblRutaId.getText());
         try{
             int niveles = Integer.valueOf(txtNiveles.getText());
-            boolean isModificarOk = rutaBD.subirNivelesRuta(id, niveles);
-            if (isModificarOk) {
-                setPokemonList(id);
-            } else {
-                View.lanzarMensajeError("Error", "Modificación de niveles abortada", "No se ha podido realizar la operación correctamente, consulte los motivos en el archivo de log");
-            }
-            txtNiveles.setText("");
+            modificarNiveles(id, niveles);
         } catch (NumberFormatException e){
             View.lanzarMensajeError("Error", "Error de formato", "Debe introducir el número de niveles a modificar");
         }
+    }
 
+    public void bajarNiveles(){
+        int id = Integer.valueOf(lblRutaId.getText());
+        try{
+            int niveles = Integer.valueOf(txtNiveles.getText());
+            modificarNiveles(id, 0-niveles);
+        } catch (NumberFormatException e){
+            View.lanzarMensajeError("Error", "Error de formato", "Debe introducir el número de niveles a modificar");
+        }
     }
 
 
