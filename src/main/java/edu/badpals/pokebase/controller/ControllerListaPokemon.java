@@ -5,6 +5,7 @@ import edu.badpals.pokebase.model.AccesoBD;
 import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.PokemonBD;
 import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.service.DocumentExporter;
 import edu.badpals.pokebase.view.View;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -12,15 +13,19 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class ControllerListaPokemon {
     @FXML
@@ -168,5 +173,25 @@ public class ControllerListaPokemon {
         this.criteria = null;
         setTablaPokemon();
         setCriteria(criteria);
+    }
+
+    public void exportar(ActionEvent action){
+        Stage stage = (Stage) ((Node) action.getSource()).getScene().getWindow();
+        Optional<File> posibleDirectorio = View.abrirFileChooserExp(stage);
+        if(posibleDirectorio.isPresent()){
+            String ruta = posibleDirectorio.get().getAbsolutePath();
+            boolean exportaCorrecto = DocumentExporter.exportToJson(listaPokemon,ruta);
+            if(exportaCorrecto){
+                View.lanzarMensajeAviso(
+                        "Aviso",
+                        "Exportación exitosa",
+                        "Se han exportado los datos de la búsqueda filtrada de pokemon a: "+ ruta);
+            }else{
+                View.lanzarMensajeError(
+                        "Error",
+                        "Error de exportación",
+                        "Se ha producido un error inesperado. Consulte el log para más información.");
+            }
+        }
     }
 }

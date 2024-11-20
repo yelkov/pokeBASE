@@ -1,6 +1,7 @@
 package edu.badpals.pokebase.controller;
 
 import edu.badpals.pokebase.model.*;
+import edu.badpals.pokebase.service.DocumentExporter;
 import edu.badpals.pokebase.view.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,7 +21,7 @@ public class ControllerEditarPokemon {
     @FXML
     private TextField tfNombre, tfId, tfTipo1, tfTipo2, tfEvolucionaDe, tfMetodoEvolucion, tfImagen, tfGif, tfShiny;
     @FXML
-    private Button btnCargarImagen, btnCargarGif, btnCargarShiny, btnModificar, btnEliminar;
+    private Button btnCargarImagen, btnCargarGif, btnCargarShiny, btnModificar, btnEliminar, btnExportar;
 
     private Pokemon pokemon;
 
@@ -38,6 +39,7 @@ public class ControllerEditarPokemon {
         if(pokemon == null){
             btnEliminar.setDisable(true);
             btnModificar.setDisable(true);
+            btnExportar.setDisable(true);
         }
     }
 
@@ -52,6 +54,7 @@ public class ControllerEditarPokemon {
         rellenarCampos();
         btnModificar.setDisable(false);
         btnEliminar.setDisable(false);
+        btnExportar.setDisable(false);
     }
 
     public void rellenarCampos(){
@@ -369,6 +372,7 @@ public class ControllerEditarPokemon {
                 tfShiny.setText("");
                 btnModificar.setDisable(true);
                 btnEliminar.setDisable(true);
+                btnExportar.setDisable(true);
             }
         }else{
             tfNombre.setText("");
@@ -382,6 +386,7 @@ public class ControllerEditarPokemon {
             tfShiny.setText("");
             btnModificar.setDisable(true);
             btnEliminar.setDisable(true);
+            btnExportar.setDisable(true);
         }
     }
 
@@ -413,6 +418,29 @@ public class ControllerEditarPokemon {
             this.pokemon = null;
             limpiarPanel();
         }
+    }
+
+    public void exportar(ActionEvent action){
+        if(this.pokemon != null){
+            Stage stage = (Stage) ((Node) action.getSource()).getScene().getWindow();
+            Optional<File> posibleDirectorio = View.abrirFileChooserExp(stage);
+            if(posibleDirectorio.isPresent()){
+                String ruta = posibleDirectorio.get().getAbsolutePath();
+                boolean exportaCorrecto = DocumentExporter.exportToJson(pokemon,ruta);
+                if(exportaCorrecto){
+                    View.lanzarMensajeAviso(
+                            "Aviso",
+                            "Exportación exitosa",
+                            "Se han exportado los datos de pokémon a: "+ ruta);
+                }else{
+                    View.lanzarMensajeError(
+                            "Error",
+                            "Error de exportación",
+                            "Se ha producido un error inesperado. Consulte el log para más información.");
+                }
+            }
+        }
+
     }
 
 }

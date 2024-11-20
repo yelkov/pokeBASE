@@ -3,6 +3,7 @@ package edu.badpals.pokebase.controller;
 import edu.badpals.pokebase.criteria.CriteriaRuta;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.service.DocumentExporter;
 import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
 import javafx.collections.FXCollections;
@@ -15,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.w3c.dom.events.MouseEvent;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +36,7 @@ public class ControllerListaRutas {
 
     private RutaBD rutaBD;
     private CriteriaRuta criteriaRuta;
+    private List<Ruta> rutas;
 
     public void initialize(){
         cmbCriterio.setItems(FXCollections.observableArrayList("id", "nombre", "region"));
@@ -44,6 +47,7 @@ public class ControllerListaRutas {
     };
 
     public void setRutas(List<Ruta> rutas) {
+        this.rutas = rutas;
         listaRutas.setItems(FXCollections.observableArrayList(rutas));
     }
 
@@ -114,6 +118,26 @@ public class ControllerListaRutas {
         } catch (IOException e){
             View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
             ErrorLogger.saveErrorLog(e.getMessage());
+        }
+    }
+
+    public void exportar(ActionEvent action){
+        Stage stage = (Stage) ((Node) action.getSource()).getScene().getWindow();
+        Optional<File> posibleDirectorio = View.abrirFileChooserExp(stage);
+        if(posibleDirectorio.isPresent()){
+            String ruta = posibleDirectorio.get().getAbsolutePath();
+            boolean exportaCorrecto = DocumentExporter.exportToJson(rutas,ruta);
+            if(exportaCorrecto){
+                View.lanzarMensajeAviso(
+                        "Aviso",
+                        "Exportación exitosa",
+                        "Se han exportado los datos de pokémon a: "+ ruta);
+            }else{
+                View.lanzarMensajeError(
+                        "Error",
+                        "Error de exportación",
+                        "Se ha producido un error inesperado. Consulte el log para más información.");
+            }
         }
     }
 

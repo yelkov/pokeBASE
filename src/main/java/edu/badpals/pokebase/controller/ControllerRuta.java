@@ -5,6 +5,7 @@ import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
 import edu.badpals.pokebase.model.RutaPokemon;
+import edu.badpals.pokebase.service.DocumentExporter;
 import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
 import javafx.collections.FXCollections;
@@ -15,10 +16,13 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import java.util.Optional;
 
 public class ControllerRuta {
     @FXML
@@ -40,6 +44,7 @@ public class ControllerRuta {
     private Button btnAnterior, btnSiguiente, btnBuscarPokemon, btnRetirarPokemon;
 
     private RutaBD rutaBD;
+    private Ruta ruta;
     private List<Ruta> rutas;
     private int currentIndex;
     private CriteriaRuta criteriaRuta;
@@ -61,6 +66,7 @@ public class ControllerRuta {
     }
 
     public void setRuta(Ruta ruta){
+        this.ruta = ruta;
         configureMenu(true);
         lblRutaId.setText(String.valueOf(ruta.getId()));
         txtRutaNombre.setText(ruta.getNombre());
@@ -297,5 +303,25 @@ public class ControllerRuta {
         txtRutaNombre.setText("");
         txtRutaRegion.setText("");
         showNode(menuPokemon, false);
+    }
+
+    public void exportar(ActionEvent action){
+        Stage stage = (Stage) ((Node) action.getSource()).getScene().getWindow();
+        Optional<File> posibleDirectorio = View.abrirFileChooserExp(stage);
+        if(posibleDirectorio.isPresent()){
+            String rutaExportacion = posibleDirectorio.get().getAbsolutePath();
+            boolean exportaCorrecto = DocumentExporter.exportToJson(ruta,rutaExportacion);
+            if(exportaCorrecto){
+                View.lanzarMensajeAviso(
+                        "Aviso",
+                        "Exportación exitosa",
+                        "Se han exportado los datos de pokémon a: "+ rutaExportacion);
+            }else{
+                View.lanzarMensajeError(
+                        "Error",
+                        "Error de exportación",
+                        "Se ha producido un error inesperado. Consulte el log para más información.");
+            }
+        }
     }
 }
