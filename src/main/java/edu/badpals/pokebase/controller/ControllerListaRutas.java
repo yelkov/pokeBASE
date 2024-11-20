@@ -4,21 +4,18 @@ import edu.badpals.pokebase.criteria.CriteriaRuta;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
 import edu.badpals.pokebase.service.DocumentExporter;
-import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import org.w3c.dom.events.MouseEvent;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ControllerListaRutas {
@@ -39,11 +36,18 @@ public class ControllerListaRutas {
     private List<Ruta> rutas;
 
     public void initialize(){
+        rutaBD = SceneManager.getRutaBD();
+
         cmbCriterio.setItems(FXCollections.observableArrayList("id", "nombre", "region"));
         cmbCriterio.setValue("id");
         cmbOrden.setItems(FXCollections.observableArrayList("ASC", "DESC"));
         cmbOrden.setValue("ASC");
 
+        Map<String, ?> datos = SceneManager.getDatos();
+        if (datos.containsKey("criteriaRuta")){
+            setCriteria((CriteriaRuta) datos.get("criteriaRuta"));
+            refiltrarRutas();
+        }
     };
 
     public void setRutas(List<Ruta> rutas) {
@@ -84,40 +88,12 @@ public class ControllerListaRutas {
         this.criteriaRuta = criteria;
     }
 
-    public void showRuta(ActionEvent actionEvent){
-        try {
-            Ruta ruta = listaRutas.getSelectionModel().getSelectedItem();
-            if (ruta!= null) {
-                FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "datosRuta.fxml", this.getClass(), 600, 700);
-                ControllerRuta controllerRuta = loader.getController();
-                controllerRuta.setAcceso(rutaBD);
-                controllerRuta.setRuta(ruta);
-                List<Ruta> rutas = listaRutas.getItems().stream().toList();
-                int index = rutas.indexOf(ruta);
-                controllerRuta.setPartOfList(rutas, index, criteriaRuta);
-            }
-        } catch (IOException e){
-            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
-            ErrorLogger.saveErrorLog(e.getMessage());
-        }
-    }
-
-
     public void activateBotonBuscar(){
         Ruta ruta = listaRutas.getSelectionModel().getSelectedItem();
         if(ruta!= null){
             btnBuscarRuta.setDisable(false);
         } else {
             btnBuscarRuta.setDisable(true);
-        }
-    }
-
-    public void volverAlInicio(ActionEvent actionEvent){
-        try {
-            FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "main.fxml", this.getClass(), 800, 600);
-        } catch (IOException e){
-            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
-            ErrorLogger.saveErrorLog(e.getMessage());
         }
     }
 
@@ -141,13 +117,24 @@ public class ControllerListaRutas {
         }
     }
 
-    @FXML
-    private void handleVolver(ActionEvent event) {
-        try {
-            Controller.volver(event, this.getClass());
-        } catch (IOException e){
-            ErrorLogger.saveErrorLog("Error al volver: " + e.getMessage());
+    public void goToRutaInfo(ActionEvent actionEvent){
+        Ruta ruta = listaRutas.getSelectionModel().getSelectedItem();
+        if (ruta!= null) {
+            Map<String, Object> datos = new HashMap<>();
+            datos.put("rutas", rutas);
+            datos.put("ruta", ruta);
+            datos.put("criteriaRuta", criteriaRuta);
+            SceneManager.setDatos(datos);
+            SceneManager.goToView(actionEvent, "datosRuta.fxml", this.getClass(), 600, 700);
         }
+    }
+
+    public void volverAlInicio(ActionEvent actionEvent){
+        SceneManager.volverAlInicio(actionEvent, this.getClass());
+    }
+
+    public void handleVolver(ActionEvent event) {
+        SceneManager.volver(event, this.getClass());
     }
 
 }

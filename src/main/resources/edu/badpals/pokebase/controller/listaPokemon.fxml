@@ -16,7 +16,7 @@
       <HBox prefHeight="3.0" prefWidth="560.0" spacing="15.0">
          <children>
             <Button fx:id="btnVolver1" mnemonicParsing="false" onAction="#handleVolver" text="Volver" />
-            <Button fx:id="btnMenuPrincipal" mnemonicParsing="false"  text="Ir al Menú principal" />
+            <Button fx:id="btnMenuPrincipal" mnemonicParsing="false"  text="Ir al Menú principal" onAction="#volverAlInicio"/>
             <Region HBox.hgrow="ALWAYS" />
             <Button fx:id="btnLimpiar" onAction="#limpiar" text="Limpiar" />
             <Button fx:id="btnExportar" onAction="#exportar" text="Exportar JSON" />

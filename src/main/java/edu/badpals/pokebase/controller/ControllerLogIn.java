@@ -29,12 +29,7 @@ public class ControllerLogIn {
         String pass = txtContrasena.getText();
         boolean isLoginOk = manager.authenticate(user, pass);
         if(isLoginOk){
-            try {
-                Controller.getFxmlLoader(event, "main.fxml", this.getClass(), 800, 600);
-            } catch (IOException e) {
-                ErrorLogger.saveErrorLog("Error al cambiar de ventana desde el login al main, " + e.getMessage());
-                View.lanzarMensajeError("Error", "Error al cambiar de ventana", "No se pudo cambiar de ventana, consulte el archivo de log para más información");
-            }
+            SceneManager.goToView(event,"main.fxml" , this.getClass(), 800, 600);
         } else {
             View.lanzarMensajeError("Error", "Autentificación no válida", "El usuario o contraseña no son correctos");
         }
@@ -47,13 +42,7 @@ public class ControllerLogIn {
         try {
             boolean isRegisterOk = manager.signUp(user, pass);
             if (isRegisterOk) {
-                try {
-                    Controller.getFxmlLoader(event, "main.fxml", this.getClass(), 800, 600);
-                } catch (IOException e) {
-                    ErrorLogger.saveErrorLog("Error al cambiar de ventana desde el login al main, " + e.getMessage());
-                    View.lanzarMensajeError("Error", "Error al cambiar de ventana", "No se pudo cambiar de ventana, consulte el archivo de log para más información");
-
-                }
+                    SceneManager.goToView(event, "main.fxml", this.getClass(), 800, 600);
             } else {
                 View.lanzarMensajeError("Error", "Registro no válido", "No se ha podido registrar al usuario en la base de datos, consulte el login para más información");
             }

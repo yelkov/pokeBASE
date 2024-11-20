@@ -22,6 +22,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class ControllerPokemon {
@@ -41,16 +43,15 @@ public class ControllerPokemon {
     private Pokemon pokemonAnterior;
     private Pokemon pokemonPreEvolucion;
 
-    private AccesoBD accesoBD;
     private PokemonBD pokemonBD;
-    private RutaBD rutaBD;
 
     public void initialize() {
-        accesoBD = new AccesoBD();
-        accesoBD.connect();
-        pokemonBD = new PokemonBD(accesoBD);
-        rutaBD = new RutaBD(accesoBD);
+        pokemonBD = SceneManager.getPokemonBD();
 
+        Map<String, Object> datos = SceneManager.getDatos();
+        if (datos.containsKey("pokemon")){
+            setPokemon((Pokemon) datos.get("pokemon"));
+        }
     }
 
     public void setPokemon(Pokemon pokemon) {
@@ -78,8 +79,6 @@ public class ControllerPokemon {
             btnMostrarPosterior.setDisable(true);
         }
     }
-
-
 
     private void establecerSiguientesPokemon() {
         int anteriorId = pokemon.getId()-1;
@@ -178,11 +177,11 @@ public class ControllerPokemon {
 
     @FXML
     private void handleVolver(ActionEvent event) {
-        try {
-            Controller.volver(event, this.getClass());
-        } catch (IOException e){
-            ErrorLogger.saveErrorLog("Error al volver: " + e.getMessage());
-        }
+        SceneManager.volver(event, this.getClass());
+    }
+
+    public void volverAlInicio(ActionEvent actionEvent){
+        SceneManager.volverAlInicio(actionEvent, this.getClass());
     }
 
     public void limpiarPanel(){
@@ -213,17 +212,14 @@ public class ControllerPokemon {
     }
 
     public void editarPokemon(ActionEvent actionEvent){
-        try{
-            FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"editarPokemon.fxml", this.getClass(), 500,500);
-            ControllerEditarPokemon controller = loader.getController();
-            if(actionEvent.getSource() == btnCrear){
-                controller.setPokemon(null);
-            }else if(actionEvent.getSource() == btnModificar){
-                controller.setPokemon(pokemon);
-            }
-        }catch (IOException e) {
-            e.printStackTrace();
+        Map<String, Object> datos = new HashMap<>();
+
+        if(actionEvent.getSource() == btnCrear){
+        }else if(actionEvent.getSource() == btnModificar){
+            datos.put("pokemon", pokemon);
         }
+        SceneManager.setDatos(datos);
+        SceneManager.goToView(actionEvent,"editarPokemon.fxml", this.getClass(), 500,500);
 
     }
 

@@ -14,7 +14,7 @@
    <HBox prefHeight="3.0" prefWidth="560.0" spacing="15.0">
       <children>
          <Button fx:id="btnVolver" mnemonicParsing="false"  text="Volver" onAction="#handleVolver" />
-         <Button fx:id="btnMenuPrincipal" mnemonicParsing="false" text="Ir al Menú principal" />
+         <Button fx:id="btnMenuPrincipal" mnemonicParsing="false" text="Ir al Menú principal" onAction="#volverAlInicio" />
          <Region HBox.hgrow="ALWAYS" />
          <Button fx:id="btnLimpiar" text="Limpiar" />
          <Button fx:id="btnExportar" onAction="#exportar" text="Exportar JSON" />
@@ -24,15 +24,14 @@
    <HBox alignment="CENTER" spacing="10.0">
       <Label text="Pokemon" />
       <TextField fx:id="txtPokemon" />
-      <Label text="Región" />
+      <Label text="Región"/>
       <ComboBox fx:id="cmbRegion" />
       <ComboBox fx:id="cmbCriterio" />
       <ComboBox fx:id="cmbOrden" />
       <Button fx:id="btnFiltrarRutas" onAction="#refiltrarRutas" text="Buscar" />
    </HBox>
    <ListView fx:id="listaRutas" maxHeight="250.0" maxWidth="300.0" onMouseClicked="#activateBotonBuscar" />
-   <Button fx:id="btnBuscarRuta" disable="true" onAction="#showRuta" text="Buscar Ruta" />
-   <Button onAction="#volverAlInicio" text="Volver Al Menú Principal" />
+   <Button fx:id="btnBuscarRuta" disable="true" onAction="#goToRutaInfo" text="Buscar Ruta" />
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>

@@ -13,7 +13,7 @@
    <HBox prefHeight="3.0" prefWidth="560.0" spacing="15.0">
       <children>
          <Button fx:id="btnVolver" mnemonicParsing="false"  text="Volver" onAction="#handleVolver" />
-         <Button fx:id="btnMenuPrincipal" mnemonicParsing="false" text="Ir al Menú principal" />
+         <Button fx:id="btnMenuPrincipal" mnemonicParsing="false" text="Ir al Menú principal" onAction="#volverAlInicio" />
          <Region HBox.hgrow="ALWAYS" />
          <Button fx:id="btnLimpiar" text="Limpiar" />
          <Button fx:id="btnExportar" onAction="#exportar" text="Exportar JSON" />
@@ -72,12 +72,10 @@
          <Button fx:id="btnAnterior" onAction="#anteriorRuta" text="Anterior" />
          <Button fx:id="btnSiguiente" onAction="#siguienteRuta" text="Siguiente" />
       </HBox>
-      <Button fx:id="btnVolverRutas" onAction="#volverListaRutas" text="Volver a Menú de Rutas" />
    </VBox>
    <HBox fx:id="menuRutaNueva" alignment="CENTER" managed="true" visible="true">
       <Button fx:id="btnGuardar" onAction="#crearRuta" text="Guardar" />
    </HBox>
-   <Button onAction="#volverAlInicio" text="Volver al Menú Principal" />
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>

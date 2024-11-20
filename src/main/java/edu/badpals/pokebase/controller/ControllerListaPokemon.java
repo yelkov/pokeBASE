@@ -25,7 +25,9 @@ import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ControllerListaPokemon {
@@ -51,10 +53,8 @@ public class ControllerListaPokemon {
     private RutaBD rutaBD;
 
     public void initialize() {
-        accesoBD = new AccesoBD();
-        accesoBD.connect();
-        pokemonBD = new PokemonBD(accesoBD);
-        rutaBD = new RutaBD(accesoBD);
+        pokemonBD = SceneManager.getPokemonBD();
+
         cmbCriterio.setItems(FXCollections.observableArrayList("---","Id","Nombre"));
         cmbCriterio.setValue("---");
         cmbOrden.setItems(FXCollections.observableArrayList("ASC","DESC"));
@@ -68,17 +68,16 @@ public class ControllerListaPokemon {
                 column.setPrefWidth(columnWidth);
             }
         });
+
+        Map<String, Object> datos = SceneManager.getDatos();
+        if (datos.containsKey("criteriaPokemon")){
+            setCriteria((CriteriaPokemon) datos.get("criteriaPokemon"));
+        }
     }
 
-    public void setPokemons(List<Pokemon> listaPokemon, CriteriaPokemon criteria) {
-        this.listaPokemon = listaPokemon;
-        accesoBD = new AccesoBD();
-        accesoBD.connect();
-        pokemonBD = new PokemonBD(accesoBD);
-
-
+    public void setPokemons() {
+        this.listaPokemon = pokemonBD.getPokemonByFilters(criteria);
         setTablaPokemon();
-        setCriteria(criteria);
     }
 
     public void setCriteria(CriteriaPokemon criteriaPokemon){
@@ -88,6 +87,7 @@ public class ControllerListaPokemon {
             txtTipo2.setText((criteria.getTipo2() == null ? "" : criteria.getTipo2()));
             cmbCriterio.setValue(criteria.getCriterio());
             cmbOrden.setValue(criteria.getOrden());
+            setPokemons();
         }else{
             txtTipo1.setText("");
             txtTipo2.setText("");
@@ -97,30 +97,23 @@ public class ControllerListaPokemon {
 
     }
 
-
     public void verPokemon(ActionEvent actionEvent) {
-        try{
-            Pokemon pokemon = tableListaPokemon.getSelectionModel().getSelectedItem();
-            if(pokemon != null){
-                FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "datosPokemon.fxml",this.getClass(),600,500);
-                ControllerPokemon controllerPokemon = loader.getController();
-                controllerPokemon.setPokemon(pokemon);
-
-            }
-        }catch (IOException e){
-            System.out.println("Error al mostrar un pokemon" + e.getMessage());
-            e.printStackTrace();
+        Pokemon pokemon = tableListaPokemon.getSelectionModel().getSelectedItem();
+        if(pokemon != null) {
+            Map<String, Object> datos = new HashMap<>();
+            datos.put("pokemon", pokemon);
+            SceneManager.setDatos(datos);
+            SceneManager.goToView(actionEvent, "datosPokemon.fxml", this.getClass(), 600, 500);
         }
-
     }
 
     @FXML
     private void handleVolver(ActionEvent event) {
-        try {
-            Controller.volver(event, this.getClass());
-        } catch (IOException e){
-            ErrorLogger.saveErrorLog("Error al volver: " + e.getMessage());
-        }
+        SceneManager.volver(event, this.getClass());
+    }
+
+    public void volverAlInicio(ActionEvent actionEvent){
+        SceneManager.volverAlInicio(actionEvent, this.getClass());
     }
 
 
