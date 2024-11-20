@@ -4,22 +4,19 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="453.0" prefWidth="757.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.ControllerListaPokemon">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="441.0" prefWidth="757.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.ControllerListaPokemon">
    <children>
       <HBox prefHeight="3.0" prefWidth="560.0" spacing="15.0">
          <children>
             <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#handleVolver" text="Volver" />
-            <Button fx:id="btnLimpiar" mnemonicParsing="false" text="Limpiar" />
+            <Button fx:id="btnLimpiar" onAction="#limpiar" mnemonicParsing="false" text="Limpiar" />
             <Region HBox.hgrow="ALWAYS" />
             <Button fx:id="btnLogIn" text="Log in" />
             <Button fx:id="btnRegistrarse" text="Registrarse" />
@@ -27,48 +24,36 @@
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <Label text="LISTA DE POKEMON" />
+            <Label text="LISTA DE POKEMON">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin></Label>
          </children>
-      </HBox>
-      <GridPane>
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="258.0" minWidth="10.0" prefWidth="163.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="252.0" minWidth="10.0" prefWidth="171.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="252.0" minWidth="10.0" prefWidth="203.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="189.0" minWidth="10.0" prefWidth="179.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
          <VBox.margin>
-            <Insets top="20.0" />
+            <Insets bottom="20.0" top="10.0" />
          </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER" spacing="15.0">
          <children>
-            <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="195.0" spacing="10.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="35.0" spacing="10.0">
                <children>
                   <Label text="Tipo 1:" />
                   <TextField fx:id="txtTipo1" maxWidth="100.0" minWidth="100.0" />
                </children>
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1">
+            <HBox alignment="CENTER" prefHeight="100.0" spacing="10.0">
                <children>
                   <Label text="Tipo 2: " />
                   <TextField fx:id="txtTipo2" maxWidth="100.0" minWidth="100.0" />
                </children>
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="30.0" prefWidth="216.0" spacing="10.0" GridPane.columnIndex="2">
+            <HBox alignment="CENTER" prefHeight="30.0" spacing="10.0">
                <children>
                   <Label text="Ordenar por: " />
                   <ComboBox fx:id="cmbCriterio" maxWidth="120.0" minWidth="100.0" />
@@ -77,78 +62,36 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </HBox>
-            <ComboBox fx:id="cmbOrden" maxWidth="120.0" minWidth="100.0" GridPane.columnIndex="3" />
+            <ComboBox fx:id="cmbOrden" maxWidth="80.0" minWidth="80.0">
+               <HBox.margin>
+                  <Insets left="-15.0" />
+               </HBox.margin></ComboBox>
          </children>
-      </GridPane>
-      <HBox alignment="CENTER_RIGHT" spacing="10.0">
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="15.0">
          <children>
-            <Button fx:id="btnFiltrar" mnemonicParsing="false" text="Aplicar filtros" />
+            <Label text="Total de pokémon en la búsqueda: " />
+            <Label fx:id="lblTotal" />
+            <Region prefWidth="100.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnFiltrar" mnemonicParsing="false" onAction="#filtrarPokemon" text="Aplicar filtros" />
          </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" top="10.0" />
-         </padding>
          <VBox.margin>
-            <Insets top="10.0" />
+            <Insets bottom="10.0" top="15.0" />
          </VBox.margin>
       </HBox>
-      <BorderPane>
-         <top>
-            <GridPane prefHeight="30.0" prefWidth="680.0" BorderPane.alignment="CENTER">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <HBox alignment="CENTER" style="-fx-border-color: black;">
-                     <children>
-                        <Label text="NOMBRE" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER" style="-fx-border-color: black;" GridPane.columnIndex="1">
-                     <children>
-                        <Label text="ID" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER" style="-fx-border-color: black;" GridPane.columnIndex="2">
-                     <children>
-                        <Label text="TIPO 1" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER" style="-fx-border-color: black;" GridPane.columnIndex="3">
-                     <children>
-                        <Label text="TIPO 2" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER" style="-fx-border-color: black;" GridPane.columnIndex="4">
-                     <children>
-                        <Label text="EVOLUCIONA DE" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER" style="-fx-border-color: black;" GridPane.columnIndex="5">
-                     <children>
-                        <Label text="MÉTODO EVOL." />
-                     </children>
-                  </HBox>
-               </children>
-            </GridPane>
-         </top>
-         <VBox.margin>
-            <Insets top="20.0" />
-         </VBox.margin>
-      </BorderPane>
-      <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
-         <ListView fx:id="lvPokemon" />
-      </VBox>
+      <TableView fx:id="tableListaPokemon">
+        <columns>
+          <TableColumn fx:id="columnaNombre" prefWidth="75.0" text="Nombre" />
+          <TableColumn fx:id="columnaId" prefWidth="75.0" text="Id" />
+            <TableColumn fx:id="columnaTipo1" prefWidth="75.0" text="Tipo 1" />
+            <TableColumn fx:id="columnaTipo2" prefWidth="75.0" text="Tipo 2" />
+            <TableColumn fx:id="columnaEvoluciona" prefWidth="99.0" text="Evoluciona de:" />
+            <TableColumn fx:id="columnaMetodo" prefWidth="136.0" text="Método de evolución" />
+        </columns>
+      </TableView>
       <HBox alignment="CENTER">
          <children>
-            <Button fx:id="btnVerPokemon" onAction="#verPokemon" mnemonicParsing="false" text="Ver pokemon" />
+            <Button fx:id="btnVerPokemon" mnemonicParsing="false" onAction="#verPokemon" text="Ver pokemon" />
          </children>
          <VBox.margin>
             <Insets top="10.0" />

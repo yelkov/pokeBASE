@@ -3,6 +3,7 @@ package edu.badpals.pokebase.controller;
 import edu.badpals.pokebase.criteria.CriteriaRuta;
 import edu.badpals.pokebase.model.Ruta;
 import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -83,17 +84,17 @@ public class ControllerListaRutas {
         try {
             Ruta ruta = listaRutas.getSelectionModel().getSelectedItem();
             if (ruta!= null) {
-                FXMLLoader loader = getFxmlLoader(actionEvent, "datosRuta.fxml");
+                FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "datosRuta.fxml", this.getClass(), 600, 700);
                 ControllerRuta controllerRuta = loader.getController();
                 controllerRuta.setAcceso(rutaBD);
                 controllerRuta.setRuta(ruta);
                 List<Ruta> rutas = listaRutas.getItems().stream().toList();
                 int index = rutas.indexOf(ruta);
                 controllerRuta.setPartOfList(rutas, index, criteriaRuta);
-            } else{
             }
         } catch (IOException e){
-            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", e.getMessage());
+            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
+            ErrorLogger.saveErrorLog(e.getMessage());
         }
     }
 
@@ -109,20 +110,11 @@ public class ControllerListaRutas {
 
     public void volverAlInicio(ActionEvent actionEvent){
         try {
-            FXMLLoader loader = getFxmlLoader(actionEvent, "main.fxml");
+            FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "main.fxml", this.getClass(), 800, 600);
         } catch (IOException e){
-            View.lanzarMensajeError("Error", "No se pudo cambiar de vista", e.getMessage());
+            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
+            ErrorLogger.saveErrorLog(e.getMessage());
         }
-    }
-
-    private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
-        Scene scene = new Scene(loader.load(), 900, 1080);
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
-        // Crear una nueva escena con el contenido cargado
-        stage.setScene(scene); // Establecer la nueva escena en el Stage
-        stage.show();
-        return loader;
     }
 
 }

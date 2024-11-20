@@ -134,7 +134,22 @@ public class ControllerPokemon {
             ByteArrayInputStream bais = new ByteArrayInputStream(pokemon.getImagen());
             image = new Image(bais);
         }
-        imgPokemon.setImage(image);
+        if (image != null) {
+            imgPokemon.setImage(image);
+
+            double originalWidth = image.getWidth();
+            double originalHeight = image.getHeight();
+
+            if (originalWidth > 150 || originalHeight > 150) {
+                imgPokemon.setFitWidth(150);
+                imgPokemon.setFitHeight(150);
+                imgPokemon.setPreserveRatio(true);
+            } else {
+                imgPokemon.setFitWidth(originalWidth);
+                imgPokemon.setFitHeight(originalHeight);
+            }
+        }
+
     }
 
     public void buscarPokemon(){
@@ -192,7 +207,7 @@ public class ControllerPokemon {
 
     public void editarPokemon(ActionEvent actionEvent){
         try{
-            FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"editarPokemon.fxml", this.getClass(), 600,500);
+            FXMLLoader loader = Controller.getFxmlLoader(actionEvent,"editarPokemon.fxml", this.getClass(), 500,500);
             ControllerEditarPokemon controller = loader.getController();
             if(actionEvent.getSource() == btnCrear){
                 controller.setPokemon(null);
@@ -203,16 +218,6 @@ public class ControllerPokemon {
             e.printStackTrace();
         }
 
-    }
-
-    private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
-        Scene scene = new Scene(loader.load(),600,500);
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-
-        stage.setScene(scene);
-        stage.show();
-        return loader;
     }
 
 }

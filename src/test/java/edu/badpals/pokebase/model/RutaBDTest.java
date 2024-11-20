@@ -2,6 +2,8 @@ package edu.badpals.pokebase.model;
 
 import org.junit.jupiter.api.*;
 
+import java.rmi.UnexpectedException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,19 +62,22 @@ class RutaBDTest {
     }
 
     @Test
-    void insertRuta() {
+    void insertRuta() throws Exception{
         int totalRutas = rutaBD.getRoutesCount();
         Ruta ruta = new Ruta(1, "Ruta 1", "Unova");
-        assertTrue(rutaBD.insertRuta(ruta));
-        assertEquals(totalRutas + 1, rutaBD.getRoutesCount());
-        //Problemas con los id's autogenerados
+        try {
+            assertTrue(rutaBD.insertRuta(ruta));
+            assertEquals(totalRutas + 1, rutaBD.getRoutesCount());
+        } catch (SQLIntegrityConstraintViolationException e){
+            throw new Exception("No se debería lanzar una excepción");
+        }
     }
 
     @Test
     void insertRuta_YaExiste() {
         int totalRutas = rutaBD.getRoutesCount();
         Ruta ruta = new Ruta(1, "Ruta 1", "Kanto");
-        assertFalse(rutaBD.insertRuta(ruta));
+        assertThrows(SQLIntegrityConstraintViolationException.class, () -> rutaBD.insertRuta(ruta));
         assertEquals(totalRutas, rutaBD.getRoutesCount());
         //Problemas con los id's autogenerados
     }
@@ -103,24 +108,28 @@ class RutaBDTest {
     }
 
     @Test
-    void modifyRuta(){
-        int rutasKanto = rutaBD.getRoutesCount("Kanto");
-        Ruta ruta  = rutaBD.getRuta("Ruta 1", "Kanto").get();
-        ruta.setNombre("Ruta 5");
-        ruta.setRegion("Alola");
-        int id = ruta.getId();
-        assertTrue(rutaBD.updateRuta(ruta));
-        assertEquals(rutasKanto - 1, rutaBD.getRoutesCount("Kanto"));
-        Optional<Ruta> isRuta = rutaBD.getRuta(id);
-        assertTrue(isRuta.isPresent());
-        Ruta rutaModificada = isRuta.get();
-        assertEquals("Ruta 5", rutaModificada.getNombre());
-        assertEquals("Alola", rutaModificada.getRegion());
+    void modifyRuta() throws Exception{
+        try {
+            int rutasKanto = rutaBD.getRoutesCount("Kanto");
+            Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
+            ruta.setNombre("Ruta 5");
+            ruta.setRegion("Alola");
+            int id = ruta.getId();
+            assertTrue(rutaBD.updateRuta(ruta));
+            assertEquals(rutasKanto - 1, rutaBD.getRoutesCount("Kanto"));
+            Optional<Ruta> isRuta = rutaBD.getRuta(id);
+            assertTrue(isRuta.isPresent());
+            Ruta rutaModificada = isRuta.get();
+            assertEquals("Ruta 5", rutaModificada.getNombre());
+            assertEquals("Alola", rutaModificada.getRegion());
 
-        //deshacemos los cambios
-        ruta.setNombre("Ruta 1");
-        ruta.setRegion("Kanto");
-        rutaBD.updateRuta(ruta);
+            //deshacemos los cambios
+            ruta.setNombre("Ruta 1");
+            ruta.setRegion("Kanto");
+            rutaBD.updateRuta(ruta);
+        } catch (SQLIntegrityConstraintViolationException e){
+            throw new Exception("No se debería lanzar la excepción de integridad aquí");
+        }
     }
 
     @Test
@@ -132,7 +141,7 @@ class RutaBDTest {
         ruta.setNombre("Ruta 101");
         ruta.setRegion("Johto");
 
-        assertFalse(rutaBD.updateRuta(ruta));
+        assertThrows(SQLIntegrityConstraintViolationException.class, () -> rutaBD.updateRuta(ruta));
         assertEquals(rutasKanto, rutaBD.getRoutesCount("Kanto"));
         Optional<Ruta> isRuta = rutaBD.getRuta(id);
         assertTrue(isRuta.isPresent());
@@ -143,25 +152,33 @@ class RutaBDTest {
 
 
     @Test
-    void deleteRuta(){
-        int numRutas = rutaBD.getRoutesCount();
-        Ruta ruta = new Ruta(0, "Toledo", "España");
-        rutaBD.insertRuta(ruta);
-        assertEquals(numRutas + 1, rutaBD.getRoutesCount());
-        Ruta createdRuta = rutaBD.getRuta("Toledo", "España").get();
-        int id = createdRuta.getId();
-        assertTrue(rutaBD.deleteRuta(id));
-        assertEquals(numRutas, rutaBD.getRoutesCount());
+    void deleteRuta() throws Exception{
+        try {
+            int numRutas = rutaBD.getRoutesCount();
+            Ruta ruta = new Ruta(0, "Toledo", "España");
+            rutaBD.insertRuta(ruta);
+            assertEquals(numRutas + 1, rutaBD.getRoutesCount());
+            Ruta createdRuta = rutaBD.getRuta("Toledo", "España").get();
+            int id = createdRuta.getId();
+            assertTrue(rutaBD.deleteRuta(id));
+            assertEquals(numRutas, rutaBD.getRoutesCount());
+        } catch (SQLIntegrityConstraintViolationException e){
+            throw new Exception("No se debería lanzar la excepción de integridad aquí");
+        }
     }
 
     @Test
-    void deleteRutaByNameAndRegion() {
-        int numRutas = rutaBD.getRoutesCount();
-        Ruta ruta = new Ruta(0, "Toledo", "España");
-        rutaBD.insertRuta(ruta);
-        assertEquals(numRutas + 1, rutaBD.getRoutesCount());
-        assertTrue(rutaBD.deleteRuta("Toledo", "España"));
-        assertEquals(numRutas, rutaBD.getRoutesCount());
+    void deleteRutaByNameAndRegion() throws Exception{
+        try {
+            int numRutas = rutaBD.getRoutesCount();
+            Ruta ruta = new Ruta(0, "Toledo", "España");
+            rutaBD.insertRuta(ruta);
+            assertEquals(numRutas + 1, rutaBD.getRoutesCount());
+            assertTrue(rutaBD.deleteRuta("Toledo", "España"));
+            assertEquals(numRutas, rutaBD.getRoutesCount());
+        } catch (SQLIntegrityConstraintViolationException e){
+            throw new Exception("No se debería lanzar la excepción de integridad aquí");
+        }
     }
 
     @Test
@@ -265,45 +282,56 @@ class RutaBDTest {
     }
 
     @Test
-    void addPokemon(){
-        Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
-        int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
-        assertTrue(rutaBD.addPokemon(ruta.getId(), "Caterpie"));
-        List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
-        assertEquals(numberPkRuta + 1, pokemonsRuta.size());
-        RutaPokemon pokemon = new RutaPokemon("caterpie", ruta.getId(), 0 ,100);
-        assertTrue(pokemonsRuta.contains(pokemon));
+    void addPokemon() throws Exception{
+        try {
+            Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
+            int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
+            assertTrue(rutaBD.addPokemon(ruta.getId(), "Caterpie"));
+            List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
+            assertEquals(numberPkRuta + 1, pokemonsRuta.size());
+            RutaPokemon pokemon = new RutaPokemon("caterpie", ruta.getId(), 0, 100);
+            assertTrue(pokemonsRuta.contains(pokemon));
+        } catch (SQLIntegrityConstraintViolationException e){
+            throw new Exception("No debería dar un error de integridad aquí");
+        }
     }
 
     @Test
-    void addPokemonConNiveles(){
-        Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
-        int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
-        assertTrue(rutaBD.addPokemon(ruta.getId(), "Pikachu", 3, 5));
-        List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
-        RutaPokemon pokemon = pokemonsRuta.get(1);
-        assertEquals("pikachu", pokemon.getPokemon());
-        assertEquals(3, pokemon.getNivel_minimo());
-        assertEquals(5, pokemon.getNivel_maximo());
-
+    void addPokemonConNiveles() throws Exception{
+        try {
+            Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
+            int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
+            assertTrue(rutaBD.addPokemon(ruta.getId(), "Pikachu", 3, 5));
+            List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
+            RutaPokemon pokemon = pokemonsRuta.get(1);
+            assertEquals("pikachu", pokemon.getPokemon());
+            assertEquals(3, pokemon.getNivel_minimo());
+            assertEquals(5, pokemon.getNivel_maximo());
+        } catch (SQLIntegrityConstraintViolationException e){
+            throw new Exception("No debería dar un error de integridad aquí");
+        }
     }
 
     @Test
     void addPokemon_YaEsta(){
         Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
         int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
-        assertFalse(rutaBD.addPokemon(ruta.getId(), "Bulbasaur"));
+        assertThrows(SQLIntegrityConstraintViolationException.class, () -> rutaBD.addPokemon(ruta.getId(), "Bulbasaur"));
         List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
         assertEquals(numberPkRuta , pokemonsRuta.size());
     }
 
     @Test
-    void addPokemon_NoEsxiste(){
-        Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
-        int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
-        assertFalse(rutaBD.addPokemon(ruta.getId(), "Jajbse"));
-        List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
-        assertEquals(numberPkRuta , pokemonsRuta.size());
+    void addPokemon_NoEsxiste() throws Exception{
+        try {
+            Ruta ruta = rutaBD.getRuta("Ruta 1", "Kanto").get();
+            int numberPkRuta = rutaBD.getPokemons(ruta.getId()).size();
+            assertFalse(rutaBD.addPokemon(ruta.getId(), "Jajbse"));
+            List<RutaPokemon> pokemonsRuta = rutaBD.getPokemons(ruta.getId());
+            assertEquals(numberPkRuta, pokemonsRuta.size());
+        } catch (SQLIntegrityConstraintViolationException e){
+            throw new Exception("No debería dar un error de integridad aquí");
+        }
     }
 
     @Test
@@ -314,5 +342,21 @@ class RutaBDTest {
         assertTrue(rutaBD.subirNivelesRuta(ruta.getId(), 4));
         List<RutaPokemon> pokemonRutaNuevo = rutaBD.getPokemons(ruta.getId());
         assertEquals(pokemonRutaViejo.get(0).getNivel_maximo() + 4 , pokemonRutaNuevo.get(0).getNivel_maximo());
+    }
+
+    @Test
+    void removePokemonRuta(){
+        int numberPkRuta = rutaBD.getPokemons(12).size();
+        assertTrue(rutaBD.removePokemonRuta(12, 37));
+        int nuevoNumberPkRuta = rutaBD.getPokemons(12).size();
+        assertEquals(numberPkRuta -1, nuevoNumberPkRuta);
+    }
+
+    @Test
+    void removePokemonRuta_NoEsta(){
+        int numberPkRuta = rutaBD.getPokemons(12).size();
+        assertFalse(rutaBD.removePokemonRuta(12, 1));
+        int nuevoNumberPkRuta = rutaBD.getPokemons(12).size();
+        assertEquals(numberPkRuta, nuevoNumberPkRuta);
     }
 }
