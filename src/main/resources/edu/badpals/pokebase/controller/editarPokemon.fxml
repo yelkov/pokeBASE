@@ -125,7 +125,7 @@
                   <HBox alignment="CENTER" prefHeight="47.0" prefWidth="560.0" spacing="20.0">
                      <children>
                         <Button fx:id="btnCrear" mnemonicParsing="false" onAction="#crearPokemon" text="Crear" />
-                        <Button fx:id="btnModificar" mnemonicParsing="false" text="Modificar" />
+                        <Button fx:id="btnModificar" mnemonicParsing="false" onAction="#modificarPokemon" text="Modificar" />
                         <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#eliminarPokemon" text="Eliminar" />
                      </children>
                   </HBox>
