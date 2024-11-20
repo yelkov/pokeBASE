@@ -3,7 +3,12 @@ package edu.badpals.pokebase.view;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
+import java.text.FieldPosition;
 import java.util.Optional;
 
 public class View {
@@ -38,6 +43,18 @@ public class View {
 
         Optional<ButtonType> respuesta = confirmacion.showAndWait();
         return respuesta;
+    }
+
+    public static Optional<File> abrirFileChooserExp(Stage stage){
+        FileChooser fl = new FileChooser();
+        fl.setInitialDirectory(new File(System.getProperty("user.home")));
+        fl.setTitle("Guardar archivo");
+
+        fl.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos JSON (*.json)", "*.json"));
+
+        File selectedFile = fl.showSaveDialog(stage);
+        return selectedFile == null? Optional.empty(): Optional.of(selectedFile);
+
     }
 
 }

@@ -4,6 +4,7 @@ import edu.badpals.pokebase.model.AccesoBD;
 import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.PokemonBD;
 import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.service.DocumentExporter;
 import edu.badpals.pokebase.view.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,12 +18,14 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Optional;
 
 public class ControllerPokemon {
     @FXML
-    private Button btnVolver, btnLimpiar, btnNuevaBusqueda, btnEvolucionaDe,btnMostrarAnterior,btnMostrarPosterior, btnCrear, btnModificar, btnEliminar;
+    private Button btnVolver, btnLimpiar, btnNuevaBusqueda, btnEvolucionaDe,btnMostrarAnterior,btnMostrarPosterior, btnCrear, btnModificar, btnEliminar, btnExportar, btnMenuPrincipal;
     @FXML
     private ImageView imgPokemon;
     @FXML
@@ -218,6 +221,26 @@ public class ControllerPokemon {
             e.printStackTrace();
         }
 
+    }
+
+    public void exportar(ActionEvent action){
+        Stage stage = (Stage) ((Node) action.getSource()).getScene().getWindow();
+        Optional<File> posibleDirectorio = View.abrirFileChooserExp(stage);
+        if(posibleDirectorio.isPresent()){
+            String ruta = posibleDirectorio.get().getAbsolutePath();
+            boolean exportaCorrecto = DocumentExporter.exportToJson(pokemon,ruta);
+            if(exportaCorrecto){
+                View.lanzarMensajeAviso(
+                        "Aviso",
+                        "Exportación exitosa",
+                        "Se han exportado los datos de pokémon a: "+ ruta);
+            }else{
+                View.lanzarMensajeError(
+                        "Error",
+                        "Error de exportación",
+                        "Se ha producido un error inesperado. Consulte el log para más información.");
+            }
+        }
     }
 
 }

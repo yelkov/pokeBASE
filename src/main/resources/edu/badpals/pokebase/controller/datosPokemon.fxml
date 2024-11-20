@@ -18,10 +18,10 @@
       <HBox prefHeight="3.0" prefWidth="560.0" spacing="15.0">
          <children>
             <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#handleVolver" text="Volver" />
-            <Button fx:id="btnLimpiar" onAction="#limpiarPanel" mnemonicParsing="false" text="Limpiar" />
+            <Button fx:id="btnMenuPrincipal" mnemonicParsing="false" onAction="#limpiarPanel" text="Ir al Menú principal" />
             <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnLogIn" text="Log in" />
-            <Button fx:id="btnRegistrarse" text="Registrarse" />
+            <Button fx:id="btnLimpiar" text="Limpiar" />
+            <Button fx:id="btnExportar" onAction="#exportar" text="Exportar JSON" />
          </children>
       </HBox>
       <GridPane alignment="CENTER">
@@ -45,7 +45,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <ImageView fx:id="imgPokemon" pickOnBounds="true" preserveRatio="true" visible="false" managed="false"/>
+                  <ImageView fx:id="imgPokemon" managed="false" pickOnBounds="true" preserveRatio="true" visible="false" />
                   <Label fx:id="lblNombrePokemon" />
                   <HBox alignment="CENTER" prefHeight="21.0" prefWidth="560.0" spacing="15.0">
                      <children>
@@ -87,12 +87,12 @@
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
             </VBox>
-            <Button fx:id="btnMostrarAnterior" minHeight="50.0" mnemonicParsing="false" disable="true" onAction="#cambiarPokemon" text="&lt;" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <Button fx:id="btnMostrarAnterior" disable="true" minHeight="50.0" mnemonicParsing="false" onAction="#cambiarPokemon" text="&lt;" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <tooltip>
                   <Tooltip text="Mostrar pokémon anterior" />
                </tooltip>
             </Button>
-            <Button fx:id="btnMostrarPosterior" minHeight="50.0" mnemonicParsing="false" disable="true" onAction="#cambiarPokemon" text="&gt;" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <Button fx:id="btnMostrarPosterior" disable="true" minHeight="50.0" mnemonicParsing="false" onAction="#cambiarPokemon" text="&gt;" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <tooltip>
                   <Tooltip text="Mostrar pokémon posterior" />
                </tooltip>
@@ -119,9 +119,9 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="47.0" prefWidth="560.0" spacing="20.0">
                      <children>
-                        <Button fx:id="btnCrear" onAction="#editarPokemon" mnemonicParsing="false" text="Crear nuevo " />
-                        <Button fx:id="btnModificar" onAction="#editarPokemon" mnemonicParsing="false" text="Modificar Pokémon" />
-                        <Button fx:id="btnEliminar" onAction="#eliminarPokemon" mnemonicParsing="false" text="Eliminar Pokémon" />
+                        <Button fx:id="btnCrear" mnemonicParsing="false" onAction="#editarPokemon" text="Crear nuevo " />
+                        <Button fx:id="btnModificar" mnemonicParsing="false" onAction="#editarPokemon" text="Modificar Pokémon" />
+                        <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#eliminarPokemon" text="Eliminar Pokémon" />
                      </children>
                   </HBox>
                </children>
