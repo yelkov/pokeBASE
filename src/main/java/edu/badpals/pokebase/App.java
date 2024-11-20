@@ -10,7 +10,7 @@ import java.io.IOException;
 public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("controller/main.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("controller/login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
         stage.setTitle("Pokemon World");
         stage.setScene(scene);
