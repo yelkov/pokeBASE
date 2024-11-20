@@ -134,7 +134,22 @@ public class ControllerPokemon {
             ByteArrayInputStream bais = new ByteArrayInputStream(pokemon.getImagen());
             image = new Image(bais);
         }
-        imgPokemon.setImage(image);
+        if (image != null) {
+            imgPokemon.setImage(image);
+
+            double originalWidth = image.getWidth();
+            double originalHeight = image.getHeight();
+
+            if (originalWidth > 150 || originalHeight > 150) {
+                imgPokemon.setFitWidth(150);
+                imgPokemon.setFitHeight(150);
+                imgPokemon.setPreserveRatio(true);
+            } else {
+                imgPokemon.setFitWidth(originalWidth);
+                imgPokemon.setFitHeight(originalHeight);
+            }
+        }
+
     }
 
     public void buscarPokemon(){
