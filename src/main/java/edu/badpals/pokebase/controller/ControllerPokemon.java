@@ -220,14 +220,4 @@ public class ControllerPokemon {
 
     }
 
-    private FXMLLoader getFxmlLoader(ActionEvent actionEvent, String sceneFxml) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneFxml));
-        Scene scene = new Scene(loader.load(),600,500);
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-
-        stage.setScene(scene);
-        stage.show();
-        return loader;
-    }
-
 }

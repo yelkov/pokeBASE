@@ -114,7 +114,6 @@ public class ControllerEditarPokemon {
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-        // Mostrar diálogo y procesar archivo seleccionado
         File archivoSeleccionado = fileChooser.showOpenDialog(stage);
         if (archivoSeleccionado != null) {
             destino.setText(archivoSeleccionado.getAbsolutePath());
