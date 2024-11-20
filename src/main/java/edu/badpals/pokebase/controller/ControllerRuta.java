@@ -324,4 +324,13 @@ public class ControllerRuta {
             }
         }
     }
+
+    @FXML
+    private void handleVolver(ActionEvent event) {
+        try {
+            Controller.volver(event, this.getClass());
+        } catch (IOException e){
+            ErrorLogger.saveErrorLog("Error al volver: " + e.getMessage());
+        }
+    }
 }

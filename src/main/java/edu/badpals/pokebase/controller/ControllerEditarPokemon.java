@@ -2,6 +2,7 @@ package edu.badpals.pokebase.controller;
 
 import edu.badpals.pokebase.model.*;
 import edu.badpals.pokebase.service.DocumentExporter;
+import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -390,7 +391,13 @@ public class ControllerEditarPokemon {
         }
     }
 
-    public void handleVolver(ActionEvent actionEvent) {
+    @FXML
+    private void handleVolver(ActionEvent event) {
+        try {
+            Controller.volver(event, this.getClass());
+        } catch (IOException e){
+            ErrorLogger.saveErrorLog("Error al volver: " + e.getMessage());
+        }
     }
 
     public boolean tieneCamposObligatorios(){

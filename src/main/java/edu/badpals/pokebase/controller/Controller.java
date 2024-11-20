@@ -107,6 +107,7 @@ public class Controller {
     }
 
     public static FXMLLoader getFxmlLoader(ActionEvent actionEvent,String sceneFxml, Class clase, int ancho, int largo) throws IOException {
+        ScenePile.addToPile(sceneFxml);
         FXMLLoader loader = new FXMLLoader(clase.getResource(sceneFxml));
         Scene scene = new Scene(loader.load(),ancho,largo);
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
@@ -114,6 +115,11 @@ public class Controller {
         stage.setScene(scene); // Establecer la nueva escena en el Stage
         stage.show();
         return loader;
+    }
+
+    public static void volver(ActionEvent actionEvent, Class clase)  throws IOException {
+        String view = ScenePile.goBack();
+        Controller.getFxmlLoader(actionEvent, view, clase, 800, 800);
     }
 
     public void buscarRuta(ActionEvent actionEvent) {

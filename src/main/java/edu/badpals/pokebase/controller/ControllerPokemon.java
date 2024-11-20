@@ -5,6 +5,7 @@ import edu.badpals.pokebase.model.Pokemon;
 import edu.badpals.pokebase.model.PokemonBD;
 import edu.badpals.pokebase.model.RutaBD;
 import edu.badpals.pokebase.service.DocumentExporter;
+import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -177,8 +178,11 @@ public class ControllerPokemon {
 
     @FXML
     private void handleVolver(ActionEvent event) {
-        Stage stage = (Stage) btnVolver.getScene().getWindow();
-        stage.hide();
+        try {
+            Controller.volver(event, this.getClass());
+        } catch (IOException e){
+            ErrorLogger.saveErrorLog("Error al volver: " + e.getMessage());
+        }
     }
 
     public void limpiarPanel(){
