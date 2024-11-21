@@ -215,7 +215,8 @@ public class ControllerPokemon {
         Map<String, Object> datos = new HashMap<>();
 
         if(actionEvent.getSource() == btnCrear){
-        }else if(actionEvent.getSource() == btnModificar){
+        }
+        else if(actionEvent.getSource() == btnModificar){
             datos.put("pokemon", pokemon);
         }
         SceneManager.setDatos(datos);

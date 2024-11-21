@@ -43,13 +43,9 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        accesoBD = new AccesoBD();
-        accesoBD.connect();
-        pokemonBD = new PokemonBD(accesoBD);
-        rutaBD = new RutaBD(accesoBD);
-
-        SceneManager.setRutaBD(rutaBD);
-        SceneManager.setPokemonBD(pokemonBD);
+        accesoBD = SceneManager.getAccesoBD();
+        pokemonBD = SceneManager.getPokemonBD();
+        rutaBD = SceneManager.getRutaBD();
 
         List<String> regiones = rutaBD.getAllRegions();
         cmbRegiones.setItems(FXCollections.observableArrayList(regiones
@@ -135,27 +131,5 @@ public class Controller {
         datos.put("criteriaRuta", criteriaRuta);
         SceneManager.setDatos(datos);
         SceneManager.goToView(actionEvent,"listaRutas.fxml",this.getClass(),550,600);
-
-
     }
-
-/*
-    public static FXMLLoader getFxmlLoader(ActionEvent actionEvent,String sceneFxml, Class clase, int ancho, int largo) throws IOException {
-        FXMLLoader loader = new FXMLLoader(clase.getResource(sceneFxml));
-        Scene scene = new Scene(loader.load(),ancho,largo);
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
-        // Crear una nueva escena con el contenido cargado
-        stage.setScene(scene); // Establecer la nueva escena en el Stage
-        stage.show();
-        return loader;
-    }
-
-    public static void volver(ActionEvent actionEvent, Class clase)  throws IOException {
-        String view = SceneManager.getPreviousView();
-        Controller.getFxmlLoader(actionEvent, view, clase, 800, 800);
-    } */
-
-
-
-
 }

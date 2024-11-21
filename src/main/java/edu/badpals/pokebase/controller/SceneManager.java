@@ -1,5 +1,6 @@
 package edu.badpals.pokebase.controller;
 
+import edu.badpals.pokebase.model.AccesoBD;
 import edu.badpals.pokebase.model.PokemonBD;
 import edu.badpals.pokebase.model.RutaBD;
 import edu.badpals.pokebase.service.ErrorLogger;
@@ -20,6 +21,7 @@ public class SceneManager {
     private static Map<String, Object> datos = new HashMap<>();
     private static RutaBD rutaBD;
     private static PokemonBD pokemonBD;
+    private static AccesoBD accesoBD;
 
     public static void addToPile(String view){
         stack.push(view);
@@ -45,6 +47,10 @@ public class SceneManager {
     public static PokemonBD getPokemonBD(){
         return pokemonBD;
     }
+
+    public static AccesoBD getAccesoBD() {return accesoBD;}
+
+    public static void setAccesoBD(AccesoBD accesoBD) {SceneManager.accesoBD = accesoBD;}
 
     public static void setDatos(Map<String,Object> datosNuevos){
         datos = datosNuevos;

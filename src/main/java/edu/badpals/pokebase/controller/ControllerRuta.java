@@ -245,6 +245,7 @@ public class ControllerRuta {
             }
         } catch (SQLIntegrityConstraintViolationException e){
             View.lanzarMensajeError("Error", "Error al modificar la ruta", "Ya existe una ruta diferente con el nombre y región indicados");
+            setRuta(ruta);
         }
     }
 
@@ -304,9 +305,12 @@ public class ControllerRuta {
 
     @FXML
     private void handleVolver(ActionEvent event) {
-        Map<String, Object> datos = new HashMap<>();
-        datos.put("criteriaRuta", criteriaRuta);
-        SceneManager.setDatos(datos);
+
+        if(criteriaRuta != null) {
+            Map<String, Object> datos = new HashMap<>();
+            datos.put("criteriaRuta", criteriaRuta);
+            SceneManager.setDatos(datos);
+        }
         SceneManager.volver(event, this.getClass());
     }
 

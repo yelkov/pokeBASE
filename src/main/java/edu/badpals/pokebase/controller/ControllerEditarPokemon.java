@@ -34,6 +34,11 @@ public class ControllerEditarPokemon {
     public void initialize() {
         pokemonBD = SceneManager.getPokemonBD();
 
+        Map<String, Object> datos = SceneManager.getDatos();
+        if (datos.containsKey("pokemon")){
+            setPokemon((Pokemon) datos.get("pokemon"));
+        }
+
         permitirSoloEnteros(tfId);
         if(pokemon == null){
             btnEliminar.setDisable(true);
@@ -41,10 +46,7 @@ public class ControllerEditarPokemon {
             btnExportar.setDisable(true);
         }
 
-        Map<String, Object> datos = SceneManager.getDatos();
-        if (datos.containsKey("pokemon")){
-            setPokemon((Pokemon) datos.get("pokemon"));
-        }
+
     }
 
     private void permitirSoloEnteros(TextField textField) {

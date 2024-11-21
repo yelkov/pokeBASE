@@ -43,7 +43,13 @@ public class ControllerListaRutas {
         cmbOrden.setItems(FXCollections.observableArrayList("ASC", "DESC"));
         cmbOrden.setValue("ASC");
 
-        Map<String, ?> datos = SceneManager.getDatos();
+        List<String> regiones = rutaBD.getAllRegions();
+        regiones.add("Todas");
+        cmbRegion.setItems(FXCollections.observableArrayList(regiones
+        ));
+        cmbRegion.setValue("Todas");
+
+        Map<String, Object> datos = SceneManager.getDatos();
         if (datos.containsKey("criteriaRuta")){
             setCriteria((CriteriaRuta) datos.get("criteriaRuta"));
             refiltrarRutas();
@@ -63,15 +69,6 @@ public class ControllerListaRutas {
         criteriaRuta = new CriteriaRuta(pokemon, regionSeleccionada, criterio, orden);
         List<Ruta> rutas = rutaBD.getRutasByFilters(criteriaRuta);
         setRutas(rutas);
-    }
-
-    public void setAcceso(RutaBD rutaBD) {
-        this.rutaBD = rutaBD;
-        List<String> regiones = rutaBD.getAllRegions();
-        regiones.add("Todas");
-        cmbRegion.setItems(FXCollections.observableArrayList(regiones
-        ));
-        cmbRegion.setValue("Todas");
     }
 
     public void setCriteria(CriteriaRuta criteria){
