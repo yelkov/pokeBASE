@@ -21,8 +21,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ControllerRuta {
     @FXML
@@ -50,13 +49,21 @@ public class ControllerRuta {
     private CriteriaRuta criteriaRuta;
 
     public void initialize() {
+        rutaBD = SceneManager.getRutaBD();
+        Map<String, Object> datos = SceneManager.getDatos();
+        if (datos.containsKey("ruta")){
+            setRuta((Ruta) datos.get("ruta"));
+            if (datos.containsKey("rutas") && datos.containsKey("criteriaRuta")){
+                rutas = (List<Ruta>) datos.get("rutas");
+                currentIndex = rutas.indexOf(ruta);
+                criteriaRuta = (CriteriaRuta) datos.get("criteriaRuta");
+                setPartOfList();
+            }
+        }
+
         permitirSoloEnteros(txtMaximoNivel);
         permitirSoloEnteros(txtMinimoNivel);
         permitirSoloEnteros(txtNiveles);
-    }
-
-    public void setAcceso(RutaBD rutaBD) {
-        this.rutaBD = rutaBD;
     }
 
     private void permitirSoloEnteros(TextField textField) {
@@ -153,26 +160,9 @@ public class ControllerRuta {
         }
     }
 
-
-    public void buscarInfoPokemon(ActionEvent actionEvent){
-        try{
-            FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "datosPokemon.fxml", this.getClass(), 600, 500);
-            ControllerPokemon controller = loader.getController();
-            String pokemonName = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
-            Pokemon pokemon = rutaBD.getPokemonBD().getPokemonByName(pokemonName);
-            controller.setPokemon(pokemon);
-        } catch (IOException e){
-            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
-            ErrorLogger.saveErrorLog(e.getMessage());
-        }
-    }
-
-    public void setPartOfList(List<Ruta> rutas, int currentIndex, CriteriaRuta criteria){
-        this.rutas = rutas;
-        this.currentIndex = currentIndex;
+    public void setPartOfList(){
         showNode(menuParteLista, true);
-        criteriaRuta = criteria;
-        lblCriterios.setText(criteria.toString());
+        lblCriterios.setText(criteriaRuta.toString());
         if (rutas.size()==1){
             btnAnterior.setDisable(true);
             btnSiguiente.setDisable(true);
@@ -207,28 +197,6 @@ public class ControllerRuta {
         } catch (IndexOutOfBoundsException e){
             currentIndex = rutas.size()-1;
             setRuta(rutas.get(currentIndex));
-        }
-    }
-
-    public void volverListaRutas(ActionEvent actionEvent){
-        try{
-            FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "listaRutas.fxml", this.getClass(),550, 600);
-            ControllerListaRutas controller = loader.getController();
-            controller.setRutas(rutas);
-            controller.setAcceso(rutaBD);
-            controller.setCriteria(criteriaRuta);
-        } catch (IOException e){
-            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
-            ErrorLogger.saveErrorLog(e.getMessage());
-        }
-    }
-
-    public void volverAlInicio(ActionEvent actionEvent){
-        try {
-            FXMLLoader loader = Controller.getFxmlLoader(actionEvent, "main.fxml", this.getClass(), 800, 600);
-        } catch (IOException e){
-            View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
-            ErrorLogger.saveErrorLog(e.getMessage());
         }
     }
 
@@ -277,6 +245,7 @@ public class ControllerRuta {
             }
         } catch (SQLIntegrityConstraintViolationException e){
             View.lanzarMensajeError("Error", "Error al modificar la ruta", "Ya existe una ruta diferente con el nombre y región indicados");
+            setRuta(ruta);
         }
     }
 
@@ -325,12 +294,27 @@ public class ControllerRuta {
         }
     }
 
+    public void buscarInfoPokemon(ActionEvent actionEvent){
+        String pokemonName = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
+        Pokemon pokemon = rutaBD.getPokemonBD().getPokemonByName(pokemonName);
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("pokemon", pokemon);
+        SceneManager.setDatos(datos);
+        SceneManager.goToView(actionEvent, "datosPokemon.fxml", this.getClass(), 600, 500);
+    }
+
     @FXML
     private void handleVolver(ActionEvent event) {
-        try {
-            Controller.volver(event, this.getClass());
-        } catch (IOException e){
-            ErrorLogger.saveErrorLog("Error al volver: " + e.getMessage());
+
+        if(criteriaRuta != null) {
+            Map<String, Object> datos = new HashMap<>();
+            datos.put("criteriaRuta", criteriaRuta);
+            SceneManager.setDatos(datos);
         }
+        SceneManager.volver(event, this.getClass());
+    }
+
+    public void volverAlInicio(ActionEvent actionEvent){
+        SceneManager.volverAlInicio(actionEvent, this.getClass());
     }
 }

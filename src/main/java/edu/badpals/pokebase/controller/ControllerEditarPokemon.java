@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 public class ControllerEditarPokemon {
@@ -31,10 +32,12 @@ public class ControllerEditarPokemon {
     private RutaBD rutaBD;
 
     public void initialize() {
-        accesoBD = new AccesoBD();
-        accesoBD.connect();
-        pokemonBD = new PokemonBD(accesoBD);
-        rutaBD = new RutaBD(accesoBD);
+        pokemonBD = SceneManager.getPokemonBD();
+
+        Map<String, Object> datos = SceneManager.getDatos();
+        if (datos.containsKey("pokemon")){
+            setPokemon((Pokemon) datos.get("pokemon"));
+        }
 
         permitirSoloEnteros(tfId);
         if(pokemon == null){
@@ -42,6 +45,8 @@ public class ControllerEditarPokemon {
             btnModificar.setDisable(true);
             btnExportar.setDisable(true);
         }
+
+
     }
 
     private void permitirSoloEnteros(TextField textField) {
@@ -393,11 +398,11 @@ public class ControllerEditarPokemon {
 
     @FXML
     private void handleVolver(ActionEvent event) {
-        try {
-            Controller.volver(event, this.getClass());
-        } catch (IOException e){
-            ErrorLogger.saveErrorLog("Error al volver: " + e.getMessage());
-        }
+        SceneManager.volver(event, this.getClass());
+    }
+
+    public void volverAlInicio(ActionEvent actionEvent){
+        SceneManager.volverAlInicio(actionEvent, this.getClass());
     }
 
     public boolean tieneCamposObligatorios(){

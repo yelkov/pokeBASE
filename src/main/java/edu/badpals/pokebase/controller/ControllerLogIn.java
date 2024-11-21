@@ -1,6 +1,9 @@
 package edu.badpals.pokebase.controller;
 
 import edu.badpals.pokebase.auth.LogInManager;
+import edu.badpals.pokebase.model.AccesoBD;
+import edu.badpals.pokebase.model.PokemonBD;
+import edu.badpals.pokebase.model.RutaBD;
 import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
 import javafx.event.ActionEvent;
@@ -29,12 +32,7 @@ public class ControllerLogIn {
         String pass = txtContrasena.getText();
         boolean isLoginOk = manager.authenticate(user, pass);
         if(isLoginOk){
-            try {
-                Controller.getFxmlLoader(event, "main.fxml", this.getClass(), 800, 600);
-            } catch (IOException e) {
-                ErrorLogger.saveErrorLog("Error al cambiar de ventana desde el login al main, " + e.getMessage());
-                View.lanzarMensajeError("Error", "Error al cambiar de ventana", "No se pudo cambiar de ventana, consulte el archivo de log para más información");
-            }
+            enterMain(event);
         } else {
             View.lanzarMensajeError("Error", "Autentificación no válida", "El usuario o contraseña no son correctos");
         }
@@ -47,13 +45,7 @@ public class ControllerLogIn {
         try {
             boolean isRegisterOk = manager.signUp(user, pass);
             if (isRegisterOk) {
-                try {
-                    Controller.getFxmlLoader(event, "main.fxml", this.getClass(), 800, 600);
-                } catch (IOException e) {
-                    ErrorLogger.saveErrorLog("Error al cambiar de ventana desde el login al main, " + e.getMessage());
-                    View.lanzarMensajeError("Error", "Error al cambiar de ventana", "No se pudo cambiar de ventana, consulte el archivo de log para más información");
-
-                }
+                    enterMain(event);
             } else {
                 View.lanzarMensajeError("Error", "Registro no válido", "No se ha podido registrar al usuario en la base de datos, consulte el login para más información");
             }
@@ -62,6 +54,18 @@ public class ControllerLogIn {
         } finally {
             limpiar();
         }
+    }
+
+    public void enterMain(ActionEvent event){
+        AccesoBD accesoBD = new AccesoBD();
+        accesoBD.connect();
+        PokemonBD pokemonBD = new PokemonBD(accesoBD);
+        RutaBD rutaBD = new RutaBD(accesoBD);
+
+        SceneManager.setAccesoBD(accesoBD);
+        SceneManager.setRutaBD(rutaBD);
+        SceneManager.setPokemonBD(pokemonBD);
+        SceneManager.goToView(event, "main.fxml", this.getClass(), 800, 600);
     }
 
     private void limpiar(){
