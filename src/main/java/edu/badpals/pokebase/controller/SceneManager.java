@@ -91,7 +91,7 @@ public class SceneManager {
 
     public static void volverAlInicio(ActionEvent actionEvent, Class clase){
         try {
-            loadFxml(actionEvent, "main.fxml", clase, 800, 600);
+            loadFxml(actionEvent, "main.fxml", clase, 900, 700);
         } catch (IOException e){
             View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
             ErrorLogger.saveErrorLog(e.getMessage());

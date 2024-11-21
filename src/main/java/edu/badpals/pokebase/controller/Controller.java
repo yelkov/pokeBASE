@@ -13,6 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,6 +24,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public class Controller {
+
+    @FXML
+    private ImageView logo, imgPokemon, imgRutas;
     @FXML
     private Button btnBuscarPokemon, btnBuscarRuta, btnFiltrarPokemon, btnFiltrarRuta;
 
@@ -64,6 +69,9 @@ public class Controller {
 
         cmbOrden.setItems(FXCollections.observableArrayList("ASC","DESC"));
         cmbOrden.setValue("ASC");
+
+        logo.setImage(new Image(getClass().getResource("/images/logo.png").toExternalForm()));
+        imgPokemon.setImage(new Image(getClass().getResource("/images/imgPokemon.png").toExternalForm()));
 
     }
 

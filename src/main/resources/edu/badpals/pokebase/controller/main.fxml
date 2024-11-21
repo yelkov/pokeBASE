@@ -17,7 +17,7 @@
     </padding>
    <VBox alignment="CENTER" spacing="10.0">
       <children>
-         <ImageView fx:id="imgCabecera" fitHeight="75.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" />
+         <ImageView fx:id="logo" fitHeight="75.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" />
          <Label text="¡Bienvenido al mundo pokémon!" />
       </children>
       <VBox.margin>
@@ -38,7 +38,7 @@
                      <Insets top="-20.0" />
                   </VBox.margin>
                </Separator>
-               <ImageView fx:id="imgPokemon" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" />
+               <ImageView fx:id="imgPokemon" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" />
                <HBox>
                   <children>
                      <Label text="Buscar detalles de pokémon:">

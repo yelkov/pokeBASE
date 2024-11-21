@@ -36,3 +36,9 @@ Error al ejecutar la query 'select countAllRoutes()' como parte del método getR
 Error al ejecutar la query 'select * from rutas...' como parte del método getRutasByFilters(...) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_POKEMON does not exist - 2024-11-19 18:18:08
 Error al ejecutar la query 'select * from rutas...' como parte del método getRutasByFilters(...) de RutaBD: FUNCTION bdpokemon_test.FN_GET_ID_POKEMON does not exist - 2024-11-19 18:18:08
 Error al realizar la query 'call MODIFCIAR_NIVELES_EN_RUTA(rutaId, niveles)' como parte del método subirNivelesRuta(int rutaId, int niveles) de RutaBD: PROCEDURE bdpokemon.MODIFCIAR_NIVELES_EN_RUTA does not exist - 2024-11-20 10:19:02
+Error al realizar la acción de ir a otra vista: 
+/G:/Mi%20unidad/DAM/2_DAM_G/AD/PROYECTO%20BD/pokeBASE/target/classes/edu/badpals/pokebase/controller/main.fxml
+ - 2024-11-21 09:37:52
+Error al realizar la acción de ir a otra vista: 
+/G:/Mi%20unidad/DAM/2_DAM_G/AD/PROYECTO%20BD/pokeBASE/target/classes/edu/badpals/pokebase/controller/main.fxml
+ - 2024-11-21 09:38:19

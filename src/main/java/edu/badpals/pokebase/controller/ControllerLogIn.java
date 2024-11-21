@@ -65,7 +65,7 @@ public class ControllerLogIn {
         SceneManager.setAccesoBD(accesoBD);
         SceneManager.setRutaBD(rutaBD);
         SceneManager.setPokemonBD(pokemonBD);
-        SceneManager.goToView(event, "main.fxml", this.getClass(), 800, 600);
+        SceneManager.volverAlInicio(event,this.getClass());
     }
 
     private void limpiar(){
