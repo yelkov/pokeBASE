@@ -133,6 +133,7 @@ public class ControllerPokemon {
 
     public void setImage() {
         mostrar(imgPokemon,true,true);
+        imgPokemon.setImage(null);
         Image image = null;
         if(pokemon.getGif() != null) {
             ByteArrayInputStream bais = new ByteArrayInputStream(pokemon.getGif());
