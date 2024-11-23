@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" stylesheets="@../../../../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.Controller">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <VBox alignment="CENTER" spacing="10.0">
+      <children>
+         <ImageView fx:id="logo" fitHeight="75.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" />
+         <Label text="¡Bienvenido al mundo pokémon!" />
+      </children>
+      <VBox.margin>
+         <Insets bottom="20.0" />
+      </VBox.margin>
+   </VBox>
+   <HBox alignment="CENTER">
+      <children>
+         <VBox alignment="TOP_CENTER" minWidth="400.0" spacing="20.0">
+            <children>
+               <Label text="POKÉMON">
+                  <font>
+                     <Font size="16.0" />
+                  </font>
+               </Label>
+               <Separator prefWidth="200.0">
+                  <VBox.margin>
+                     <Insets top="-20.0" />
+                  </VBox.margin>
+               </Separator>
+               <ImageView fx:id="imgPokemon" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+               <HBox>
+                  <children>
+                     <Label text="Buscar detalles de pokémon:">
+                        <font>
+                           <Font size="14.0" />
+                        </font>
+                     </Label>
+                  </children>
+               </HBox>
+               <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                  <children>
+                  
+                      <Label fx:id="welcomeText" text="Nombre o ID:    " />
+                     <TextField id="txtNombrePokemon" fx:id="txtNombrePokemon" />
+                     <Button id="btnBuscarPokemon" fx:id="btnBuscarPokemon" mnemonicParsing="false" onAction="#buscarPokemon" text="Buscar" />
+                  </children>
+               </HBox>
+               <VBox alignment="CENTER" spacing="15.0">
+                  <children>
+                     <HBox alignment="CENTER_LEFT">
+                        <children>
+                           <Label fx:id="lblFiltrado" text="Búsqueda filtrada de Pokémon:">
+                              <font>
+                                 <Font size="14.0" />
+                              </font>
+                           </Label>
+                        </children>
+                        <VBox.margin>
+                           <Insets bottom="15.0" />
+                        </VBox.margin>
+                     </HBox>
+                     <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                        <children>
+                           <Label text="Tipo 1: *           " />
+                           <TextField fx:id="txtTipo1" maxWidth="150.0" minWidth="150.0" />
+                           <Region minWidth="80.0" />
+                        </children>
+                     </HBox>
+                     <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                        <children>
+                           <Label text="Tipo 2:             " />
+                           <TextField fx:id="txtTipo2" maxWidth="150.0" minWidth="150.0" />
+                           <Region minWidth="80.0" />
+                        </children>
+                     </HBox>
+                     <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                        <children>
+                           <Label text="Ordenar por:  " />
+                           <ComboBox fx:id="cmbCriterio" minWidth="150.0" />
+                           <ComboBox fx:id="cmbOrden" maxWidth="80.0" minWidth="80.0" />
+                        </children>
+                     </HBox>
+                     <Button fx:id="btnFiltrarPokemon" mnemonicParsing="false" onAction="#filtrarPokemon" text="Buscar">
+                        <VBox.margin>
+                           <Insets bottom="25.0" top="15.0" />
+                        </VBox.margin>
+                     </Button>
+                     <HBox alignment="CENTER_RIGHT">
+                        <children>
+                           <Button fx:id="btnCrearPokemon" mnemonicParsing="false" onAction="#crearPokemon" text="Crear Pokémon" />
+                        </children>
+                     </HBox>
+                  </children>
+                  <VBox.margin>
+                     <Insets top="20.0" />
+                  </VBox.margin>
+               </VBox>
+            </children>
+            <padding>
+               <Insets bottom="20.0" left="20.0" right="20.0" />
+            </padding>
+         </VBox>
+         <Separator orientation="VERTICAL">
+            <padding>
+               <Insets bottom="30.0" top="60.0" />
+            </padding></Separator>
+         <VBox alignment="TOP_CENTER" minWidth="400.0" spacing="20.0">
+            <children>
+               <Label text="RUTAS">
+                  <font>
+                     <Font size="16.0" />
+                  </font>
+               </Label>
+               <Separator prefWidth="200.0">
+                  <VBox.margin>
+                     <Insets top="-20.0" />
+                  </VBox.margin>
+               </Separator>
+               <ImageView fx:id="imgRutas" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" />
+               <HBox>
+                  <children>
+                     <Label text="Buscar ruta:">
+                        <font>
+                           <Font size="14.0" />
+                        </font>
+                     </Label>
+                  </children>
+               </HBox>
+               <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                  <children>
+                     <Label fx:id="welcomeText1" text="Nombre:  " />
+                     <TextField fx:id="txtNombreRuta" maxWidth="120.0" minWidth="120.0" />
+                     <Label text="Región: " />
+                     <ComboBox fx:id="cmbRegiones" minWidth="90.0" />
+                  </children>
+               </HBox>
+               <HBox alignment="CENTER">
+                  <children>
+                     <Button fx:id="btnBuscarRuta" mnemonicParsing="false" onAction="#buscarRuta" text="Buscar" />
+                  </children>
+                  <VBox.margin>
+                     <Insets bottom="15.0" />
+                  </VBox.margin>
+               </HBox>
+               <VBox alignment="CENTER" spacing="15.0">
+                  <children>
+                     <HBox>
+                        <children>
+                           <Label text="Búsqueda filtrada de rutas:">
+                              <font>
+                                 <Font size="14.0" />
+                              </font>
+                           </Label>
+                        </children>
+                        <VBox.margin>
+                           <Insets bottom="15.0" />
+                        </VBox.margin>
+                     </HBox>
+                     <HBox alignment="CENTER" spacing="15.0">
+                        <children>
+                           <Label text="Nombre de pokemon:  " />
+                           <TextField fx:id="txtPokemonRuta" maxWidth="150.0" minWidth="150.0" />
+                        </children>
+                     </HBox>
+                     <HBox alignment="CENTER_LEFT" spacing="15.0">
+                        <children>
+                           <Label text="          Región:" />
+                           <ComboBox fx:id="cmbFiltrarRegiones" maxWidth="100.0" minWidth="100.0" />
+                        </children>
+                     </HBox>
+                     <HBox alignment="CENTER">
+                        <children>
+                           <Button fx:id="btnFiltrarRuta" mnemonicParsing="false" onAction="#filtrarRuta" text="Buscar">
+                              <HBox.margin>
+                                 <Insets bottom="25.0" top="15.0" />
+                              </HBox.margin>
+                           </Button>
+                        </children>
+                     </HBox>
+                     <HBox alignment="CENTER_RIGHT">
+                        <children>
+                           <Button fx:id="btnCrearRuta" mnemonicParsing="false" onAction="#crearRuta" text="Crear Ruta" />
+                        </children>
+                     </HBox>
+                  </children>
+               </VBox>
+            </children>
+            <padding>
+               <Insets bottom="20.0" left="20.0" right="20.0" />
+            </padding>
+         </VBox>
+      </children>
+   </HBox>
+</VBox>

@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS BDPOKEMON;
-CREATE DATABASE IF NOT EXISTS BDPOKEMON;
-USE BDPOKEMON;
+DROP DATABASE IF EXISTS BDPOKEMON_TEST;
+CREATE DATABASE IF NOT EXISTS BDPOKEMON_TEST;
+USE BDPOKEMON_TEST;
 
 DROP TABLE IF EXISTS POKEMONS;
 CREATE TABLE IF NOT EXISTS POKEMONS(
@@ -248,30 +248,31 @@ INSERT INTO RUTAS (NOMBRE, REGION) VALUES
 ('Isla Canela', 'Kanto'),
 ('Ruta 101', 'Johto');
 
-INSERT INTO RUTAS_POKEMONS (POKEMON, RUTA, NIVEL_MINIMO, NIVEL_MAXIMO) VALUES
-                                                                           (1, 1, 2, 5),  -- Bulbasaur aparece en la Ruta 1 entre los niveles 2 y 5
-                                                                           (2, 2, 16, 18), -- Ivysaur aparece en la Ruta 2 entre los niveles 16 y 18
-                                                                           (4, 3, 3, 6),   -- Charmander aparece en la Ruta 3 entre los niveles 3 y 6
-                                                                           (7, 4, 5, 8),   -- Squirtle aparece en la Ruta 4 entre los niveles 5 y 8
-                                                                           (10, 5, 2, 3),  -- Caterpie aparece en la Ruta 5 entre los niveles 2 y 3
-                                                                           (13, 5, 2, 4),  -- Weedle aparece en la Ruta 5 entre los niveles 2 y 4
-                                                                           (16, 6, 4, 7),  -- Pidgey aparece en la Ruta 6 entre los niveles 4 y 7
-                                                                           (19, 7, 2, 5),  -- Rattata aparece en la Ruta 7 entre los niveles 2 y 5
-                                                                           (21, 8, 7, 9),  -- Spearow aparece en la Ruta 8 entre los niveles 7 y 9
-                                                                           (23, 9, 6, 10), -- Ekans aparece en la Ruta 9 entre los niveles 6 y 10
-                                                                           (25, 10, 10, 12), -- Pikachu aparece en la Ruta 10 entre los niveles 10 y 12
-                                                                           (25, 39, 10, 12), -- Pikachu aparece en la Ruta 101 de Johto entre los niveles 10 y 12
-                                                                           (29, 11, 3, 5), -- Nidoran♀ aparece en la Ruta 11 entre los niveles 3 y 5
-                                                                           (32, 11, 3, 5), -- Nidoran♂ aparece en la Ruta 11 entre los niveles 3 y 5
-                                                                           (37, 12, 6, 8), -- Vulpix aparece en la Ruta 12 entre los niveles 6 y 8
-                                                                           (41, 13, 4, 6), -- Zubat aparece en la Ruta 13 entre los niveles 4 y 6
-                                                                           (60, 14, 10, 12), -- Poliwag aparece en la Ruta 14 entre los niveles 10 y 12
-                                                                           (69, 15, 12, 15), -- Bellsprout aparece en la Ruta 15 entre los niveles 12 y 15
-                                                                           (96, 18, 22, 25), -- Drowzee aparece en la Ruta 18 entre los niveles 22 y 25
-                                                                           (129, 19, 5, 10); -- Magikarp aparece en la Ruta 19 entre los niveles 5 y 10
 
+INSERT INTO RUTAS_POKEMONS (POKEMON, RUTA, NIVEL_MINIMO, NIVEL_MAXIMO) VALUES
+(1, 1, 2, 5),  -- Bulbasaur aparece en la Ruta 1 entre los niveles 2 y 5
+(2, 2, 16, 18), -- Ivysaur aparece en la Ruta 2 entre los niveles 16 y 18
+(4, 3, 3, 6),   -- Charmander aparece en la Ruta 3 entre los niveles 3 y 6
+(7, 4, 5, 8),   -- Squirtle aparece en la Ruta 4 entre los niveles 5 y 8
+(10, 5, 2, 3),  -- Caterpie aparece en la Ruta 5 entre los niveles 2 y 3
+(13, 5, 2, 4),  -- Weedle aparece en la Ruta 5 entre los niveles 2 y 4
+(16, 6, 4, 7),  -- Pidgey aparece en la Ruta 6 entre los niveles 4 y 7
+(19, 7, 2, 5),  -- Rattata aparece en la Ruta 7 entre los niveles 2 y 5
+(21, 8, 7, 9),  -- Spearow aparece en la Ruta 8 entre los niveles 7 y 9
+(23, 9, 6, 10), -- Ekans aparece en la Ruta 9 entre los niveles 6 y 10
+(25, 10, 10, 12), -- Pikachu aparece en la Ruta 10 entre los niveles 10 y 12
+(25, 39, 10, 12), -- Pikachu aparece en la Ruta 101 de Johto entre los niveles 10 y 12
+(29, 11, 3, 5), -- Nidoran♀ aparece en la Ruta 11 entre los niveles 3 y 5
+(32, 11, 3, 5), -- Nidoran♂ aparece en la Ruta 11 entre los niveles 3 y 5
+(37, 12, 6, 8), -- Vulpix aparece en la Ruta 12 entre los niveles 6 y 8
+(41, 13, 4, 6), -- Zubat aparece en la Ruta 13 entre los niveles 4 y 6
+(60, 14, 10, 12), -- Poliwag aparece en la Ruta 14 entre los niveles 10 y 12
+(69, 15, 12, 15), -- Bellsprout aparece en la Ruta 15 entre los niveles 12 y 15
+(96, 18, 22, 25), -- Drowzee aparece en la Ruta 18 entre los niveles 22 y 25
+(129, 19, 5, 10); -- Magikarp aparece en la Ruta 19 entre los niveles 5 y 10
 
 delimiter $$
+
 drop procedure if exists MODIFCIAR_NIVELES_EN_RUTA$$
 create procedure MODIFCIAR_NIVELES_EN_RUTA(IN RUTA_ID INT, IN SUBIDA INT)
 BEGIN
@@ -354,5 +355,3 @@ BEGIN
       end if;
 
 END$$
-
-
