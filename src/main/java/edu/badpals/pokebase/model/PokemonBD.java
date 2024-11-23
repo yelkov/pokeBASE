@@ -1,6 +1,7 @@
 package edu.badpals.pokebase.model;
 
 import edu.badpals.pokebase.criteria.CriteriaPokemon;
+import edu.badpals.pokebase.service.ErrorLogger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -26,8 +27,7 @@ public class PokemonBD {
                 return false;
             }
         }catch (SQLException e) {
-            System.out.println("Error al comprobar existencia de id.");
-            e.printStackTrace();
+            ErrorLogger.saveErrorLog("Error al comprobar existencia de id "+e.getMessage());
             return false;
         }
     }
@@ -43,8 +43,7 @@ public class PokemonBD {
                 return false;
             }
         }catch (SQLException e) {
-            System.out.println("Error al comprobar existencia de nombre.");
-            e.printStackTrace();
+            ErrorLogger.saveErrorLog("Error al comprobar existencia de nombre "+e.getMessage());
             return false;
         }
     }
@@ -71,8 +70,7 @@ public class PokemonBD {
             }
             rs.close();
         } catch (SQLException e) {
-            System.out.println("Error al buscar pokemon por id en la base de datos.");
-            e.printStackTrace();
+            ErrorLogger.saveErrorLog("Error al buscar pokemon por id en la base de datos "+e.getMessage());
         }
         return pokemon;
     }
@@ -98,8 +96,7 @@ public class PokemonBD {
             }
             rs.close();
         }catch (SQLException e) {
-            System.out.println("Error al buscar pokemon por nombre en la base de datos.");
-            e.printStackTrace();
+            ErrorLogger.saveErrorLog("Error al buscar pokemon por nombre en la base de datos "+e.getMessage());
         }
         return pokemon;
     }
@@ -142,8 +139,7 @@ public class PokemonBD {
             rs.close();
 
         }catch (SQLException e) {
-            System.out.println("Error al buscar lista de pokemon por tipo en la base de datos.");
-            e.printStackTrace();
+            ErrorLogger.saveErrorLog("Error al buscar lista de pokemon por tipo en la base de datos "+e.getMessage());
         }
         return pokemons;
     }
@@ -174,8 +170,7 @@ public class PokemonBD {
 
             return true;
         }catch (SQLException e) {
-            System.out.println("Error al modificar pokemon en la base de datos.");
-            e.printStackTrace();
+            ErrorLogger.saveErrorLog("Error al modificar pokemon en la base de datos "+e.getMessage());
             return false;
         }
     }
@@ -206,9 +201,7 @@ public class PokemonBD {
             return true;
 
         }catch (SQLException e) {
-            System.out.println("Error al insertar pokemon en la base de datos.");
-            e.printStackTrace();
-
+            ErrorLogger.saveErrorLog("Error al insertar pokemon en la base de datos " + e.getMessage());
             return false;
         }
     }
@@ -224,9 +217,7 @@ public class PokemonBD {
 
             return true;
         } catch (SQLException e) {
-            System.out.println("Error al borrar pokemon en la base de datos.");
-            e.printStackTrace();
-
+            ErrorLogger.saveErrorLog("Error al borrar pokemon en la base de datos "+e.getMessage());
             return false;
         }
     }
