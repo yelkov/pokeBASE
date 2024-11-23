@@ -13,10 +13,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ControllerListaRutas {
     @FXML
@@ -124,6 +121,15 @@ public class ControllerListaRutas {
             SceneManager.setDatos(datos);
             SceneManager.goToView(actionEvent, "datosRuta.fxml", this.getClass(), 650, 800);
         }
+    }
+
+    public void cleanFields(){
+        txtPokemon.setText("");
+        cmbCriterio.setValue("id");
+        cmbOrden.setValue("ASC");
+        cmbRegion.setValue("Todas");
+        setRutas(new ArrayList<>());
+
     }
 
     public void volverAlInicio(ActionEvent actionEvent){

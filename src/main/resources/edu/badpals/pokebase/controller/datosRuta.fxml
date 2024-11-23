@@ -17,7 +17,7 @@
          <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#handleVolver" styleClass="menu" text="Volver" />
          <Button fx:id="btnMenuPrincipal" mnemonicParsing="false" onAction="#volverAlInicio" styleClass="menu" text="Ir al Menú principal" />
          <Region HBox.hgrow="ALWAYS" />
-         <Button fx:id="btnLimpiar" styleClass="menu" text="Limpiar" />
+         <Button fx:id="btnLimpiar" styleClass="menu" text="Limpiar" onAction="#toMenuCrearRuta" />
          <Button fx:id="btnExportar" onAction="#exportar" styleClass="menu" text="Exportar JSON" />
       </children>
    </HBox>

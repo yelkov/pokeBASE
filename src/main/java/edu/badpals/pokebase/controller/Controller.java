@@ -93,6 +93,8 @@ public class Controller {
             datos.put("ruta", ruta.get());
             SceneManager.setDatos(datos);
             SceneManager.goToView(actionEvent,"datosRuta.fxml",this.getClass(), 650,700);
+        } else{
+            View.lanzarMensajeError("Error", "Ruta no encontrada", "No existe ninguna ruta con los datos especificados en la base de datos");
         }
 
     }
@@ -111,6 +113,8 @@ public class Controller {
             datos.put("pokemon", pokemon);
             SceneManager.setDatos(datos);
             SceneManager.goToView(actionEvent, "datosPokemon.fxml", this.getClass(), 750, 650);
+        } else{
+            View.lanzarMensajeError("Error","Pokémon no encontrado.","En la base de datos no se encuentra el nombre del pokémon o el id introducido.");
         }
     }
 
