@@ -79,7 +79,7 @@
             <Insets bottom="10.0" top="15.0" />
          </VBox.margin>
       </HBox>
-      <TableView fx:id="tableListaPokemon">
+      <TableView fx:id="tableListaPokemon" onMouseClicked="#activateBotonVer">
         <columns>
           <TableColumn fx:id="columnaNombre" prefWidth="75.0" text="Nombre" />
           <TableColumn fx:id="columnaId" prefWidth="75.0" text="Id" />

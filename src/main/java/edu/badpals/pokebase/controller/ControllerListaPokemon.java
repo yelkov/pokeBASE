@@ -1,10 +1,7 @@
 package edu.badpals.pokebase.controller;
 
 import edu.badpals.pokebase.criteria.CriteriaPokemon;
-import edu.badpals.pokebase.model.AccesoBD;
-import edu.badpals.pokebase.model.Pokemon;
-import edu.badpals.pokebase.model.PokemonBD;
-import edu.badpals.pokebase.model.RutaBD;
+import edu.badpals.pokebase.model.*;
 import edu.badpals.pokebase.service.DocumentExporter;
 import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
@@ -34,7 +31,7 @@ public class ControllerListaPokemon {
     @FXML
     ComboBox<String> cmbCriterio, cmbOrden;
     @FXML
-    Button btnVerPokemon;
+    Button btnVerPokemon, btnExportar;
     @FXML
     private TableView<Pokemon> tableListaPokemon;
     @FXML
@@ -59,6 +56,7 @@ public class ControllerListaPokemon {
         cmbCriterio.setValue("---");
         cmbOrden.setItems(FXCollections.observableArrayList("ASC","DESC"));
         cmbOrden.setValue("ASC");
+        btnVerPokemon.setDisable(true);
 
         tableListaPokemon.widthProperty().addListener((obs, oldWidth, newWidth) -> {
             double totalWidth = newWidth.doubleValue();
@@ -77,6 +75,7 @@ public class ControllerListaPokemon {
 
     public void setPokemons() {
         this.listaPokemon = pokemonBD.getPokemonByFilters(criteria);
+        btnExportar.setDisable(false);
         setTablaPokemon();
     }
 
@@ -161,6 +160,7 @@ public class ControllerListaPokemon {
 
             setTablaPokemon();
             setCriteria(criteriaPokemon);
+            btnExportar.setDisable(false);
 
         }else{
             View.lanzarMensajeError("Error","Tipo no seleccionado","Para realizar una búsqueda, es imprescindible introducir un tipo en la primera casilla (tipo 1)");
@@ -173,6 +173,7 @@ public class ControllerListaPokemon {
         this.criteria = null;
         setTablaPokemon();
         setCriteria(criteria);
+        btnExportar.setDisable(true);
     }
 
     public void exportar(ActionEvent action){
@@ -192,6 +193,15 @@ public class ControllerListaPokemon {
                         "Error de exportación",
                         "Se ha producido un error inesperado. Consulte el log para más información.");
             }
+        }
+    }
+
+    public void activateBotonVer(){
+        Pokemon pokemon = tableListaPokemon.getSelectionModel().getSelectedItem();
+        if(pokemon!= null){
+            btnVerPokemon.setDisable(false);
+        } else {
+            btnVerPokemon.setDisable(true);
         }
     }
 }
