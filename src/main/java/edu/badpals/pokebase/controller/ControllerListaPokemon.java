@@ -103,7 +103,7 @@ public class ControllerListaPokemon {
             Map<String, Object> datos = new HashMap<>();
             datos.put("pokemon", pokemon);
             SceneManager.setDatos(datos);
-            SceneManager.goToView(actionEvent, "datosPokemon.fxml", this.getClass(), 600, 500);
+            SceneManager.goToView(actionEvent, "datosPokemon.fxml", this.getClass(), 750, 650);
         }
     }
 

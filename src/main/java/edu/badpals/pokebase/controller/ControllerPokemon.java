@@ -59,6 +59,9 @@ public class ControllerPokemon {
         visualizarDatos();
         establecerSiguientesPokemon();
         habilitarBotonesLaterales();
+        btnExportar.setDisable(false);
+        btnModificar.setDisable(false);
+        btnEliminar.setDisable(false);
     }
 
 
@@ -102,6 +105,7 @@ public class ControllerPokemon {
             establecerSiguientesPokemon();
         }
         habilitarBotonesLaterales();
+        btnExportar.setDisable(false);
     }
 
     public void visualizarDatos() {
@@ -169,6 +173,9 @@ public class ControllerPokemon {
             visualizarDatos();
             establecerSiguientesPokemon();
             habilitarBotonesLaterales();
+            btnExportar.setDisable(false);
+            btnModificar.setDisable(false);
+            btnEliminar.setDisable(false);
 
         }else{
             View.lanzarMensajeError("Error","Pokémon no encontrado.","En la base de datos no se encuentra el nombre del pokémon o el id introducido.");
@@ -196,6 +203,9 @@ public class ControllerPokemon {
         lblTipo1.setText("");
         lblTipo2.setText("");
         mostrar(gridEvolucionaDe,false,false);
+        btnExportar.setDisable(true);
+        btnModificar.setDisable(true);
+        btnEliminar.setDisable(true);
     }
 
     public void eliminarPokemon(){
@@ -220,7 +230,7 @@ public class ControllerPokemon {
             datos.put("pokemon", pokemon);
         }
         SceneManager.setDatos(datos);
-        SceneManager.goToView(actionEvent,"editarPokemon.fxml", this.getClass(), 500,500);
+        SceneManager.goToView(actionEvent,"editarPokemon.fxml", this.getClass(), 650,600);
 
     }
 

@@ -10,11 +10,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.io.IOException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 public class ControllerLogIn {
+    @FXML
+    private ImageView logo;
     @FXML
     private TextField txtUsuario;
 
@@ -24,6 +28,7 @@ public class ControllerLogIn {
     private LogInManager manager = new LogInManager();
 
     public void initialize(){
+        logo.setImage(new Image(getClass().getResource("/images/logo.png").toExternalForm()));
         manager.connect();
     }
 

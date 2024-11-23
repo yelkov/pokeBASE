@@ -4,19 +4,21 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.ControllerRuta">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" stylesheets="@../../../../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.ControllerRuta">
    <HBox prefHeight="3.0" prefWidth="560.0" spacing="15.0">
       <children>
-         <Button fx:id="btnVolver" mnemonicParsing="false"  text="Volver" onAction="#handleVolver" />
-         <Button fx:id="btnMenuPrincipal" mnemonicParsing="false" text="Ir al Menú principal" onAction="#volverAlInicio" />
+         <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#handleVolver" styleClass="menu" text="Volver" />
+         <Button fx:id="btnMenuPrincipal" mnemonicParsing="false" onAction="#volverAlInicio" styleClass="menu" text="Ir al Menú principal" />
          <Region HBox.hgrow="ALWAYS" />
-         <Button fx:id="btnLimpiar" text="Limpiar" />
-         <Button fx:id="btnExportar" onAction="#exportar" text="Exportar JSON" />
+         <Button fx:id="btnLimpiar" styleClass="menu" text="Limpiar" />
+         <Button fx:id="btnExportar" onAction="#exportar" styleClass="menu" text="Exportar JSON" />
       </children>
    </HBox>
    <Label text="DATOS DE RUTA" />
@@ -25,21 +27,34 @@
       <Label fx:id="lblRutaId" />
    </HBox>
    <HBox alignment="CENTER" spacing="10.0">
-      <Label text="Ruta:" />
+      <Label text="Ruta:    " />
       <TextField fx:id="txtRutaNombre" maxWidth="100.0" />
    </HBox>
    <HBox alignment="CENTER" spacing="10.0">
       <Label text="Región:" />
       <TextField fx:id="txtRutaRegion" maxWidth="100.0" />
+      <VBox.margin>
+         <Insets bottom="10.0" />
+      </VBox.margin>
    </HBox>
 
    <VBox fx:id="menuRutaCargada" alignment="CENTER" managed="false" spacing="10.0" visible="false">
-      <HBox alignment="CENTER" spacing="10.0">
-         <Button fx:id="btnModificar" onAction="#modificarRuta" text="Modificar" />
-         <Button fx:id="btnBorrar" onAction="#borrarRuta" text="Borrar" />
-         <Button fx:id="btnMenuCrear" onAction="#toMenuCrearRuta" text="Crear Nueva Ruta" />
+      <HBox alignment="CENTER" spacing="15.0">
+         <Button fx:id="btnMenuCrear" onAction="#toMenuCrearRuta" text="Crear ruta" />
+         <Button fx:id="btnModificar" onAction="#modificarRuta" text="Modificar ruta" />
+         <Button fx:id="btnBorrar" onAction="#borrarRuta" text="Borrar ruta" />
+         <VBox.margin>
+            <Insets bottom="15.0" />
+         </VBox.margin>
       </HBox>
-      <Label text="Añadir un pokemon a la ruta:" />
+      <Separator prefWidth="200.0" />
+      <Label text="Añadir un pokemon a la ruta:">
+         <font>
+            <Font size="15.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="10.0" top="10.0" />
+         </VBox.margin></Label>
       <HBox alignment="CENTER" spacing="10.0">
          <Label text="Nombre: " />
          <TextField fx:id="txtPokemonAnadir" maxWidth="100.0" />
@@ -52,7 +67,13 @@
    </VBox>
 
    <VBox fx:id="menuPokemon" alignment="CENTER" managed="false" spacing="10.0" visible="false">
-      <Label text="Lista de pokemons" />
+      <Label text="Lista de pokemon en la ruta:">
+         <VBox.margin>
+            <Insets bottom="10.0" top="15.0" />
+         </VBox.margin>
+         <font>
+            <Font size="14.0" />
+         </font></Label>
       <ListView fx:id="listPokemonsRuta" maxHeight="200" maxWidth="150" onMouseClicked="#activateBotonesPokemon" />
       <HBox alignment="CENTER" spacing="10.0">
          <Label text="Niveles a modificar" />
@@ -63,6 +84,9 @@
       <HBox alignment="CENTER" spacing="10.0">
          <Button fx:id="btnBuscarPokemon" disable="true" onAction="#buscarInfoPokemon" text="Buscar Pokemon" />
          <Button fx:id="btnRetirarPokemon" disable="true" onAction="#removePokemonRuta" text="Quitar Pokemon" />
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
       </HBox>
    </VBox>
    <VBox fx:id="menuParteLista" alignment="CENTER" managed="false" spacing="10.0" visible="false">
@@ -75,6 +99,9 @@
    </VBox>
    <HBox fx:id="menuRutaNueva" alignment="CENTER" managed="true" visible="true">
       <Button fx:id="btnGuardar" onAction="#crearRuta" text="Guardar" />
+      <VBox.margin>
+         <Insets />
+      </VBox.margin>
    </HBox>
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

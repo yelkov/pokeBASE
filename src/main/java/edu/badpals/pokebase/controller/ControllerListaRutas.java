@@ -122,7 +122,7 @@ public class ControllerListaRutas {
             datos.put("ruta", ruta);
             datos.put("criteriaRuta", criteriaRuta);
             SceneManager.setDatos(datos);
-            SceneManager.goToView(actionEvent, "datosRuta.fxml", this.getClass(), 600, 700);
+            SceneManager.goToView(actionEvent, "datosRuta.fxml", this.getClass(), 650, 800);
         }
     }
 

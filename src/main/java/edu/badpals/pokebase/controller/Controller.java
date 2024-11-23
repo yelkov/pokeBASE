@@ -64,14 +64,15 @@ public class Controller {
         ));
         cmbFiltrarRegiones.setValue("Todas");
 
-        cmbCriterio.setItems(FXCollections.observableArrayList("---","Id","Nombre"));
-        cmbCriterio.setValue("---");
+        cmbCriterio.setItems(FXCollections.observableArrayList("Id","Nombre"));
+        cmbCriterio.setValue("Id");
 
         cmbOrden.setItems(FXCollections.observableArrayList("ASC","DESC"));
         cmbOrden.setValue("ASC");
 
         logo.setImage(new Image(getClass().getResource("/images/logo.png").toExternalForm()));
         imgPokemon.setImage(new Image(getClass().getResource("/images/imgPokemon.png").toExternalForm()));
+        imgRutas.setImage(new Image(getClass().getResource("/images/imgRutas.png").toExternalForm()));
 
     }
 
@@ -80,7 +81,7 @@ public class Controller {
         SceneManager.goToView(actionEvent,"datosRuta.fxml",this.getClass(),500,900);
     }
     public void crearPokemon(ActionEvent actionEvent) {
-        SceneManager.goToView(actionEvent,"editarPokemon.fxml",this.getClass(),500,500);
+        SceneManager.goToView(actionEvent,"editarPokemon.fxml",this.getClass(),650,600);
     }
 
     public void buscarRuta(ActionEvent actionEvent) {
@@ -91,7 +92,7 @@ public class Controller {
             Map<String, Object> datos = new HashMap<>();
             datos.put("ruta", ruta.get());
             SceneManager.setDatos(datos);
-            SceneManager.goToView(actionEvent,"datosRuta.fxml",this.getClass(), 600,700);
+            SceneManager.goToView(actionEvent,"datosRuta.fxml",this.getClass(), 650,700);
         }
 
     }
@@ -109,7 +110,7 @@ public class Controller {
             Map<String, Object> datos = new HashMap<>();
             datos.put("pokemon", pokemon);
             SceneManager.setDatos(datos);
-            SceneManager.goToView(actionEvent, "datosPokemon.fxml", this.getClass(), 600, 500);
+            SceneManager.goToView(actionEvent, "datosPokemon.fxml", this.getClass(), 750, 650);
         }
     }
 

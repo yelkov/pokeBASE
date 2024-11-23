@@ -11,15 +11,15 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="441.0" prefWidth="757.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.ControllerListaPokemon">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="441.0" prefWidth="757.0" stylesheets="@../../../../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.badpals.pokebase.controller.ControllerListaPokemon">
    <children>
       <HBox prefHeight="3.0" prefWidth="560.0" spacing="15.0">
          <children>
-            <Button fx:id="btnVolver1" mnemonicParsing="false" onAction="#handleVolver" text="Volver" />
-            <Button fx:id="btnMenuPrincipal" mnemonicParsing="false"  text="Ir al Menú principal" onAction="#volverAlInicio"/>
+            <Button fx:id="btnVolver1" mnemonicParsing="false" onAction="#handleVolver" styleClass="menu" text="Volver" />
+            <Button fx:id="btnMenuPrincipal" mnemonicParsing="false" onAction="#volverAlInicio" styleClass="menu" text="Ir al Menú principal" />
             <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnLimpiar" onAction="#limpiar" text="Limpiar" />
-            <Button fx:id="btnExportar" onAction="#exportar" text="Exportar JSON" />
+            <Button fx:id="btnLimpiar" onAction="#limpiar" styleClass="menu" text="Limpiar" />
+            <Button fx:id="btnExportar" onAction="#exportar" styleClass="menu" text="Exportar JSON" />
          </children>
       </HBox>
       <HBox alignment="CENTER">
