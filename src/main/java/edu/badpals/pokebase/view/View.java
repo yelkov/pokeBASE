@@ -26,6 +26,7 @@ public class View {
         error.setTitle(titulo);
         error.setHeaderText(cabecera);
         error.setContentText(mensaje);
+        error.setHeight(300.0);
 
         error.showAndWait();
     }
