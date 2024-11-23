@@ -1,8 +1,5 @@
-package edu.badpals.pokebase.model;
+package edu.badpals.pokebase.service;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,8 +12,7 @@ public class ImageToBytes {
                 fis.read(bytes);
                 return bytes;
             }catch(IOException e){
-            System.out.println("Error al convertir imagen a bytes");
-            e.printStackTrace();
+            ErrorLogger.saveErrorLog("Error al convertir imagen a bytes" + e.getMessage());
             return null;
         }
     }

@@ -13,4 +13,6 @@ module edu.badpals.pokebase {
     exports edu.badpals.pokebase;
     exports edu.badpals.pokebase.controller to javafx.fxml;
     exports edu.badpals.pokebase.model to javafx.fxml, com.fasterxml.jackson.databind;
+    exports edu.badpals.pokebase.service to com.fasterxml.jackson.databind, javafx.fxml;
+    opens edu.badpals.pokebase.service to com.fasterxml.jackson.databind, javafx.base, javafx.fxml;
 }

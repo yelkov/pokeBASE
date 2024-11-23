@@ -2,19 +2,16 @@ package edu.badpals.pokebase.controller;
 
 import edu.badpals.pokebase.model.*;
 import edu.badpals.pokebase.service.DocumentExporter;
-import edu.badpals.pokebase.service.ErrorLogger;
+import edu.badpals.pokebase.service.ImageToBytes;
 import edu.badpals.pokebase.view.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -199,7 +196,7 @@ public class ControllerEditarPokemon {
                 View.lanzarMensajeError(
                         "Error",
                         "No se ha creado al Pokémon",
-                        "Se ha producido un error inesperado y el proceso ha sido abortado.");
+                        "Se ha producido un error inesperado y el proceso ha sido abortado. Consulte el log para más información.");
             }
 
         }else{
@@ -296,7 +293,7 @@ public class ControllerEditarPokemon {
                 View.lanzarMensajeError(
                         "Error",
                         "No se ha modificado al Pokémon",
-                        "Se ha producido un error inesperado y el proceso ha sido abortado.");
+                        "Se ha producido un error inesperado y el proceso ha sido abortado. Consulte el log para más información.");
             }
 
         }else{
@@ -340,17 +337,21 @@ public class ControllerEditarPokemon {
         String gifTxt = tfGif.getText();
         String shinyTxt = tfShiny.getText();
 
-        if(!imagenTxt.equals("")){
+        boolean imgFormatoCorrecto = imagenTxt.endsWith(".jpg") || imagenTxt.endsWith(".png") || imagenTxt.endsWith(".jpeg");
+        boolean gifFormatoCorrecto = gifTxt.endsWith(".gif");
+        boolean shinyFormatoCorrecto = shinyTxt.endsWith(".jpg") || shinyTxt.endsWith(".png") || shinyTxt.endsWith(".jpeg");
+
+        if(!imagenTxt.equals("") && !imagenTxt.equals("Imagen cargada") && imgFormatoCorrecto){
             imagenes[0] = ImageToBytes.toByteArray(imagenTxt);
         }else{
             imagenes[0] = null;
         }
-        if(!gifTxt.equals("")){
+        if(!gifTxt.equals("") && !gifTxt.equals("Gif cargado") && gifFormatoCorrecto){
             imagenes[1] = ImageToBytes.toByteArray(gifTxt);
         }else{
             imagenes[1] = null;
         }
-        if(!shinyTxt.equals("")){
+        if(!shinyTxt.equals("") && !shinyTxt.equals("Imagen Shiny cargada") && shinyFormatoCorrecto){
             imagenes[2] = ImageToBytes.toByteArray(shinyTxt);
         }else{
             imagenes[2] = null;
