@@ -1,6 +1,7 @@
 package edu.badpals.pokebase;
 
 import edu.badpals.pokebase.controller.SceneManager;
+import edu.badpals.pokebase.model.AccesoBD;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -21,7 +22,10 @@ public class App extends Application {
         stage.setScene(scene);
 
         stage.setOnCloseRequest(event -> {
-            SceneManager.getAccesoBD().desconectarBD();
+            AccesoBD accesoBD = SceneManager.getAccesoBD();
+            if (accesoBD != null) {
+                accesoBD.desconectarBD();
+            }
         });
 
         stage.show();
