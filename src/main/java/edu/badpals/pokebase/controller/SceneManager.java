@@ -17,17 +17,17 @@ import java.util.Map;
 import java.util.Stack;
 
 public class SceneManager {
-    private static Stack<String> stack = new Stack<>();
+    private static Stack<Scene> stack = new Stack<>();
     private static Map<String, Object> datos = new HashMap<>();
     private static RutaBD rutaBD;
     private static PokemonBD pokemonBD;
     private static AccesoBD accesoBD;
 
-    public static void addToPile(String view){
+    public static void addToPile(Scene view){
         stack.push(view);
     }
 
-    public static String getPreviousView(){
+    public static Scene getPreviousView(){
         stack.pop();
         return stack.lastElement();
     }
@@ -60,19 +60,21 @@ public class SceneManager {
         return datos;
     }
 
-    private static void loadFxml(ActionEvent actionEvent, String sceneFxml, Class clase, int ancho, int largo) throws IOException {
+    private static Scene loadFxml(String sceneFxml, Class clase, int ancho, int largo) throws IOException {
         FXMLLoader loader = new FXMLLoader(clase.getResource(sceneFxml));
         Scene scene = new Scene(loader.load(),ancho,largo);
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(); // Obtener el Stage actual
-        // Crear una nueva escena con el contenido cargado
-        stage.setScene(scene); // Establecer la nueva escena en el Stage
-        stage.show();
+        return scene;
     }
 
     public static void goToView(ActionEvent actionEvent, String sceneFxml, Class clase, int ancho, int largo){
         try {
-            addToPile(sceneFxml);
-            loadFxml(actionEvent, sceneFxml, clase, ancho, largo);
+            Stage currentStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene currentScene = currentStage.getScene();
+            addToPile(currentScene);
+
+            Scene newScene = loadFxml(sceneFxml, clase, ancho, largo);
+            currentStage.setScene(newScene);
+            currentStage.show();
         } catch (IOException e){
             View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
             ErrorLogger.saveErrorLog("Error al realizar la acción de ir a otra vista: " + e.getMessage());
@@ -81,9 +83,16 @@ public class SceneManager {
 
     public static void volver(ActionEvent actionEvent, Class clase){
         try {
-            String view = SceneManager.getPreviousView();
-            loadFxml(actionEvent, view, clase, 950, 800);
-        } catch (IOException e){
+            Stage currentStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+
+            if(!stack.isEmpty()){
+                Scene previousScene = stack.pop();
+                currentStage.setScene(previousScene);
+                currentStage.show();
+            }else{
+                View.lanzarMensajeError("Error", "No hay vistas anteriores en la pila", "");
+            }
+        } catch (Exception e){
             View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
             ErrorLogger.saveErrorLog("Error al realizar la acción volver: " + e.getMessage());
         }
@@ -91,9 +100,11 @@ public class SceneManager {
 
     public static void volverAlInicio(ActionEvent actionEvent, Class clase){
         try {
-            stack = new Stack<>();
-            stack.push("main.fxml");
-            loadFxml(actionEvent, "main.fxml", clase, 950, 800);
+            stack.clear();
+            Stage currentStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene main = loadFxml( "main.fxml", clase, 950, 800);
+            currentStage.setScene(main);
+            currentStage.show();
         } catch (IOException e){
             View.lanzarMensajeError("Error", "No se ha podido cambiar de ventana", "Consulte el log para ver el error más detalladamente");
             ErrorLogger.saveErrorLog(e.getMessage());
