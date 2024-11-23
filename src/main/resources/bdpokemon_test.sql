@@ -270,3 +270,88 @@ INSERT INTO RUTAS_POKEMONS (POKEMON, RUTA, NIVEL_MINIMO, NIVEL_MAXIMO) VALUES
 (69, 15, 12, 15), -- Bellsprout aparece en la Ruta 15 entre los niveles 12 y 15
 (96, 18, 22, 25), -- Drowzee aparece en la Ruta 18 entre los niveles 22 y 25
 (129, 19, 5, 10); -- Magikarp aparece en la Ruta 19 entre los niveles 5 y 10
+
+delimiter $$
+
+drop procedure if exists MODIFCIAR_NIVELES_EN_RUTA$$
+create procedure MODIFCIAR_NIVELES_EN_RUTA(IN RUTA_ID INT, IN SUBIDA INT)
+BEGIN
+	UPDATE RUTAS_POKEMONS
+    SET NIVEL_MINIMO = NIVEL_MINIMO + SUBIDA,
+    NIVEL_MAXIMO = NIVEL_MAXIMO + SUBIDA
+    WHERE RUTA = RUTA_ID and nivel_maximo is not null and nivel_minimo is not null;
+END$$
+
+DROP FUNCTION IF EXISTS FN_GET_ID_POKEMON$$
+CREATE FUNCTION FN_GET_ID_POKEMON(NOMBRE_POKEMON VARCHAR(20))
+RETURNS INT UNSIGNED
+READS SQL DATA
+BEGIN
+	RETURN	(
+				SELECT ID 
+					FROM POKEMONS
+					WHERE NOMBRE = NOMBRE_POKEMON
+            );
+END$$
+
+DROP FUNCTION IF EXISTS FN_GET_NOMBRE_POKEMON$$
+CREATE FUNCTION FN_GET_NOMBRE_POKEMON(ID_POKEMON INT UNSIGNED)
+RETURNS VARCHAR(20)
+READS SQL DATA
+BEGIN
+	RETURN	(
+				SELECT NOMBRE
+					FROM POKEMONS
+                    WHERE ID = ID_POKEMON
+            );
+END$$
+
+DROP FUNCTION IF EXISTS FN_GET_ID_RUTA$$
+CREATE FUNCTION  FN_GET_ID_RUTA(NOMBRE_RUTA VARCHAR(50), REGION_RUTA VARCHAR(20))
+RETURNS INT UNSIGNED
+READS SQL DATA
+BEGIN
+	RETURN 	(
+				SELECT ID
+					FROM RUTAS
+                    WHERE NOMBRE = NOMBRE_RUTA
+						AND
+					REGION = REGION_RUTA
+            );
+END$$
+
+DROP FUNCTION if exists countAllRoutes$$
+create function countAllRoutes()
+    returns int
+    reads sql data
+begin
+RETURN (select count(*) from rutas);
+end$$
+
+DROP FUNCTION if exists countRoutesInRegion$$
+create function countRoutesInRegion(regionName varchar(30))
+    returns int
+    reads sql data
+begin
+RETURN (select count(*) from rutas where region = regionName);
+end$$
+
+DROP TRIGGER IF EXISTS limites_Niveles$$
+CREATE TRIGGER limites_Niveles
+before update ON rutas_pokemons
+FOR EACH ROW
+BEGIN
+      if new.NIVEL_MAXIMO < 1 
+		then set new.NIVEL_MAXIMO = 1;
+      end if;
+      if new.NIVEL_MAXIMO > 100 
+		then set new.NIVEL_MAXIMO = 100;
+      end if;
+      if new.NIVEL_MINIMO < 1 
+		then set new.NIVEL_MINIMO = 1;
+      end if;
+      if new.NIVEL_MINIMO > 100 
+		then set new.NIVEL_MINIMO = 100;
+      end if;
+
+END$$
