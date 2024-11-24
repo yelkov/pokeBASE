@@ -3,10 +3,17 @@ package edu.badpals.pokebase.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 
-
+/**
+ * Proporciona un método para exportar datos a archivos en formato JSON.
+ * Utiliza la librería Jackson para la conversión de objetos Java a JSON.
+ */
 public class DocumentExporter {
     /**
      * Exporta los datos de un Pokémon a un archivo JSON.
+     *
+     * Este método toma un objeto Java y lo convierte a formato JSON,
+     * luego guarda ese JSON en un archivo en la ruta especificada por el usuario.
+     *
      *
      * @param data El objeto PokemonData a exportar.
      * @param path La ruta donde se guardará el archivo JSON (sin extensión).
