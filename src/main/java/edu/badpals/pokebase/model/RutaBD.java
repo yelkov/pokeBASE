@@ -8,19 +8,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Maneja la interacción con la base de datos en relación con las rutas.
+ * Permite la inserción, eliminación, actualización, y consulta de una ruta, así como de los Pokémon que pueden encontrarse en ella.
+ */
 public class RutaBD {
+    /**
+     * Conexión a la base de datos
+     */
     private Connection connection;
+    /**
+     * Clase que permite conectarse a la parte de pokémons de la base de datos
+     */
     private PokemonBD pokemonBD;
 
+    /**
+     * Constructor de la clase RutaBD.
+     *
+     * @param accesoBD Un objeto que proporciona la conexión a la base de datos. A partir de él se obtiene la conexión a la base de datos y un objeto para acceder a la información de pokémon.
+     */
     public RutaBD(AccesoBD accesoBD) {
         this.connection = accesoBD.getConnection();
         pokemonBD = new PokemonBD(accesoBD);
     }
 
+    /**
+     * Obtiene el objeto PokemonBD asociado con esta instancia de RutaBD.
+     *
+     * @return El objeto PokemonBD asociado.
+     */
     public PokemonBD getPokemonBD() {
         return pokemonBD;
     }
 
+    /**
+     * Obtiene el número total de rutas en la base de datos.
+     *
+     * @return El número total de rutas.
+     */
     public int getRoutesCount(){
         try(Statement statement = connection.createStatement();){
             ResultSet resultSet = statement.executeQuery("select countAllRoutes()");
@@ -32,6 +57,12 @@ public class RutaBD {
         }
     }
 
+    /**
+     * Obtiene el número de rutas en una región específica.
+     *
+     * @param region La región en la que contar las rutas.
+     * @return El número de rutas en la región especificada.
+     */
     public int getRoutesCount(String region){
         try(PreparedStatement statement = connection.prepareStatement("select countRoutesInRegion(?)")){
             statement.setString(1, region);
@@ -44,19 +75,32 @@ public class RutaBD {
         }
     }
 
+    /**
+     * Obtiene el ID de una ruta a partir de su nombre y región.
+     *
+     * @param name El nombre de la ruta.
+     * @param region La región donde se encuentra la ruta.
+     * @return El ID de la ruta si existe, o 0 si no se encuentra.
+     */
     public int getRutaId(String name, String region){
         try(PreparedStatement statement = connection.prepareStatement("Select FN_GET_ID_RUTA(?,?)");){
             statement.setString(1, name);
             statement.setString(2, region);
             ResultSet results = statement.executeQuery();
-            results.next();
-            return results.getInt(1);
+            if(results.next()) return results.getInt(1);
+            else return 0;
         } catch (SQLException e){
             ErrorLogger.saveErrorLog("Error al ejecutar la query 'Select FN_GET_ID_RUTA(name,region)' como parte del método getRutaId(String name, String region) de RutaBD: " + e.getMessage());
             return 0;
         }
     }
 
+    /**
+     * Obtiene una ruta a partir de su ID, si existe.
+     *
+     * @param Id El ID de la ruta.
+     * @return Un {@link Optional} que contiene la ruta si existe, o vacío si no se encuentra.
+     */
      public Optional<Ruta> getRuta(int Id){
         try(PreparedStatement statement = connection.prepareStatement("select * from rutas where id = ?");){
             statement.setInt(1, Id);
@@ -75,11 +119,27 @@ public class RutaBD {
         }
     }
 
+    /**
+     * Obtiene una ruta a partir de su nombre y región, si existe
+     *
+     * @param name El nombre de la ruta.
+     * @param region La región en la que se encuentra la ruta.
+     * @return Un {@link Optional} que contiene la ruta si existe, o vacío si no se encuentra.
+     */
     public Optional<Ruta> getRuta(String name, String region){
         int id = getRutaId(name, region);
         return getRuta(id);
     }
 
+    /**
+     * Obtiene una lista con las rutas que coinciden con los filtros proporcionados.
+     *
+     * @param pokemon Un filtro opcional por nombre de Pokémon. Si no se especifica, no se aplica.
+     * @param region Un filtro opcional por región. Si no se especifica, no se aplica.
+     * @param criterio El campo por el que se ordenarán los resultados.
+     * @param orden El orden de los resultados, que puede ser "ASC" o "DESC".
+     * @return Una lista de rutas que coinciden con los filtros y en el orden establecido.
+     */
     public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region, String criterio, String orden){
         StringBuilder basicSql = new StringBuilder("select * from rutas");
         List<Ruta> rutas = new ArrayList<>();
@@ -115,14 +175,32 @@ public class RutaBD {
         return rutas;
     }
 
+    /**
+     * Obtiene todas las rutas que coinciden con los filtros proporcionados, usando siempre un criterio de orden ascendente por ID.
+     *
+     * @param pokemon Un filtro opcional por nombre de Pokémon. Si no se especifica, no se aplica.
+     * @param region Un filtro opcional por región. Si no se especifica, no se aplica.
+     * @return Una lista de rutas que coinciden con los filtros.
+     */
     public List<Ruta> getRutasByFilters(Optional<String> pokemon, Optional<String> region) {
         return getRutasByFilters(pokemon, region, "id", "ASC");
     }
 
+    /**
+     * Obtiene todas las rutas que coinciden con los filtros proporcionados utilizando un objeto {@link CriteriaRuta}.
+     *
+     * @param criteriaRuta El objeto que contiene los filtros, criterio y orden.
+     * @return Una lista de rutas que coinciden con los filtros.
+     */
     public List<Ruta> getRutasByFilters(CriteriaRuta criteriaRuta){
         return getRutasByFilters(criteriaRuta.getPokemon(), criteriaRuta.getRegion(), criteriaRuta.getCriterio(),criteriaRuta.getOrden());
     }
 
+    /**
+     * Obtiene todas las regiones distintas guardadas en la base de datos.
+     *
+     * @return Una lista de nombres de regiones.
+     */
     public List<String> getAllRegions(){
         List<String> regions = new ArrayList<>();
         try(PreparedStatement statement = connection.prepareStatement("select distinct region from rutas");){
@@ -136,6 +214,13 @@ public class RutaBD {
         return regions;
     }
 
+    /**
+     * Inserta una nueva ruta en la base de datos.
+     *
+     * @param ruta El objeto {@link Ruta} que se insertará.
+     * @return {@code true} si la ruta fue insertada exitosamente, {@code false} si ocurrió un error no esperado.
+     * @throws SQLIntegrityConstraintViolationException Si ocurre una violación de la clave única al intentar insertar la ruta, es decir, si esta ya existe.
+     */
     public boolean insertRuta(Ruta ruta) throws SQLIntegrityConstraintViolationException{
         String sqlSentence = """
             insert into rutas(NOMBRE, REGION)
@@ -154,6 +239,13 @@ public class RutaBD {
         return false;
     }
 
+    /**
+     * Actualiza una ruta existente en la base de datos.
+     *
+     * @param ruta El objeto {@link Ruta} que contiene la información actualizada.
+     * @return {@code true} si la ruta fue actualizada exitosamente, {@code false} si ocurrió un error inesperado.
+     * @throws SQLIntegrityConstraintViolationException Si ocurre una violación de la clave única al intentar actualizar la ruta, es decir, si se introdujeron valores de rutas ya existentes.
+     */
     public boolean updateRuta(Ruta ruta) throws SQLIntegrityConstraintViolationException{
         try(PreparedStatement statement = connection.prepareStatement("Update rutas set nombre = ?, region = ? where id = ?");){
             statement.setString(1, ruta.getNombre());
@@ -169,6 +261,12 @@ public class RutaBD {
         return false;
     }
 
+    /**
+     * Elimina una ruta de la base de datos utilizando su ID.
+     *
+     * @param id El ID de la ruta que se desea eliminar.
+     * @return {@code true} si la ruta fue eliminada exitosamente, {@code false} si no se encontró en la base de datos u ocurrió un error.
+     */
     public boolean deleteRuta(int id){
         try(PreparedStatement statement = connection.prepareStatement("Delete from rutas where id = ?");){
             statement.setInt(1, id);
@@ -184,11 +282,24 @@ public class RutaBD {
         }
     }
 
+    /**
+     * Elimina una ruta de la base de datos utilizando su nombre y región.
+     *
+     * @param name El nombre de la ruta a eliminar.
+     * @param region La región donde se encuentra la ruta.
+     * @return {@code true} si la ruta fue eliminada exitosamente, {@code false} si no se encontró en la base de datos u ocurrió un error.
+     */
     public boolean deleteRuta(String name, String region){
         int id = getRutaId(name, region);
         return deleteRuta(id);
     }
 
+    /**
+     * Obtiene los Pokémon que pueden encontrarse en una ruta.
+     *
+     * @param rutaId El ID de la ruta.
+     * @return Una lista de objetos {@link RutaPokemon} que representan los Pokémon de esa ruta, con su nivel mínimo y máximo.
+     */
     public List<RutaPokemon> getPokemons(int rutaId){
         List<RutaPokemon> pokemons = new ArrayList<>();
         try(PreparedStatement statement = connection.prepareStatement("select p.nombre, rt.NIVEL_MINIMO, rt.NIVEL_MAXIMO from pokemons as p inner join rutas_pokemons as rt on p.id = rt.pokemon and rt.ruta = ?");){
@@ -204,6 +315,16 @@ public class RutaBD {
         return pokemons;
     }
 
+    /**
+     * Añade un Pokémon a una ruta con un nivel mínimo y máximo especificado.
+     *
+     * @param rutaId El ID de la ruta a la que se le añadirá el Pokémon.
+     * @param pokemonName El nombre del Pokémon que se añadirá.
+     * @param nivel_minimo El nivel mínimo del Pokémon en la ruta.
+     * @param nivel_maximo El nivel máximo del Pokémon en la ruta.
+     * @return {@code true} si el Pokémon fue añadido exitosamente, {@code false} si ocurrió un error inesperado.
+     * @throws SQLIntegrityConstraintViolationException Si ocurre una violación de la clave única al intentar añadir el Pokémon, es decir, si ya existe el pokemon en esa ruta.
+     */
     public boolean addPokemon(int rutaId, String pokemonName, int nivel_minimo, int nivel_maximo) throws SQLIntegrityConstraintViolationException {
         Pokemon pokemon = pokemonBD.getPokemonByName(pokemonName);
         if (pokemon != null) {
@@ -228,10 +349,25 @@ public class RutaBD {
         return false;
     }
 
+    /**
+     * Añade un Pokémon a una ruta con nivel mínimo 1 y nivel máximo 100.
+     *
+     * @param rutaId El ID de la ruta a la que se añadirá el Pokémon.
+     * @param pokemonName El nombre del Pokémon que se añadirá.
+     * @return {@code true} si el Pokémon fue añadido exitosamente, {@code false} si ocurrió un error inesperado.
+     * @throws SQLIntegrityConstraintViolationException Si ocurre una violación de la clave única al intentar añadir el Pokémon.
+     */
     public boolean addPokemon(int rutaId, String pokemonName) throws SQLIntegrityConstraintViolationException{
-        return addPokemon(rutaId, pokemonName, 0, 100);
+        return addPokemon(rutaId, pokemonName, 1, 100);
     }
 
+    /**
+     * Elimina un Pokémon de una ruta.
+     *
+     * @param rutaId El ID de la ruta.
+     * @param pokemonId El ID del Pokémon a eliminar.
+     * @return {@code true} si el Pokémon fue eliminado exitosamente, {@code false} si ocurrió un error.
+     */
     public boolean removePokemonRuta(int rutaId, int pokemonId){
         try (PreparedStatement statement = connection.prepareStatement("delete from rutas_pokemons where ruta = ? and pokemon = ?");) {
             statement.setInt(1, rutaId);
@@ -248,6 +384,13 @@ public class RutaBD {
         }
     }
 
+    /**
+     * Incrementa (o disminuye) el nivel de los Pokémon en una ruta por una cantidad determinada.
+     *
+     * @param rutaId El ID de la ruta cuyo nivel de Pokémon se desea modificar.
+     * @param niveles La cantidad de niveles a aumentar.
+     * @return {@code true} si los niveles fueron modificados exitosamente, {@code false} si ocurrió un error.
+     */
     public boolean subirNivelesRuta(int rutaId, int niveles){
         try(CallableStatement statement = connection.prepareCall("{call MODIFCIAR_NIVELES_EN_RUTA(?,?)}");){
             statement.setInt(1, rutaId);
