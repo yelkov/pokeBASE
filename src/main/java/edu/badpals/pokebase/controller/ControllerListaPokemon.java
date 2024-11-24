@@ -3,31 +3,31 @@ package edu.badpals.pokebase.controller;
 import edu.badpals.pokebase.criteria.CriteriaPokemon;
 import edu.badpals.pokebase.model.*;
 import edu.badpals.pokebase.service.DocumentExporter;
-import edu.badpals.pokebase.service.ErrorLogger;
 import edu.badpals.pokebase.view.View;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Controlador de la vista que gestiona la lista de Pokémon.
+ * Proporciona funcionalidades para refiltrar, ver detalles de un pokemon, o exportar la tabla de Pokémon.
+ */
 public class ControllerListaPokemon {
+    /**
+     * Elementos de la interfaz que serán empleados por la clase
+     */
     @FXML
     ComboBox<String> cmbCriterio, cmbOrden;
     @FXML
@@ -43,12 +43,20 @@ public class ControllerListaPokemon {
     @FXML
     private Label lblTotal;
 
+    /**
+     * Objetos de otras clases que son necesarios para controlar la vista
+     */
     private CriteriaPokemon criteria;
     private List<Pokemon> listaPokemon;
     private AccesoBD accesoBD;
     private PokemonBD pokemonBD;
     private RutaBD rutaBD;
 
+    /**
+     * Inicializa los componentes y configura comportamientos iniciales.
+     * Se recupera la conexión a la base de datos, se establece la configuración inicial de los ComboBox
+     * según el criterio recibido de SceneManager y se carga la tabla si procede.
+     */
     public void initialize() {
         pokemonBD = SceneManager.getPokemonBD();
 
@@ -73,12 +81,20 @@ public class ControllerListaPokemon {
         }
     }
 
+    /**
+     * Actualiza la lista de Pokémon en la tabla según los criterios actuales.
+     */
     public void setPokemons() {
         this.listaPokemon = pokemonBD.getPokemonByFilters(criteria);
         btnExportar.setDisable(false);
         setTablaPokemon();
     }
 
+    /**
+     * Establece los criterios de filtrado de Pokémon recibidos y actualiza la lista de Pokémon en la tabla según estos.
+     *
+     * @param criteriaPokemon criterios de filtrado recibidos.
+     */
     public void setCriteria(CriteriaPokemon criteriaPokemon){
         this.criteria = criteriaPokemon;
         if(criteria != null){
@@ -96,6 +112,11 @@ public class ControllerListaPokemon {
 
     }
 
+    /**
+     * Maneja el evento para ver los detalles de un Pokémon seleccionado, moviéndose a la lista correspondiente.
+     *
+     * @param actionEvent evento de acción generado por el usuario.
+     */
     public void verPokemon(ActionEvent actionEvent) {
         Pokemon pokemon = tableListaPokemon.getSelectionModel().getSelectedItem();
         if(pokemon != null) {
@@ -106,16 +127,29 @@ public class ControllerListaPokemon {
         }
     }
 
+    /**
+     * Navega de vuelta a la vista anterior.
+     *
+     * @param event evento de acción generado por el usuario.
+     */
     @FXML
     private void handleVolver(ActionEvent event) {
         SceneManager.volver(event, this.getClass());
     }
 
+    /**
+     * Navega al menú principal de la aplicación.
+     *
+     * @param actionEvent evento de acción generado por el usuario.
+     */
     public void volverAlInicio(ActionEvent actionEvent){
         SceneManager.volverAlInicio(actionEvent, this.getClass());
     }
 
 
+    /**
+     * Configura la tabla de Pokémon con los datos actuales.
+     */
     private void setTablaPokemon(){
         ObservableList oal = FXCollections.observableArrayList();
         if(listaPokemon != null){
@@ -125,8 +159,6 @@ public class ControllerListaPokemon {
             lblTotal.setText("0");
         }
         tableListaPokemon.setItems(oal);
-
-
         columnaNombre.setCellValueFactory(new PropertyValueFactory<Pokemon, String>("nombre"));
         columnaId.setCellValueFactory(new PropertyValueFactory<Pokemon,Integer>("id"));
         columnaTipo1.setCellValueFactory(new PropertyValueFactory<Pokemon,String>("tipo1"));
@@ -144,10 +176,11 @@ public class ControllerListaPokemon {
             return new SimpleStringProperty("");
         });
         columnaMetodo.setCellValueFactory(new PropertyValueFactory<Pokemon,String>("metodoEvolucion"));
-
-
     }
 
+    /**
+     * Filtra la lista de Pokémon según los tipos y criterios seleccionados.
+     */
     public void filtrarPokemon() {
         String tipo1 = txtTipo1.getText();
 
@@ -168,6 +201,9 @@ public class ControllerListaPokemon {
 
     }
 
+    /**
+     * Limpia los filtros y la tabla de Pokémon a sus valores predeterminados.
+     */
     public void limpiar(){
         this.listaPokemon = null;
         this.criteria = null;
@@ -176,6 +212,11 @@ public class ControllerListaPokemon {
         btnExportar.setDisable(true);
     }
 
+    /**
+     * Exporta la lista filtrada de Pokémon a un archivo JSON.
+     *
+     * @param action evento de acción generado por el usuario.
+     */
     public void exportar(ActionEvent action){
         Stage stage = (Stage) ((Node) action.getSource()).getScene().getWindow();
         Optional<File> posibleDirectorio = View.abrirFileChooserExp(stage);
@@ -196,6 +237,9 @@ public class ControllerListaPokemon {
         }
     }
 
+    /**
+     * Activa o desactiva el botón "Ver Pokémon" según la selección en la tabla de una fila o no.
+     */
     public void activateBotonVer(){
         Pokemon pokemon = tableListaPokemon.getSelectionModel().getSelectedItem();
         if(pokemon!= null){

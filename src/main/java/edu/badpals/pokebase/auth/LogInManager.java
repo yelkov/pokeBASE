@@ -15,87 +15,102 @@ import java.util.HexFormat;
 import java.util.Properties;
 
 /**
- * Clase que gestiona la autenticación de usuarios, incluyendo el inicio de sesión y la creación de nuevos usuarios.
- *
- * Esta clase se basa en un archivo de propiedades que almacena las credenciales (usuario y contraseñas cifradas)
- * y utiliza el algoritmo de hash SHA-256 para la seguridad de las contraseñas.
- *
- * @author David Búa - @BuaTeijeiro
- * @author Yelko Veiga - @yelkov
- * @version 1.0
+ * La clase LogInManager gestiona la autentificación de usuarios en la aplicación,
+ * mediante una base de datos MySQL dónde se almacenan los usuario con sus respectivas contraseñas cifradas.
+ * Permite tanto autentificar usuarios como registrar nuevos.
  */
 public class LogInManager {
 
-    // Ruta al archivo que contiene las credenciales de los usuarios.
+    // Constantes para la conexión a la base de datos
     private final String DATABASE_SERVICE = "jdbc:mysql://localhost:3306/";
     private final String DATABASE_DEFAULT = "bdpokemon_users";
-
     private final String USERNAME = "root";
     private final String PASSWORD = "root";
+
+    // Conexión a la base de datos
     private Connection connection;
 
-    public void connect(){
-        try{
-            if(connection == null){
+    /**
+     * Conecta a la base de datos predeterminada especificada en DATABASE_DEFAULT.
+     */
+    public void connect() {
+        try {
+            if (connection == null) {
                 Properties propiedadesConexion = new Properties();
                 propiedadesConexion.put("user", USERNAME);
                 propiedadesConexion.put("password", PASSWORD);
                 connection = DriverManager.getConnection(DATABASE_SERVICE + DATABASE_DEFAULT, propiedadesConexion);
-            };
-
-        } catch (SQLException e){
+            }
+        } catch (SQLException e) {
             ErrorLogger.saveErrorLog("Error al conectarse a la base de datos de autentificación, " + e.getMessage());
         }
     }
 
-    public void connect(String database){
-        try{
-            if(connection == null){
+    /**
+     * Conecta a una base de datos específica, diferente de DATABASE_DEFAULT.
+     *
+     * @param database El nombre de la base de datos a la que se desea conectar.
+     */
+    public void connect(String database) {
+        try {
+            if (connection == null) {
                 Properties propiedadesConexion = new Properties();
                 propiedadesConexion.put("user", USERNAME);
                 propiedadesConexion.put("password", PASSWORD);
                 connection = DriverManager.getConnection(DATABASE_SERVICE + database, propiedadesConexion);
-            };
-
-        } catch (SQLException e){
+            }
+        } catch (SQLException e) {
             ErrorLogger.saveErrorLog("Error al conectarse a la base de datos de autentificación, " + e.getMessage());
         }
     }
 
-    public void desconectarBD(){
-        if(connection != null){
-            try{
+    /**
+     * Cierra la conexión a la base de datos si está activa.
+     */
+    public void desconectarBD() {
+        if (connection != null) {
+            try {
                 connection.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 ErrorLogger.saveErrorLog("Error al desconectarse a la base de datos de autentificación, " + e.getMessage());
-            }finally{
+            } finally {
                 connection = null;
             }
         }
     }
 
-    public void setAutoCommit(boolean autoCommit){
-        try{
+    /**
+     * Establece si las operaciones deben ser confirmadas automáticamente.
+     * Lo usamos para desactivar esta opción durante los tests.
+     *
+     * @param autoCommit {@code true} para activar auto-commit; {@code false} para desactivarlo.
+     */
+    public void setAutoCommit(boolean autoCommit) {
+        try {
             connection.setAutoCommit(autoCommit);
-        } catch (SQLException e){
-            System.out.println("Error al hacer el autocommit");
-        }
-    }
-
-    public void rollback(){
-        try{
-            connection.rollback();
-        } catch (SQLException e){
-            System.out.println("Error al hacer el autocommit");
+        } catch (SQLException e) {
+            System.out.println("Error al configurar auto-commit.");
         }
     }
 
     /**
-     * Autentica a un usuario verificando el nombre de usuario y la contraseña proporcionados.
+     * Realiza un rollback de las transacciones pendientes.
+     * Lo empleamos para deshacer los cambios hechos durante los tests.
+     */
+    public void rollback() {
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            System.out.println("Error al realizar rollback.");
+        }
+    }
+
+    /**
+     * Autentifica a un usuario verificando su contraseña con la cifrada correspondiente almacenada en la base de datos.
      *
-     * @param user El nombre de usuario proporcionado.
-     * @param password La contraseña proporcionada (en texto plano).
-     * @return {@code true} si el nombre de usuario y la contraseña son correctos, {@code false} en caso contrario.
+     * @param user     El nombre de usuario.
+     * @param password La contraseña proporcionada.
+     * @return {@code true} si las credenciales son correctas; {@code false} en caso contrario.
      */
     public boolean authenticate(String user, String password) {
         try (PreparedStatement statement = connection.prepareStatement("select contrasinal from users where usuario = ?")) {
@@ -104,11 +119,9 @@ public class LogInManager {
 
             ResultSet results = statement.executeQuery();
 
-            if(results.next()){
+            if (results.next()) {
                 String correctPassword = results.getString(1);
-
                 String hashedPassword = generateHash(password);
-
                 return hashedPassword.equals(correctPassword);
             } else {
                 return false;
@@ -121,14 +134,15 @@ public class LogInManager {
     }
 
     /**
-     * Registra a un nuevo usuario, almacenando su nombre de usuario y la contraseña cifrada en el archivo de propiedades.
+     * Registra un nuevo usuario en la base de datos.
      *
-     * @param user El nombre de usuario que desea registrarse.
-     * @param password La contraseña del nuevo usuario (en texto plano).
-     * @return {@code true} si el registro fue exitoso, {@code false} si el usuario ya existe.
+     * @param user     El nombre del usuario.
+     * @param password La contraseña del usuario.
+     * @return {@code true} si el registro fue exitoso; {@code false} si ocurrió un error.
+     * @throws SQLIntegrityConstraintViolationException Si el nombre de usuario ya está registrado.
      */
     public boolean signUp(String user, String password) throws SQLIntegrityConstraintViolationException {
-        try (PreparedStatement statement = connection.prepareStatement("insert into users(usuario, contrasinal) values (?,?)");) {
+        try (PreparedStatement statement = connection.prepareStatement("insert into users(usuario, contrasinal) values (?,?)")) {
             statement.setString(1, user);
             statement.setString(2, generateHash(password));
             int rowsAffected = statement.executeUpdate();
@@ -136,30 +150,27 @@ public class LogInManager {
         } catch (SQLIntegrityConstraintViolationException pk) {
             throw pk;
         } catch (SQLException e) {
-            // En caso de error, registrar el error utilizando el ErrorLogger
             ErrorLogger.saveErrorLog("Error al guardar en la base de datos, " + e.getMessage());
             return false;
         }
     }
 
     /**
-     * Genera un hash SHA-256 para la contraseña proporcionada.
+     * Genera un hash SHA-256 para un texto proporcionado.
+     * Lo usaremos para cifrar las contraseñas que guardamos en la base de datos.
      *
-     * @param text La contraseña en texto plano.
-     * @return El hash de la contraseña en formato hexadecimal.
+     * @param text El texto a ser hasheado.
+     * @return Una cadena hexadecimal representando el hash o {@code null} si ocurre un error.
      */
-    private String generateHash(String text){
-        try{
+    private String generateHash(String text) {
+        try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
-
-            // Formatea el hash en una cadena hexadecimal
             return HexFormat.of().formatHex(hash);
-
         } catch (NoSuchAlgorithmException e) {
-            // Si el algoritmo de hashing no está disponible, registrar el error
             ErrorLogger.saveErrorLog("Hashing algorithm not found.");
         }
         return null;
     }
 }
+

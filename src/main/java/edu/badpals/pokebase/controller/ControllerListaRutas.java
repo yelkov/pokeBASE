@@ -15,7 +15,15 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.*;
 
+/**
+ * Controlador para la vista que gestiona la lista de rutas.
+ * Proporciona funcionalidades para filtrar rutas, ver detalles de una determinada ruta y exportar los datos obtenidos.
+ *
+ */
 public class ControllerListaRutas {
+    /**
+     * Declaración de los objetos corresponientes a elementos de la interfaz
+     */
     @FXML
     private ListView<Ruta> listaRutas;
 
@@ -28,10 +36,19 @@ public class ControllerListaRutas {
     @FXML
     private Button btnBuscarRuta, btnFiltrarRutas;
 
+    /**
+     * Objetos necesarios para configurar la interfaz
+     */
     private RutaBD rutaBD;
     private CriteriaRuta criteriaRuta;
     private List<Ruta> rutas;
 
+    /**
+     * Inicializa los componentes y configura los valores iniciales.
+     * Recupera el acceso a la base de datos.
+     * Configura los ComboBox con las regionaes cargads desde la base de datos, y los criterios de ordenación.
+     * Recupera los criterios de búsqueda de SceneManager si existen
+     */
     public void initialize(){
         rutaBD = SceneManager.getRutaBD();
 
@@ -53,11 +70,20 @@ public class ControllerListaRutas {
         }
     };
 
+    /**
+     * Establece las rutas que se mostrarán en la lista.
+     *
+     * @param rutas lista de rutas a mostrar.
+     */
+
     public void setRutas(List<Ruta> rutas) {
         this.rutas = rutas;
         listaRutas.setItems(FXCollections.observableArrayList(rutas));
     }
 
+    /**
+     * Aplica los filtros actuales para actualizar la lista de rutas.
+     */
     public void refiltrarRutas(){
         String pokemon = txtPokemon.getText();
         String regionSeleccionada = cmbRegion.getSelectionModel().getSelectedItem();
@@ -68,6 +94,11 @@ public class ControllerListaRutas {
         setRutas(rutas);
     }
 
+    /**
+     * Configura los criterios de búsqueda y actualiza los componentes de la vista de forma acorde.
+     *
+     * @param criteria criterios de búsqueda a aplicar.
+     */
     public void setCriteria(CriteriaRuta criteria){
         if(criteria.getPokemon().isPresent()){
             txtPokemon.setText(criteria.getPokemon().get());
@@ -82,6 +113,9 @@ public class ControllerListaRutas {
         this.criteriaRuta = criteria;
     }
 
+    /**
+     * Activa o desactiva el botón "Buscar Ruta" según si hay una ruta seleccionada o no.
+     */
     public void activateBotonBuscar(){
         Ruta ruta = listaRutas.getSelectionModel().getSelectedItem();
         if(ruta!= null){
@@ -91,6 +125,11 @@ public class ControllerListaRutas {
         }
     }
 
+    /**
+     * Exporta la lista actual de rutas a un archivo JSON.
+     *
+     * @param action evento de acción generado por el usuario.
+     */
     public void exportar(ActionEvent action){
         Stage stage = (Stage) ((Node) action.getSource()).getScene().getWindow();
         Optional<File> posibleDirectorio = View.abrirFileChooserExp(stage);
@@ -111,6 +150,11 @@ public class ControllerListaRutas {
         }
     }
 
+    /**
+     * Navega a la vista que muestra los detalles de la ruta seleccionada.
+     *
+     * @param actionEvent evento de acción generado por el usuario.
+     */
     public void goToRutaInfo(ActionEvent actionEvent){
         Ruta ruta = listaRutas.getSelectionModel().getSelectedItem();
         if (ruta!= null) {
@@ -123,6 +167,9 @@ public class ControllerListaRutas {
         }
     }
 
+    /**
+     * Limpia los campos de búsqueda a sus valores predeterminados y vacía la lista de rutas en la interfaz.
+     */
     public void cleanFields(){
         txtPokemon.setText("");
         cmbCriterio.setValue("id");
@@ -132,10 +179,20 @@ public class ControllerListaRutas {
 
     }
 
+    /**
+     * Navega al menú principal de la aplicación.
+     *
+     * @param actionEvent evento de acción generado por el usuario.
+     */
     public void volverAlInicio(ActionEvent actionEvent){
         SceneManager.volverAlInicio(actionEvent, this.getClass());
     }
 
+    /**
+     * Navega de vuelta a la vista anterior.
+     *
+     * @param event evento de acción generado por el usuario.
+     */
     public void handleVolver(ActionEvent event) {
         SceneManager.volver(event, this.getClass());
     }
