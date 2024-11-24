@@ -4,7 +4,7 @@ ___
 - [Introducción](#introducción)
 - [Manual técnico para desarrolladores](#manual-técnico-para-desarrolladores)
   - [Requisitos previos](#requisitos-previos)
-  - [Modelo Entidad-Relación](#modelo-entidad-relación)
+  - [Base de datos. Modelo Entidad-Relación](#base-de-datos-modelo-entidad-relación)
     - [Tabla Pokemons](#1tabla-pokemons)
     - [Tabla Rutas](#2tabla-rutas)
     - [Tabla Rutas-Pokemons](#3tabla-rutas_pokemons)
@@ -23,7 +23,7 @@ ___
     - [Filtrar pokémon](#filtrar-pokémon)
     - [Búsqueda de ruta](#búsqueda-ruta)
     - [Filtrar rutas](#filtrar-rutas)
-    - [Otras opciones (limpiar datos y borrar caché)](#otras-funciones)
+    - [Otras funciones](#otras-funciones)
 - [Reparto de tareas](#reparto-de-tareas)
 - [Extras](#extras)
 - [Mejoras](#mejoras)
@@ -46,7 +46,7 @@ ___
 - **MySQL**: El proyecto utiliza MySQL como sistema de gestión de bases de datos, por lo que deberás instalarlo. ([descargar](https://dev.mysql.com/downloads/mysql/))
 - **IDE recomendado**: Se recomienda el uso de IntelliJ IDEA para un desarrollo más sencillo, pero se puede usar cualquier otro IDE compatible con Java. ([descargar](https://www.jetbrains.com/idea/download/?section=windows))
 
-### Modelo Entidad-Relación
+### Base de datos. Modelo Entidad-Relación
 [Volver al índice](#índice)
 
 ![DiagramaE-R](media/DiagramaER.jpg)
@@ -200,9 +200,9 @@ Este proyecto implementa un enfoque de Desarrollo Guiado por Pruebas (TDD) para 
 
 Utilizamos una base de datos específica para realizar los test, **`bdpokemon_test`**. Cada prueba se ejecuta en una base de datos aislada y transaccional, donde las operaciones son revertidas (rollback) después de cada suite para garantizar un entorno limpio y consistente.
 
-Los casos test referidos al modelo se encuentran en las clases `PokemonBDTest.java` y `RutaBDTest.java`. Por otro lado, los test respecto del Log in se pueden encontrar en la clase `LogInManagerTest.java`
+Los casos test referidos al modelo se encuentran en las clases `PokemonBDTest.java` con 15 test y `RutaBDTest.java` con 32 test. Por otro lado, los test respecto del Log in se pueden encontrar en la clase `LogInManagerTest.java` que cuenta con 4 test más.
 
-
+![Test completados](media/test.JPG)
 
 ### Configuración de Maven
 [Volver al índice](#índice)
@@ -288,7 +288,7 @@ En la siguiente captura mostramos la ejecución del JAR desde el terminal.
 En la aplicación, los errores se gestionan de dos maneras:
 - Los errores que ocurren en las clases del **modelo**, **service**, **auth** y algunas excepciones de **controller** (relacionadas con la lógica interna) se manejan de forma interna y se registran en un archivo de log. Así cuando se captura una excepción, se llama a una función de la clase ErrorLogger, que se encarga de escribir el mensaje en el fichero `error.log`.
 
-![](media/errorLogger.JPG)
+![captura del archivo error.log](media/errorLogger.JPG)
 (Esto es lo que ocurre cuando se ejecuta la aplicación sin que exista la base de datos.)
 
 - Por otro lado, los errores que se producen en la **interfaz de usuario** se presentan directamente en pantalla, para que el usuario pueda comprender qué ha fallado.
@@ -315,32 +315,116 @@ La funcionalidad de Log In se lleva a cabo en la clase `LogInManager.java` del p
 [Volver al índice](#índice)
 
 ### Log In usuario
-Para acceder a nuestra aplicación, es necesario estar logeado o registrado, por lo que al abrir la aplicación, la primera ventana que verá el usuario será un menú de inicio de sesión como la que se muestra a continuación. Desde el mismo menú podrá registrarse en caso de que aún no lo haya hecho, o iniciar sesión si ya lo está.
+Para acceder a nuestra aplicación, es necesario estar logueado o registrado, por lo que al abrir la aplicación, la primera ventana que verá el usuario será un menú de inicio de sesión como la que se muestra a continuación. Desde el mismo menú podrá registrarse en caso de que aún no lo haya hecho, o iniciar sesión si ya lo está.
 
-![](media/01_intro.png)
+![Log in](media/01_intro.png)
 
 Si nos intentamos registrar con un nombre de usuario que ya está almacenado, el sistema nos mostrará un mensaje de error, y nos impide avanzar en el proceso.
 
-![](media/03_registro_mal.png)
+![Error usuario ya registrado](media/03_registro_mal.png)
 
 Del mismo modo, si tratamos de acceder con credenciales que no son correctas, nos muestra el correspondiente aviso, y tampoco nos permite continuar.
 
-![](media/02_usuario_mal.png)
+![Error datos incorrectos](media/02_usuario_mal.png)
 
 Finalmente, si introducimos un usuario y contraseña que coinciden con lo almacenado en el sistema, accederemos ya al menú principal de la aplicación, desde el que podemos realizar búsquedas de rutas y pokemon, que nos llevarán a las ventanas dónde tendremos acceso a las diversas acciones que se pueden realizar en cada caso y que se explicarán a continuación.
 
-![](media/03_inicio_sesion.png)
+![Menú principal](media/03_inicio_sesion.png)
 
 ### Búsqueda de Pokémon
 [Volver al índice](#índice)
+
+Podemos hacer una búsqueda a la información de un pokémon en particular desde el apartado 'Buscar detalles de pokémon'. Es posible llevarla a cabo tanto introduciendo el nombre del pokémon como su ID.
+
+![Busqueda de pokemon por nombre](media/04_buscar_pokemon_nombre.png)
+
+Podemos observar las características del pokémon: su nombre, id, sus tipos, el pokémon a partir del cual evoluciona (si es una evolución) y en este último caso el método por el cual evoluciona.
+
+![Mostrar busqueda pokemon](media/05_pokemon_buscado.png)
+
+En el apartado 'Evoluciona de' podemos encontrar un botón que nos permite acceder directamente a la pre-evolución del actual pokémon. 
+
+![boton evoluciona de](media/05__02_flechas.png)
+![mostrar preevolucion](media/05_flechas.png)
+
+Con las flechas laterales también podemos acceder al pokémon inmediatamente anterior o inmediatamente posterior en función de su id.
+
+![mostrar el pokemon anterior clicando en flecha](media/05_flechas_anterior.png)
+
+También podemos realizar una búsqueda por id desde el menú principal:
+
+![buscar por id 89](media/04_buscar_pokemon_id.PNG)
+![mostrar muk (id 89)](media/04_muk.PNG)
+
+Si desde esta pantalla clicamos en Modificar Pokémon, se abre una nueva ventana que carga los datos del pokémon que estaba siendo visualizado. 
+
+![modificar muk](media/07_modificar.png)
+
+Se han introducido una serie de comprobaciones para impedir modificaciones erróneas, como que el usuario introduzca un id o un nombre que ya existe en la base de datos:
+
+![modificar mal id](media/07_modificar_mal.png)
+![modificar mal nombre](media/07_modificar_mal_nombre.png)
+
+En el caso de que se indique una pre-evolucion, es imprescindible añadir el método por el que evoluciona el pokémon.
+
+![modificar metodo de evolucion en blanco](media/07_modificar_mal_metodo.png)
+
+Finalmente si todo está correcto, al confirmar la modificación se nos mostrará un mensaje de aviso:
+![modificar correcto](media/07_modificado.png)
+Para visualizar podemos ir a la ventana anterior y comprobar que se realizaron los cambios:
+![ver modificacion](media/07_ver_modificado.png)
+
+Si decidimos desde la ventana de edición eliminar al pokémon cargado haciendo click en el botón eliminar, un cuadro de diálogo nos pedirá confirmación para llevar a cabo esta acción:
+
+![estas seguro de eliminar](media/08_eliminar.png)
+
+Si confirmamos la acción, se nos mostrará un mensaje de aviso y se limpiarán los datos de pantalla (deshabilitando ciertas opciones al no haber un pokémon cargado):
+
+![eliminado](media/09_eliminar_definitivo.png)
+![pantalla limpia tras borras](media/10_pantalla_tras_eliminar.png)
+
+Si realizamos una búsqueda del pokémon eliminado podemos ver que ya no existe:
+
+![pokemon no existe](media/08_eliminar_02.png)
+
+También podemos crear un nuevo pokémon utilizando el botón `Crear nuevo`. Si introducimos un id o nombre que ya existe nos avisa de que no es posible crear al pokémon. Del mismo modo, si no introducimos alguno de los datos obligatorios (nombre, id y al menos el tipo 1), no será posible realizar la creación:
+![crear sin campos pokemon](media/11_crear.png)
+![crear mal id](media/11_crear_2.png)
+
+Si no existe ningún problema, se notificará que la creación ha sido exitosa:
+
+![pokemon creado](media/11_crear_final.png)
+
+Podemos añadir una imagen al crear el pokémon o bien editarla posteriormente con modificar. Si se clica en el botón `Explorar...` se abrirá un cuadro de diálogo para buscar y escoger un archivo válido (.png, .jpg y .jpeg para las imágenes y .gif para los gif).
+![añadir imagen](media/12_anadir_imagen.png)
+
+Cuando seleccionamos el archivo se carga la ruta en el label.
+![ruta de imagen cargada](media/12_anadir_imagen_2.png)
+
+Confirmamos la modificación con el botón `Mofidicar`:
+![confirmamos foto](media/12_anadir_imagen_3.png)
+![foto añadida](media/13_anadido.png)
 
 
 ### Filtrar Pokémon
 [Volver al índice](#índice)
 
+En el apartado del menú principal 'Búsqueda filtrada de Pokémon' podemos hacer una búsqueda a través de filtros que nos devolverán una lista de pokémon que cumplan esas condiciones. Es imprescindible añadir al menos uno de los tipos del pokémon para realizar el filtrado, y será posible añadir el segundo tipo y ordenar los resultados por nombre o id del pokémon, tanto de manera ascendente como descendente. 
+
+![busqueda de pokemon con filtros](media/15_buscar.png)
+![busqueda filtrada](media/15_buscar_2.png)
+
+Desde esta pantalla podemos hacer una nueva búsqueda filtrada tras cambiar los filtros y clicar `Aplicar filtros` o bien visualizar un pokémon de la lista seleccionándolo y clicando en el botón inferior `Ver pokemon` 
+
+![seleccionar](media/15_buscar_3.png)
+![visualizar](media/15_buscar_4.png)
+
+
+
 
 ### Búsqueda Ruta
 [Volver al índice](#índice)
+
 Podemos buscar la información de una ruta en concreto. Para ello, debemos introducir el nombre de la ruta, y seleccionar la región a la que pertenece, ya que puede haber varias rutas con el mismo nombre, siempre que sean de regiones distintas. Para lo segundo, se carga un combo box con las regiones que ya existen en la base de datos, aunque luego se pueden añadir a mayores.
 
 ![](media/16_ruta_001.png)
@@ -435,6 +519,8 @@ Por ejemplo, pulsando siguiente vamos a la segunda ruta de la lista anterior.
 
 Salvo el menú principal, todas las demás ventanas tienen cuatro botones que permiten realizar funciones comunes.
 
+![menu superior](media/22_menu_superior.PNG)
+
 El botón volver permite acceder a la ventana inmediatamente anterior, manteniéndose la información que estaba cargada cuando esta llamó a la siguiente.
 
 ![]()
@@ -445,7 +531,7 @@ El botón volver al menú principal vuelve a la pantalla de inicio que se carga 
 
 El botón limpiar borra la información cargada en la interfaz en un determinado momento. Además, en algunas pantallas bloquea algunos botones, pues su funcionalidad solo tiene sentido si hay algo cargado en la pantalla.
 
-![]()
+![Limpiar](media/14_limpiar.png)
 
 Finalmente, el botón exportar permite generar un archivo tipo json con la información del objeto o la lista, según corresponda que se está mostrando en ese momento.
 
