@@ -23,7 +23,12 @@ import java.io.IOException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 
+/**
+ * Controlador para gestionar una ruta en la aplicación.
+ * Maneja la creación, modificación, eliminación y visualización de rutas, así como la interacción con los pokémon en cada ruta.
+ */
 public class ControllerRuta {
+    //Elementos de la interfaz de usuario.
     @FXML
     private TextField txtRutaNombre, txtRutaRegion, txtPokemonAnadir, txtNiveles, txtMinimoNivel, txtMaximoNivel;
 
@@ -42,12 +47,19 @@ public class ControllerRuta {
     @FXML
     private Button btnAnterior, btnSiguiente, btnBuscarPokemon, btnRetirarPokemon;
 
+    //Acceso a la base de datos
     private RutaBD rutaBD;
+    //Objetos que representan componentes necesarios para la representación gráfica
     private Ruta ruta;
     private List<Ruta> rutas;
     private int currentIndex;
     private CriteriaRuta criteriaRuta;
 
+    /**
+     * Inicializa el controlador configurando las referencias a la base de datos.
+     * Si recibe del SceneManager un objeto tipo ruta, lo muestra en la vista.
+     * También configura los campos de entrada para aceptar solo números en ciertos campos.
+     */
     public void initialize() {
         rutaBD = SceneManager.getRutaBD();
         Map<String, Object> datos = SceneManager.getDatos();
@@ -66,12 +78,22 @@ public class ControllerRuta {
         permitirSoloEnteros(txtNiveles);
     }
 
+    /**
+     * Configura un formato que solo permite números enteros en el campo de texto proporcionado.
+     *
+     * @param textField El campo de texto al que se le aplicará el formato.
+     */
     private void permitirSoloEnteros(TextField textField) {
         TextFormatter<String> integerFormatter = new TextFormatter<>(change ->
                 change.getControlNewText().matches("\\d*") ? change : null);
         textField.setTextFormatter(integerFormatter);
     }
 
+    /**
+     * Establece la ruta y configura los elementos de la interfaz de usuario para mostrar la información de esta.
+     *
+     * @param ruta La ruta seleccionada.
+     */
     public void setRuta(Ruta ruta){
         this.ruta = ruta;
         configureMenu(true);
@@ -81,6 +103,11 @@ public class ControllerRuta {
         setPokemonList(ruta.getId());
     }
 
+    /**
+     * Establece la lista de pokémon asociados a una ruta.
+     *
+     * @param rutaId El ID de la ruta de la cual se cargarán los pokémon.
+     */
     private void setPokemonList(int rutaId){
         List<RutaPokemon> pokemons = rutaBD.getPokemons(rutaId);
         if (pokemons.size() > 0){
@@ -91,6 +118,10 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Añade un pokémon a la ruta actual, asegurándose de que el nombre del pokémon y los niveles sean válidos.
+     * Si el pokémon ya existe en la ruta o no existe en la base de datos no permite realizar la operación
+     */
     public void addPokemonRuta(){
         int id = Integer.valueOf(lblRutaId.getText());
         String nombre = txtPokemonAnadir.getText();
@@ -117,6 +148,9 @@ public class ControllerRuta {
         txtMinimoNivel.setText("");
     }
 
+    /**
+     * Elimina un pokémon de la ruta actual, recargando la lista de pokemons de la ruta.
+     */
     public void removePokemonRuta(){
         int rutaId = Integer.valueOf(lblRutaId.getText());
         String pokemonName = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
@@ -130,6 +164,12 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Modifica los niveles de los pokémon en la ruta actual.
+     *
+     * @param id El ID de la ruta que se va a modificar.
+     * @param niveles El número de niveles a sumar o restar.
+     */
     private void modificarNiveles(int id, int niveles) {
         boolean isModificarOk = rutaBD.subirNivelesRuta(id, niveles);
         if (isModificarOk) {
@@ -140,6 +180,9 @@ public class ControllerRuta {
         txtNiveles.setText("");
     }
 
+    /**
+     * Sube el nivel de los pokémon en la ruta actual, según lo indicado en la interfaz.
+     */
     public void subirNiveles(){
         int id = Integer.valueOf(lblRutaId.getText());
         try{
@@ -150,6 +193,9 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Baja el nivel de los pokémon en la ruta actual, según lo indicado en la interfaz.
+     */
     public void bajarNiveles(){
         int id = Integer.valueOf(lblRutaId.getText());
         try{
@@ -160,6 +206,10 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Muestra los criterios de búsqueda de ruta desde los que se accedió a la ruta
+     * y habilita los botones para navegar entre las rutas,
+     */
     public void setPartOfList(){
         showNode(menuParteLista, true);
         lblCriterios.setText(criteriaRuta.toString());
@@ -169,6 +219,9 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Activa o desactiva los botones de acción para un pokémon seleccionado en la lista.
+     */
     public void activateBotonesPokemon(){
         String pokemon = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
         if(pokemon!= null){
@@ -180,6 +233,9 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Muestra la información de la siguiente ruta en la lista de rutas disponibles.
+     */
     public void siguienteRuta(){
         currentIndex++;
         try{
@@ -190,6 +246,9 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Muestra la información de la ruta anterior en la lista de rutas disponibles.
+     */
     public void anteriorRuta(){
         currentIndex--;
         try{
@@ -200,11 +259,22 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Muestra u oculta un nodo de la interfaz de usuario.
+     *
+     * @param node El nodo a mostrar u ocultar.
+     * @param shown Determina si el nodo debe ser visible o no.
+     */
     public void showNode(Node node, boolean shown){
         node.setVisible(shown);
         node.setManaged(shown);
     }
 
+    /**
+     * Configura el menú de la interfaz de usuario dependiendo de si hay una ruta cargada o no.
+     *
+     * @param isRutaLoaded Indica si se ha cargado una ruta o no.
+     */
     public void configureMenu (boolean isRutaLoaded){
         if (isRutaLoaded){
             showNode(menuRutaCargada, true);
@@ -214,6 +284,10 @@ public class ControllerRuta {
             showNode(menuRutaNueva, true);
         }
     }
+
+    /**
+     * Crea una nueva ruta en la base de datos a partir de la información introducida en la interfaz.
+     */
     public void crearRuta(){
         String nombre = txtRutaNombre.getText();
         String region = txtRutaRegion.getText();
@@ -231,6 +305,9 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Modifica los detalles de la ruta actual en la base de datos, según lo especificado en la interfaz.
+     */
     public void modificarRuta(){
         int id = Integer.valueOf(lblRutaId.getText());
         String nombre = txtRutaNombre.getText();
@@ -249,6 +326,10 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Elimina la ruta cargada en la interfaz de la base de datos
+     * y limpia la información de esta de la vista
+     */
     public void borrarRuta(){
         String idValue = lblRutaId.getText();
         int id = Integer.parseInt(idValue);
@@ -261,12 +342,18 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Configura la vista para que solo se muestren los elementos relativos a crear una nueva ruta
+     */
     public void toMenuCrearRuta(){
         configureMenu(false);
         cleanFields();
         showNode(menuParteLista, false);
     }
 
+    /**
+     * Limpia los campos de entrada y oculta la información de la ruta cargada.
+     */
     public void cleanFields(){
         lblRutaId.setText("");
         txtRutaNombre.setText("");
@@ -274,6 +361,12 @@ public class ControllerRuta {
         showNode(menuPokemon, false);
     }
 
+    /**
+     * Exporta los datos de la ruta a un archivo JSON,
+     * abriendo una ventana para que el usuario escoja la ruta destino de la exportación.
+     *
+     * @param action La acción que dispara el evento de exportación.
+     */
     public void exportar(ActionEvent action){
         Stage stage = (Stage) ((Node) action.getSource()).getScene().getWindow();
         Optional<File> posibleDirectorio = View.abrirFileChooserExp(stage);
@@ -294,6 +387,11 @@ public class ControllerRuta {
         }
     }
 
+    /**
+     * Navega a la escena de detalles del pokémon seleccionado en la lista.
+     *
+     * @param actionEvent El evento que dispara la acción.
+     */
     public void buscarInfoPokemon(ActionEvent actionEvent){
         String pokemonName = listPokemonsRuta.getSelectionModel().getSelectedItem().getPokemon();
         Pokemon pokemon = rutaBD.getPokemonBD().getPokemonByName(pokemonName);
@@ -303,6 +401,11 @@ public class ControllerRuta {
         SceneManager.goToView(actionEvent, "datosPokemon.fxml", this.getClass(), 750, 650);
     }
 
+    /**
+     * Maneja la acción de volver a la vista anterior.
+     *
+     * @param event El evento que dispara la acción de volver.
+     */
     @FXML
     private void handleVolver(ActionEvent event) {
 
@@ -314,6 +417,11 @@ public class ControllerRuta {
         SceneManager.volver(event, this.getClass());
     }
 
+    /**
+     * Vuelve al menú principal de la aplicación.
+     *
+     * @param actionEvent El evento que dispara la acción de volver al inicio.
+     */
     public void volverAlInicio(ActionEvent actionEvent){
         SceneManager.volverAlInicio(actionEvent, this.getClass());
     }

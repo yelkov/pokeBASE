@@ -26,7 +26,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Maneja la interacción entre la vista y el modelo para la
+ * visualización, y exportación de los datos de los Pokémon en la aplicación.
+ * Incluye métodos para visualizar los datos del Pokémon, gestionar la búsqueda de Pokémon, y realizar acciones sobre los mismos (como eliminar o exportar).
+ */
 public class ControllerPokemon {
+    // Componentes de la interfaz de usuario
     @FXML
     private Button btnVolver, btnLimpiar, btnNuevaBusqueda, btnEvolucionaDe,btnMostrarAnterior,btnMostrarPosterior, btnCrear, btnModificar, btnEliminar, btnExportar, btnMenuPrincipal;
     @FXML
@@ -38,13 +44,19 @@ public class ControllerPokemon {
     @FXML
     private GridPane gridEvolucionaDe;
 
+    // Objetos que guardan la información de pokémons relevantes
     private Pokemon pokemon;
     private Pokemon pokemonPosterior;
     private Pokemon pokemonAnterior;
     private Pokemon pokemonPreEvolucion;
 
+    // Objeto para acceder a la base de datos
     private PokemonBD pokemonBD;
 
+    /**
+     * Inicializa el controlador y prepara la conexión con la base de datos de Pokémon.
+     * Además, si se pasan datos de un Pokémon, los carga y los visualiza.
+     */
     public void initialize() {
         pokemonBD = SceneManager.getPokemonBD();
 
@@ -54,6 +66,11 @@ public class ControllerPokemon {
         }
     }
 
+    /**
+     * Establece el Pokémon actual y actualiza la vista con sus datos.
+     *
+     * @param pokemon El Pokémon a establecer.
+     */
     public void setPokemon(Pokemon pokemon) {
         this.pokemon = pokemon;
         visualizarDatos();
@@ -64,12 +81,21 @@ public class ControllerPokemon {
         btnEliminar.setDisable(false);
     }
 
-
+    /**
+     * Controla la visibilidad de un nodo en la interfaz de usuario.
+     *
+     * @param nodo El nodo a mostrar o esconder.
+     * @param visibility Si el nodo debe ser visible o no.
+     * @param managed Si el nodo debe ser administrado por el layout.
+     */
     public void mostrar(Node nodo, boolean visibility, boolean managed){
-        nodo.setVisible(visibility);
-        nodo.setManaged(managed);
-    }
+            nodo.setVisible(visibility);
+            nodo.setManaged(managed);
+        }
 
+    /**
+     * Habilita o deshabilita los botones de navegación hacia los Pokémon anteriores y posteriores dependiendo de si existen o no.
+     */
     public void habilitarBotonesLaterales(){
         if(this.pokemonAnterior != null){
             btnMostrarAnterior.setDisable(false);
@@ -83,6 +109,9 @@ public class ControllerPokemon {
         }
     }
 
+    /**
+     * Establece los Pokémon anterior y posterior a partir del ID del Pokémon actual.
+     */
     private void establecerSiguientesPokemon() {
         int anteriorId = pokemon.getId()-1;
         int siguienteId = pokemon.getId()+1;
@@ -90,6 +119,11 @@ public class ControllerPokemon {
         pokemonPosterior = pokemonBD.getPokemonById(siguienteId);
     }
 
+    /**
+     * Cambia el Pokémon mostrado en función del botón presionado (anterior, posterior o preevolución).
+     *
+     * @param actionEvent El evento que dispara la acción (el botón presionado).
+     */
     public void cambiarPokemon(ActionEvent actionEvent) {
         if(actionEvent.getSource() == btnMostrarAnterior) {
             this.pokemon = pokemonAnterior;
@@ -108,6 +142,9 @@ public class ControllerPokemon {
         btnExportar.setDisable(false);
     }
 
+    /**
+     * Actualiza la vista con los datos del Pokémon actual.
+     */
     public void visualizarDatos() {
         lblNombrePokemon.setText(pokemon.getNombre());
         lblId.setText(pokemon.getId().toString());
@@ -131,6 +168,10 @@ public class ControllerPokemon {
         setImage();
     }
 
+    /**
+     * Establece la imagen del Pokémon, primero intentándolo con el GIF,
+     * y si no existe con una imagen estática.
+     */
     public void setImage() {
         mostrar(imgPokemon,true,true);
         imgPokemon.setImage(null);
@@ -160,6 +201,10 @@ public class ControllerPokemon {
 
     }
 
+    /**
+     * Busca un Pokémon por su nombre o ID y actualiza la vista si se encuentra.
+     * Si no, lanza un mensaje.
+     */
     public void buscarPokemon(){
         String pokemonSearch = tfNombrePokemon.getText();
         Pokemon nuevoPokemon;
@@ -183,15 +228,28 @@ public class ControllerPokemon {
         }
     }
 
+    /**
+     * Vuelve a la pantalla anterior.
+     *
+     * @param event El evento que dispara la acción.
+     */
     @FXML
     private void handleVolver(ActionEvent event) {
         SceneManager.volver(event, this.getClass());
     }
 
+    /**
+     * Vuelve al menú principal de la aplicación.
+     *
+     * @param actionEvent El evento que dispara la acción.
+     */
     public void volverAlInicio(ActionEvent actionEvent){
         SceneManager.volverAlInicio(actionEvent, this.getClass());
     }
 
+    /**
+     * Limpia los datos y resetea la vista del panel sin ningún pokémon cargado.
+     */
     public void limpiarPanel(){
         this.pokemon = null;
         this.pokemonPosterior = null;
@@ -209,6 +267,9 @@ public class ControllerPokemon {
         btnEliminar.setDisable(true);
     }
 
+    /**
+     * Elimina el Pokémon actual (cargado en memoria) de la base de datos.
+     */
     public void eliminarPokemon(){
         if(this.pokemon == null){
             View.lanzarMensajeError("Error","Error al eliminar pokémon","No se encuentra seleccionado ningún pokémon.");
@@ -222,6 +283,12 @@ public class ControllerPokemon {
         }
     }
 
+    /**
+     * Permite crear o modificar un Pokémon,
+     * accediendo a la vista destinada a tal fin
+     *
+     * @param actionEvent El evento que dispara la acción (botón presionado).
+     */
     public void editarPokemon(ActionEvent actionEvent){
         Map<String, Object> datos = new HashMap<>();
 
@@ -235,6 +302,11 @@ public class ControllerPokemon {
 
     }
 
+    /**
+     * Exporta los datos del Pokémon cargado en memoria a un archivo JSON.
+     *
+     * @param action El evento que dispara la acción (botón presionado).
+     */
     public void exportar(ActionEvent action){
         Stage stage = (Stage) ((Node) action.getSource()).getScene().getWindow();
         Optional<File> posibleDirectorio = View.abrirFileChooserExp(stage);

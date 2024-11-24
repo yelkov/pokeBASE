@@ -15,19 +15,28 @@ import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Controlador para la vista de edición de Pokémon. Permite crear, modificar, eliminar,
+ * y exportar la información de un Pokémon en la base de datos.
+ * También gestiona la carga de imágenes y gif relacionados con el Pokémon.
+ */
 public class ControllerEditarPokemon {
 
+    //Elementos de la interfaz de usuario
     @FXML
     private TextField tfNombre, tfId, tfTipo1, tfTipo2, tfEvolucionaDe, tfMetodoEvolucion, tfImagen, tfGif, tfShiny;
     @FXML
     private Button btnCargarImagen, btnCargarGif, btnCargarShiny, btnModificar, btnEliminar, btnExportar;
 
+    //Pokemon sobre el que se realizan las acciones
     private Pokemon pokemon;
-
-    private AccesoBD accesoBD;
+    //Objeto con los métodos para acceder a la base de datos
     private PokemonBD pokemonBD;
-    private RutaBD rutaBD;
 
+    /**
+     * Inicializa el controlador y establece los valores predeterminados de los botones y campos de texto.
+     * Si se ha pasado un Pokémon a través del SceneManager, se establece los datos en la interfaz para su edición.
+     */
     public void initialize() {
         pokemonBD = SceneManager.getPokemonBD();
 
@@ -46,12 +55,23 @@ public class ControllerEditarPokemon {
 
     }
 
+    /**
+     * Configura el TextField para aceptar solo valores numéricos.
+     *
+     * @param textField El campo de texto al que se le aplicará el formato.
+     */
     private void permitirSoloEnteros(TextField textField) {
         TextFormatter<String> integerFormatter = new TextFormatter<>(change ->
                 change.getControlNewText().matches("\\d*") ? change : null);
         textField.setTextFormatter(integerFormatter);
     }
 
+    /**
+     * Establece el Pokémon que se va a editar,
+     * y lo carga en la interfaz gráfica
+     *
+     * @param pokemon El Pokémon a editar.
+     */
     public void setPokemon(Pokemon pokemon) {
         this.pokemon = pokemon;
         rellenarCampos();
@@ -60,6 +80,9 @@ public class ControllerEditarPokemon {
         btnExportar.setDisable(false);
     }
 
+    /**
+     * Rellena los campos de texto de la interfaz con la información del Pokémon.
+     */
     public void rellenarCampos(){
         if(this.pokemon != null){
             tfNombre.setText(pokemon.getNombre());
@@ -86,6 +109,12 @@ public class ControllerEditarPokemon {
         }
     }
 
+    /**
+     * Abre una ventana diálogo para seleccionar un archivo
+     * y cargarlo en el campo correspondiente.
+     *
+     * @param actionEvent El evento de acción que desencadena la carga del archivo.
+     */
     public void cargarImagen(ActionEvent actionEvent) {
 
         String tipoArchivo = "";
@@ -110,6 +139,14 @@ public class ControllerEditarPokemon {
 
     }
 
+    /**
+     * Configura y abre un selector de archivos.
+     *
+     * @param titulo El título de la ventana del selector de archivos.
+     * @param tipoArchivo Los tipos de archivo permitidos.
+     * @param destino El campo de texto donde se mostrará la ruta del archivo seleccionado.
+     * @param event El evento de acción.
+     */
     private void abrirFileChooser(String titulo, String tipoArchivo, TextField destino, ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(titulo);
@@ -126,6 +163,10 @@ public class ControllerEditarPokemon {
         }
     }
 
+    /**
+     * Crea un nuevo Pokémon a partir de los valores introducidos en los campos de texto.
+     * Si hay errores o faltan campos, se muestra un mensaje de error.
+     */
     public void crearPokemon(){
         //Comprobamos que tenga todos los campos obligatorios (Nombre, Id y Tipo 1)
         if(tieneCamposObligatorios()){
@@ -207,6 +248,10 @@ public class ControllerEditarPokemon {
         }
     }
 
+    /**
+     * Modifica el Pokémon actual con los valores introducidos en los campos de texto.
+     * Si hay errores, muestra el mensaje correspondiente.
+     */
     public void modificarPokemon(){
         //Comprobamos que tenga todos los campos obligatorios (Nombre, Id y Tipo 1)
         if(tieneCamposObligatorios()){
@@ -304,6 +349,12 @@ public class ControllerEditarPokemon {
         }
     }
 
+    /**
+     * Obtiene el ID de la pre-evolución de un Pokémon, si existe en la base de datos.
+     *
+     * @param evolucionaDe El nombre o ID del Pokémon al que evoluciona.
+     * @return El ID de la pre-evolución, o null si no es válido.
+     */
     private Integer obtenerIdPreEvolucion(String evolucionaDe) {
         try {
             int idPosible = Integer.parseInt(evolucionaDe);
@@ -331,6 +382,11 @@ public class ControllerEditarPokemon {
         return null;
     }
 
+    /**
+     * Obtiene las imágenes asociadas al Pokémon (imagen, gif y shiny).
+     *
+     * @return Un array de bytes correspondiente a las imágenes
+     */
     private byte[][] obtenerImagenes() {
         byte[][] imagenes = new byte[3][];
         String imagenTxt = tfImagen.getText();
@@ -359,6 +415,9 @@ public class ControllerEditarPokemon {
         return imagenes;
     }
 
+    /**
+     * Limpia el panel de edición de Pokémon, restableciedno todos los campos.
+     */
     public void limpiarPanel() {
         if(this.pokemon != null){
             Optional<ButtonType> respuesta = View.lanzarMensajeConfirmacion(
@@ -397,15 +456,30 @@ public class ControllerEditarPokemon {
         }
     }
 
+    /**
+     * Maneja el evento de volver a la pantalla anterior.
+     *
+     * @param event El evento que dispara la acción.
+     */
     @FXML
     private void handleVolver(ActionEvent event) {
         SceneManager.volver(event, this.getClass());
     }
 
+    /**
+     * Vuelve al menú principal de la aplicación.
+     *
+     * @param actionEvent El evento de acción que dispara el regreso al menú principal.
+     */
     public void volverAlInicio(ActionEvent actionEvent){
         SceneManager.volverAlInicio(actionEvent, this.getClass());
     }
 
+    /**
+     * Verifica que los campos obligatorios (nombre, ID y tipo 1) hayan sido rellenados por el usuario.
+     *
+     * @return true si todos los campos obligatorios están completos, false si alguno está vacío.
+     */
     public boolean tieneCamposObligatorios(){
         String nombre = tfNombre.getText();
         String id = tfId.getText();
@@ -416,9 +490,12 @@ public class ControllerEditarPokemon {
         }else{
             return true;
         }
-
     }
 
+    /**
+     * Elimina el Pokémon actual de la base de datos,
+     * para lo cual solicita confirmar la acción.
+     */
     public void eliminarPokemon() {
         if(this.pokemon == null){
             View.lanzarMensajeError("Error","Error al eliminar pokémon","No se encuentra seleccionado ningún pokémon.");
@@ -433,6 +510,12 @@ public class ControllerEditarPokemon {
         }
     }
 
+    /**
+     * Exporta los datos del Pokémon a un archivo JSON
+     * en la ubicación seleccionada por el usuario mediante una ventana de diálogo
+     *
+     * @param action El evento de acción que desencadena la exportación.
+     */
     public void exportar(ActionEvent action){
         if(this.pokemon != null){
             Stage stage = (Stage) ((Node) action.getSource()).getScene().getWindow();
@@ -457,4 +540,3 @@ public class ControllerEditarPokemon {
     }
 
 }
-
