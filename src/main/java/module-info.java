@@ -4,6 +4,7 @@ module edu.badpals.pokebase {
     requires java.sql;
     requires java.desktop;
     requires com.fasterxml.jackson.databind;
+    requires java.rmi;
 
 
 

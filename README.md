@@ -3,22 +3,27 @@ ___
 ## Índice
 - [Introducción](#introducción)
 - [Manual técnico para desarrolladores](#manual-técnico-para-desarrolladores)
-    - [Requisitos previos](#requisitos-previos)
-    - [Estructura](#estructura)
-    - [Metodología](#metodología)
-    - [Configuración de Maven](#configuración-de-maven)
-    - [Configuración de JavaFx](#configuración-de-javafx)
-    - [Ejecución del proyecto](#ejecución-del-proyecto)
-    - [Manejo de la caché y último estado](#manejo-de-la-caché-y-último-estado)
-    - [Manejo de errores](#manejo-de-errores)
-    - [Exportación de datos](#exportación-de-datos)
+  - [Requisitos previos](#requisitos-previos)
+  - [Base de datos. Modelo Entidad-Relación](#base-de-datos-modelo-entidad-relación)
+    - [Tabla Pokemons](#1tabla-pokemons)
+    - [Tabla Rutas](#2tabla-rutas)
+    - [Tabla Rutas-Pokemons](#3tabla-rutas_pokemons)
+  - [Estructura](#estructura)
+  - [Metodología](#metodología)
+  - [Testing](#testing)
+  - [Configuración de Maven](#configuración-de-maven)
+  - [Configuración de JavaFx](#configuración-de-javafx)
+  - [Ejecución del proyecto](#ejecución-del-proyecto)
+  - [Manejo de errores](#manejo-de-errores)
+  - [Exportación de datos](#exportación-de-datos)
+  - [Log in](#log-in)
 - [Manual de usuario](#manual-de-usuario)
-    - [Búsquedas sencillas](#búsquedas-sencillas)
-    - [Consultar la información del Pokémon](#consultar-la-información-del-pokémon)
-    - [Otras opciones (limpiar datos y borrar caché)](#otras-opciones-limpiar-datos-y-borrar-caché)
-    - [Registro](#registro)
-    - [Exportaciones](#exportaciones)
-    - [Guardado del último estado](#guardado-del-último-estado)
+    - [Log in](#log-in-usuario)
+    - [Búsqueda de pokémon](#búsqueda-de-pokémon)
+    - [Filtrar pokémon](#filtrar-pokémon)
+    - [Búsqueda de ruta](#búsqueda-ruta)
+    - [Filtrar rutas](#filtrar-rutas)
+    - [Otras funciones](#otras-funciones)
 - [Reparto de tareas](#reparto-de-tareas)
 - [Extras](#extras)
 - [Mejoras](#mejoras)
@@ -27,12 +32,6 @@ ___
 
 ## Introducción
 [Volver al índice](#índice)
-
-Esta es una aplicación que permite realizar peticiones a la [API de Pokémon](https://pokeapi.co/) [(repositorio de GitHub)](https://github.com/PokeAPI/pokeapi).
-
-Tras una búsqueda por nombre, el programa mostrará los siguientes campos: número de identificación del pokémon, sprite (imagen) frontal por defecto, sus diferentes nombres en varios idiomas así como las áreas del juego en las que se encuentra el pokémon en estado salvaje.
-
-También es posible registrarse, de modo que tras el registro (o inicio de sesión posterior) el programa permite recuperar la última búsqueda del usuario y también exportar a diferentes formatos la información recopilada.
 
 ___
 
@@ -44,70 +43,169 @@ ___
 - **Java SE 17 o superior**: El proyecto está desarrollado usando Java 17, por lo que necesitarás tener una versión igual o superior instalada. ([descargar](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html))
 - **JavaFX 21.0.5**: El proyecto usa JavaFX para la interfaz gráfica, por lo que deberás incluir el SDK de JavaFX. ([descargar](https://gluonhq.com/products/javafx/))
 - **Maven**: La gestión de dependencias se hace con Maven, por lo que deberás tener Maven instalado.([descargar](https://maven.apache.org/download.cgi))
+- **MySQL**: El proyecto utiliza MySQL como sistema de gestión de bases de datos, por lo que deberás instalarlo. ([descargar](https://dev.mysql.com/downloads/mysql/))
 - **IDE recomendado**: Se recomienda el uso de IntelliJ IDEA para un desarrollo más sencillo, pero se puede usar cualquier otro IDE compatible con Java. ([descargar](https://www.jetbrains.com/idea/download/?section=windows))
 
+### Base de datos. Modelo Entidad-Relación
+[Volver al índice](#índice)
 
+![DiagramaE-R](media/DiagramaER.jpg)
+
+Los requisitos del programa en cuanto a la base de datos son los siguientes:
+- Un pokémon se define por un id, un nombre, su tipo 1 (que es obligatorio), un segundo tipo (optativo) y guardamos tres tipos de imágenes (imagen estándar, gif y shiny).
+- En cuanto a rutas vamos a registrar su nombre y la región a la que pertenece. El id de será autogenerado para cada registro y el conjunto de nombre+región será único (pudiendo repetirse el nombre en diferentes regiones).
+- La relación entre pokémon y ruta es la siguiente: un pokémon puede estar en una o más ruta y una ruta puede contener uno o más pokémon.
+- Por último, un pokemon puede evolucionar a partir de otro pokémon, pero solo evoluciona como máximo de uno. Un pokémon tambíen puede ser la preevolución de  uno o varios pokémon.
+
+#### *1.Tabla: Pokemons*
+
+-----------------------------------
+Columnas: `9`
+
+| Identificador de columna | Tipo de dato/ Rango | R. Obligatoriedad | R. Unicidad | Índice          |
+|--------------------------|---------------------|-------------------|-------------|-----------------|
+| Id                       | Integer Unsigned    | Sí                | Sí          | Primary Key     |
+| Nombre                   | Varchar(20)         | Sí                | Sí          | Alternative Key |
+| Tipo 1                   | Varchar(15)         | Sí                | No          | -               |
+| Tipo 2                   | Varchar(15)         | No                | No          | -               |
+| Imagen                   | Blob                | No                | No          | -               |
+| Gif                      | Blob                | No                | No          | -               |
+| Imagen shiny             | Blob                | No                | No          | -               |
+| Evoluciona de            | Integer unsigned    | No                | No          | Foreign key     |
+| Método de evolución      | Varchar(50)          | No                | No          | -               |
+
+Índices:
+
+| Identificador de índice | Tipo de índice |
+|-------------------------|----------------|
+| Id                      | Primary        |
+| AK_Nombre               | Alternative    |
+| FK_Evoluciona_de        | Foreign        |
+
+Claves ajenas:
+
+    evoluciona_de —> pokemons.id (B:N) / (M:C)
+
+#### 2.Tabla: Rutas
+
+-----------------------------------
+Columnas: `3`
+
+| Identificador de columna | Tipo de dato/ Rango | R. Obligatoriedad | R. Unicidad | Índice |
+|--------------------------|---------------------|-------------------|-------------|--------|
+| Id                       | Integer Unsigned    | Sí                | Sí          | Primary Key |
+| Nombre                   | Varchar(50)         | Sí                | No          | - |
+| Región                   | Varchar(20)         | Sí                | No          | - |
+
+
+Índices:
+
+| Identificador de índice | Tipo de índice |
+|-------------------------|----------------|
+| Id                      | Primary        |
+| AK_Nombre_Region        | Alternative    |
+
+
+#### 3.Tabla: Rutas_pokemons
+
+-----------------------------------
+Columnas: `4`
+
+| Identificador de columna | Tipo de dato/ Rango | R. Obligatoriedad | R. Unicidad | Índice      |
+|--------------------------|---------------------|-------------------|-------------|-------------|
+| Pokémon                  | Integer Unsigned    | Sí                | No          | Foreign key |
+| Ruta                     | Integer Unsigned    | Sí                | No          | Foreign key |
+| Nivel mínimo             | Integer             | Sí                | No          | -           |
+| Nivel máximo             | Integer             | Sí                | No          | -           |
+
+
+Índices:
+
+| Identificador de índice | Tipo de índice |
+|-------------------------|----------------|
+| Pokemon+ruta            | Primary        |
+| Fk_Pokemon_con_ruta     | Foreign        |
+| Fk_Ruta_con_Pokemon        | Foreign        |
+
+Claves ajenas:
+
+    Pokemon —> pokemons.id (B:C) / (M:C)
+    Ruta —> rutas.id (B:C) / (M:C)
 
 ### Estructura
+[Volver al índice](#índice)
+
 El proyecto está planteado siguiendo el patrón [Modelo-Vista-Controlador.](https://es.wikipedia.org/wiki/Modelo%E2%80%93vista%E2%80%93controlador)
 
-![MVC](media/images/mvc.jpg)
+![MVC](media/patronMVC.jpg)
 
 #### Modelo
 ___
 El modelo contiene los datos del programa y define cómo estos deben ser manipulados, es decir, contiene la lógica que se necesita para gestionar el estado y las reglas del negocio.
 Interactúa respondiendo a las solicitudes del controlador para acceder o actualizar los datos.  Notifica indirectamente a la vista cuando los datos han cambiado para que se actualice la presentación.
 
-En nuestra aplicación cuenta con los siguientes paquetes:
+Nuestra aplicación cuenta con los siguientes paquetes:
 
-- **<u>edu.badpals.pokeapi.model</u>**: Contiene las clases de modelos de datos como `PokemonData`, `Area`, `PokemonImage`(entre otras). Se utilizan estas clases para realizar el mapeado a los .json de respuesta de la API.
-
-
-- **<u>edu.badpals.pokeapi.service</u>**: Gestiona las operaciones como peticiones API `APIPetitions`, manejo de caché `CacheManager`, exportación de datos `DocumentExporter` y guardado del último estado `StateManager`.
+- **<u>edu.badpals.pokebase.model</u>**: Contiene las clases de acceso a base de datos: `AccesoBD`, `PokemonBD` y `RutaBD`. También las clases de modelo para los objetos que se manejan durante la ejecución: `Pokemon.java` y `Ruta.java`.
 
 
-- **<u>edu.badpals.pokeapi.auth</u>**: la clase `LogInManager` se encarga tanto de verificar la autencidad de un usuario (comprobando sus credenciales en un fichero .properties) como de registrar nuevos usuarios. Las credenciales de los usuarios se guardan cifradas en el archivo.
-
-![](media/images/encriptados.png)
-
-- **<u>/cache</u>**: en el directorio caché se guardan las respuestas a las peticiones que se han realizado a la API en sesiones previas, que son cargadas en el programa antes de hacer nuevas consultas, para mejorar el rendimiento. Los datos están almacenados en formato .json y las imágenes en .png .
+- **<u>edu.badpals.pokebase.criteria</u>**: Es complementario del paquete de modelo, con las clases `CriteriaPokemon` y `CriteriaRuta`, que son utilizadas para pasar los datos de búsqueda entre las distintas ventanas de la aplicación.
 
 
-- **<u>.appData</u>**: en este directorio se almacena en formato .bin la última búsqueda que realiza un usuario tras hacer logIn y salir de la aplicación. Cuando el usuario regresa puede restablecer esa búsqueda.
+- **<u>edu.badpals.pokebase.service</u>**: Gestiona el manejo de excepciones con la clase `ErrorLogger`; con la clase `DocumentExporter` se lleva a cabo la exportación de los datos a formato JSON y la transformación de las imágenes a formato hexadecimal para ser guardadas en la BD se realiza con `ImageToBytes`.
+
+
+- **<u>edu.badpals.pokebase.auth</u>**: la clase `LogInManager` se encarga tanto de verificar la autencidad de un usuario (comprobando sus credenciales con las registradas en la BD de usuarios) como de registrar nuevos usuarios. Las credenciales de los usuarios se guardan cifradas con SHA256 en la BD.
+
+![](media/contrasinalEncriptada2.JPG)
+- **<u>.appData</u>**: en este directorio se almacena el fichero de log `error.log` donde se guardan los mensajes de error en caso de saltar excepciones.
 
 #### Controlador
 ___
 El controlador recibe las entradas del usuario desde la vista y las traduce en acciones que el modelo debe ejecutar. Se encarga de interpretar las acciones del usuario, manejar los eventos, y de actualizar tanto el modelo como la vista.
 
-- **<u>edu.badpals.pokeapi.controller</u>**: Coordina la interacción entre los diferentes componentes, y controla la lógica de la aplicación. Se gestiona todo desde la clase `AppController`.
+- **<u>edu.badpals.pokebase.controller</u>**: Coordina la interacción entre los diferentes componentes, Para cada vista de la aplicación existe un controlador que la maneja y estructura los datos del modelo: `main.fxml` es controlado por `Controller.java`, `datosPokemon.fxml` por `ControllerPokemon.java` etc.
+
+  Por otro lado, la clase `SceneManager.java` se encarga de la transición entre las distintas escenas. El cambio entre estas es gestionado a través de una pila; de este modo, podemos volver atrás por el recorrido del usuario devolviendo exactamente la última escena que fue visitada por él. También realiza una función de puente entre las distintas escenas, de forma que los objetos que se creen en una puedan ser accedidos por otras, como cuando se solicita observar la infomración de un pokémon en concreto desde la vista del listado.
 
 #### Vista
 ___
 Se encarga de la visualización de los datos del modelo de manera que el usuario los entienda. No contiene lógica de negocio, solo muestra lo que el modelo le proporciona.. La vista recibe entradas del usuario (clics, teclas, etc.) y las envía al controlador.
 
-- `edu.badpals.pokeapi.Application.java`: Contiene la clase principal del programa, relacionada con la generación de la interfaz gráfica de usuario (con JavaFX). En ella se crean las escenas cuando se ejecuta el programa.
-
-
-- **<u>resources</u>**: en el directorio resources se almacenan los recursos necesarios para construir la interfaz de usuario, desde los archivos .fxml en los que se diseñan las vistas, hasta la hoja de estilos css e imágenes.
+- **<u>resources</u>**: en el directorio resources se almacenan los recursos necesarios para construir la interfaz de usuario, desde los archivos .fxml en los que se diseñan y configuran las vistas, hasta la hoja de estilos css e imágenes.
 
 ### Metodología
+[Volver al índice](#índice)
+
 **Uso de Git**
 
-Este proyecto sigue una metodología de desarrollo incremental basado en ramas, lo que facilita la gestión de versiones y la colaboración entre desarrolladores. Las ramas principales del proyecto son `main` y `develop`, mientras que el desarrollo se llevó a cabo en paralelo en las ramas `controller`, `service` y `model`.
+Este proyecto sigue una metodología de desarrollo incremental basado en ramas, lo que facilita la gestión de versiones y la colaboración entre desarrolladores. Las ramas principales del proyecto son `main` y `develop`, mientras que el desarrollo se llevó a cabo en paralelo en las ramas `pokemon`, `ruta` y `sceneManagar`.
 
 El flujo de trabajo del desarrollo es el siguiente:
 
-1. **Añadir Nuevas Funcionalidades**: Cuando se desea implementar una nueva funcionalidad, se trabaja en la rama propia al paquete que pertenece. Cada desarrollador trabaja en una única rama, permitiendo que el trabajo avance de manera independiente.
+1. **Añadir Nuevas Funcionalidades**: Cuando se desea implementar una nueva funcionalidad, se trabaja en la rama relacionada con la propia funcionalidad: por ejemplo, una búsqueda de pokemon por un criterio determinado se realiza en la rama `pokemon` mientras que un filtrado de rutas por pokemon se lleva a cabo en la rama `ruta`. Cada desarrollador trabaja en una única rama, permitiendo que el trabajo avance de manera independiente.
 
 2. **Testeo**: Una vez que se ha completado la funcionalidad, se realizan pruebas para asegurar que todo funciona correctamente y cumple con los requisitos establecidos.
 
 3. **Merge a Develop**: Después de las pruebas exitosas, se realiza un "merge" de la rama de funcionalidad a `develop`. Este paso es crucial para comprobar la integración de la nueva funcionalidad con el resto del código del proyecto.
 
-4. **Merge a Main**: Finalmente, cuando la versión en `develop` ha sido probada y se confirma que es estable, se realiza un "merge" a la rama `main`. Esto marca el lanzamiento de una nueva versión del proyecto.
+4. **Merge a Main**: Finalmente, cuando la versión en `develop` ha sido probada y se confirma que es estable, se realiza un "merge" a la rama `main`.
 
 Este enfoque permite una colaboración fluida entre los dos desarrolladores, asegurando que el código sea de alta calidad y esté bien integrado antes de ser lanzado.
 
+### Testing
+[Volver al índice](#índice)
+
+Este proyecto implementa un enfoque de Desarrollo Guiado por Pruebas (TDD) para la capa de acceso a datos (el  modelo del patrón MVC). TDD nos permitió diseñar la funcionalidad necesaria enfocándonos en cumplir primero los requisitos a través de casos de prueba. Este enfoque garantiza que cada funcionalidad desarrollada no solo cumpla con las especificaciones iniciales, sino que también sea robusta y verificable.
+
+Utilizamos una base de datos específica para realizar los test, **`bdpokemon_test`**. Cada prueba se ejecuta en una base de datos aislada y transaccional, donde las operaciones son revertidas (rollback) después de cada suite para garantizar un entorno limpio y consistente.
+
+Los casos test referidos al modelo se encuentran en las clases `PokemonBDTest.java` con 15 test y `RutaBDTest.java` con 32 test. Por otro lado, los test respecto del Log in se pueden encontrar en la clase `LogInManagerTest.java` que cuenta con 4 test más.
+
+![Test completados](media/test.JPG)
+
 ### Configuración de Maven
+[Volver al índice](#índice)
 
 El archivo `pom.xml` incluye las siguientes dependencias importantes:
 
@@ -127,8 +225,7 @@ El archivo `pom.xml` incluye las siguientes dependencias importantes:
         <version>2.18.0-rc1</version>
     </dependency>
 
-  <!-- También se incluyen las siguientes dependencias para realizar testing, 
-  pero no se han añadido test durante el desarrollo -->
+  <!-- Dependencias de testing -->
   
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -141,21 +238,31 @@ El archivo `pom.xml` incluye las siguientes dependencias importantes:
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+      
+      <!-- Dependencia del driver JDBC para MySql -->
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.33</version>
+      </dependency>
+      
     </dependency>
 </dependencies>
 ```
 ### Configuración de JavaFX
+[Volver al índice](#índice)
 
-Para ejecutar el proyecto con JavaFX, tras [descargar el SDK]((https://gluonhq.com/products/javafx/)) se necesitan añadir los siguientes módulos en la configuración de tu IDE:
+Para ejecutar el proyecto con JavaFX, tras [descargar el SDK]((https://gluonhq.com/products/javafx/)) se necesitan añadir los  módulos de javaFx en el proyecto.
 
-```
+Para ejecutar el programa directamente en el IDE partiendo del JAR, es preciso añadir las librerías en *File>Project Structure>Global Libraries>New Global Library>Java* y a continuación cargar los .jar del directorio lib donde se haya guardado javaFx.
+
+También es posible preparar la ejecución del .jar del programa creando un *Artifact* (*File>Project Structure>Artifact>Add>JAR>From modules with dependencies...*) y añadiendo en *VM options* las líneas siguientes (recuerde cambiar la ruta por el directorio donde se descargó javaFX):
+```bash
 --module-path="ruta\directorio\javaFx\lib" --add-modules="javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.swing,javafx.media"
 ```
-Para ejecutar el programa directamente en el IDE, es necesario añadirlos en *File>Project Structure>Global Libraries>New Global Library>Java* y a continuación cargar los .jar del directorio lib donde se haya guardado javaFx.
-
-También es posible preparar la ejecución del .jar del programa desde la ventana de *Run /Debug Configurations* añadiendo en *VM options* las líneas del cuadro anterior.
 
 ### Ejecución del proyecto
+[Volver al índice](#índice)
 
 #### Desde el IDE (IntelliJ IDEA):
 
@@ -170,67 +277,154 @@ Una vez que el JAR esté generado, se ejecuta el siguiente comando **desde el di
 java --module-path="/ruta/al/javafx/lib" --add-modules="javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.swing,javafx.media" -jar nombre-del-archivo.jar
 ```
 
-En la siguiente captura mostramos la ejecución desde el terminal.
+En la siguiente captura mostramos la ejecución del JAR desde el terminal.
 
-![](media/images/jar.png)
+![](media/ejecucion%20jar.JPG)
 
-
-### Manejo de la caché y último estado
-
-El proyecto almacena los datos de los Pokémon consultados y sus imágenes localmente en la carpeta de caché (`/cache`).
-
-- Los datos JSON se guardan usando la clase `CacheManager`, que guarda las respuestas de la API localmente para evitar llamadas repetidas.
-- Las imágenes de los Pokémon se descargan y guardan en formato `.png` en el mismo directorio.
-
-Se puede limpiar la caché con el método `deleteCache()` de la clase `CacheManager`.
-
-El último estado del usuario loggeado se almacena en formato `.bin` en el directorio oculto `.appData`. Cuando se inicia sesión se muestra este estado y se almacena cuando el usuario loggeado sale del programa.
 
 ### Manejo de errores
+[Volver al índice](#índice)
 
 En la aplicación, los errores se gestionan de dos maneras:
-- Los errores que ocurren en las clases del **modelo** o de **service** (relacionadas con la lógica interna) se manejan de forma interna y se registran en un archivo de log. Así cuando se captura una excepción, se llama a una función de la clase ErrorLogger, que se encarga de escribir el mensaje en el fichero log.
+- Los errores que ocurren en las clases del **modelo**, **service**, **auth** y algunas excepciones de **controller** (relacionadas con la lógica interna) se manejan de forma interna y se registran en un archivo de log. Así cuando se captura una excepción, se llama a una función de la clase ErrorLogger, que se encarga de escribir el mensaje en el fichero `error.log`.
 
-![](media/images/log.png)
+![captura del archivo error.log](media/errorLogger.JPG)
+(Esto es lo que ocurre cuando se ejecuta la aplicación sin que exista la base de datos.)
 
 - Por otro lado, los errores que se producen en la **interfaz de usuario** se presentan directamente en pantalla, para que el usuario pueda comprender qué ha fallado.
 
-Para registrar los errores del modelo, existe una clase llamada `ErrorLogger`, ubicada en el paquete `service`. Esta clase es responsable de guardar los errores en un archivo llamado `error.log`, que se encuentra en la carpeta oculta `.appData`.
+El archivo `error.log` se encuentra en la carpeta oculta `.appData`.
 
 
 ### Exportación de datos
+[Volver al índice](#índice)
 
-El proyecto permite exportar la información de los Pokémon a diferentes formatos, como `.json`, `.xml`, `.txt`, y `.bin`.
+El proyecto permite exportar la información de los Pokémon y las rutas a formato `.json`.
 
-- La exportación se maneja dentro de la clase `DocumentExporter`, y se puede seleccionar el formato que se prefiera tras hacer una consulta (aunque esto sólo se mostrará en la vista cuando el usuario se autentifique).
+- La exportación se maneja dentro de la clase `DocumentExporter`, y el usuario puede elegir el directorio de destino y el nombre del archivo.
+
+![Ejemplo de exportación en JSON](media/21_Exportar_4.png)
+
+### Log in
+[Volver al índice](#índice)
+
+La funcionalidad de Log In se lleva a cabo en la clase `LogInManager.java` del paquete **auth**. Esta clase es utilizada para realizar la autenticación de usuarios contra una base de datos MySQL; maneja la conexión con la base de datos, autentica usuarios, registra nuevos usuarios y asegura que las contraseñas se almacenan y comparan de forma segura mediante hashing (usando el algoritmo SHA-256).
+
 
 ## Manual de usuario
 [Volver al índice](#índice)
 
-### Log In
-Para acceder a nuestra aplicación, es necesario estar logeado o registrado, por lo que al abrir la aplicación, la primera ventana que verá el usuario será un menú de inicio de sesión como la que se muestra a continuación. Desde el mismo menú podrá registrarse en caso de que aún no lo haya hecho, o iniciar sesión si ya lo está.
+### Log In usuario
+Para acceder a nuestra aplicación, es necesario estar logueado o registrado, por lo que al abrir la aplicación, la primera ventana que verá el usuario será un menú de inicio de sesión como la que se muestra a continuación. Desde el mismo menú podrá registrarse en caso de que aún no lo haya hecho, o iniciar sesión si ya lo está.
 
-![](media/01_intro.png)
+![Log in](media/01_intro.png)
 
 Si nos intentamos registrar con un nombre de usuario que ya está almacenado, el sistema nos mostrará un mensaje de error, y nos impide avanzar en el proceso.
 
-![](media/03_registro_mal.png)
+![Error usuario ya registrado](media/03_registro_mal.png)
 
 Del mismo modo, si tratamos de acceder con credenciales que no son correctas, nos muestra el correspondiente aviso, y tampoco nos permite continuar.
 
-![](media/02_usuario_mal.png)
+![Error datos incorrectos](media/02_usuario_mal.png)
 
 Finalmente, si introducimos un usuario y contraseña que coinciden con lo almacenado en el sistema, accederemos ya al menú principal de la aplicación, desde el que podemos realizar búsquedas de rutas y pokemon, que nos llevarán a las ventanas dónde tendremos acceso a las diversas acciones que se pueden realizar en cada caso y que se explicarán a continuación.
 
-![](media/03_inicio_sesion.png)
+![Menú principal](media/03_inicio_sesion.png)
 
 ### Búsqueda de Pokémon
+[Volver al índice](#índice)
+
+Podemos hacer una búsqueda a la información de un pokémon en particular desde el apartado 'Buscar detalles de pokémon'. Es posible llevarla a cabo tanto introduciendo el nombre del pokémon como su ID.
+
+![Busqueda de pokemon por nombre](media/04_buscar_pokemon_nombre.png)
+
+Podemos observar las características del pokémon: su nombre, id, sus tipos, el pokémon a partir del cual evoluciona (si es una evolución) y en este último caso el método por el cual evoluciona.
+
+![Mostrar busqueda pokemon](media/05_pokemon_buscado.png)
+
+En el apartado 'Evoluciona de' podemos encontrar un botón que nos permite acceder directamente a la pre-evolución del actual pokémon. 
+
+![boton evoluciona de](media/05__02_flechas.png)
+![mostrar preevolucion](media/05_flechas.png)
+
+Con las flechas laterales también podemos acceder al pokémon inmediatamente anterior o inmediatamente posterior en función de su id.
+
+![mostrar el pokemon anterior clicando en flecha](media/05_flechas_anterior.png)
+
+También podemos realizar una búsqueda por id desde el menú principal:
+
+![buscar por id 89](media/04_buscar_pokemon_id.PNG)
+![mostrar muk (id 89)](media/04_muk.PNG)
+
+Si desde esta pantalla clicamos en Modificar Pokémon, se abre una nueva ventana que carga los datos del pokémon que estaba siendo visualizado. 
+
+![modificar muk](media/07_modificar.png)
+
+Se han introducido una serie de comprobaciones para impedir modificaciones erróneas, como que el usuario introduzca un id o un nombre que ya existe en la base de datos:
+
+![modificar mal id](media/07_modificar_mal.png)
+![modificar mal nombre](media/07_modificar_mal_nombre.png)
+
+En el caso de que se indique una pre-evolucion, es imprescindible añadir el método por el que evoluciona el pokémon.
+
+![modificar metodo de evolucion en blanco](media/07_modificar_mal_metodo.png)
+
+Finalmente si todo está correcto, al confirmar la modificación se nos mostrará un mensaje de aviso:
+![modificar correcto](media/07_modificado.png)
+Para visualizar podemos ir a la ventana anterior y comprobar que se realizaron los cambios:
+![ver modificacion](media/07_ver_modificado.png)
+
+Si decidimos desde la ventana de edición eliminar al pokémon cargado haciendo click en el botón eliminar, un cuadro de diálogo nos pedirá confirmación para llevar a cabo esta acción:
+
+![estas seguro de eliminar](media/08_eliminar.png)
+
+Si confirmamos la acción, se nos mostrará un mensaje de aviso y se limpiarán los datos de pantalla (deshabilitando ciertas opciones al no haber un pokémon cargado):
+
+![eliminado](media/09_eliminar_definitivo.png)
+![pantalla limpia tras borras](media/10_pantalla_tras_eliminar.png)
+
+Si realizamos una búsqueda del pokémon eliminado podemos ver que ya no existe:
+
+![pokemon no existe](media/08_eliminar_02.png)
+
+También podemos crear un nuevo pokémon utilizando el botón `Crear nuevo`. Si introducimos un id o nombre que ya existe nos avisa de que no es posible crear al pokémon. Del mismo modo, si no introducimos alguno de los datos obligatorios (nombre, id y al menos el tipo 1), no será posible realizar la creación:
+![crear sin campos pokemon](media/11_crear.png)
+![crear mal id](media/11_crear_2.png)
+
+Si no existe ningún problema, se notificará que la creación ha sido exitosa:
+
+![pokemon creado](media/11_crear_final.png)
+
+Podemos añadir una imagen al crear el pokémon o bien editarla posteriormente con modificar. Si se clica en el botón `Explorar...` se abrirá un cuadro de diálogo para buscar y escoger un archivo válido (.png, .jpg y .jpeg para las imágenes y .gif para los gif).
+![añadir imagen](media/12_anadir_imagen.png)
+
+Cuando seleccionamos el archivo se carga la ruta en el label.
+![ruta de imagen cargada](media/12_anadir_imagen_2.png)
+
+Confirmamos la modificación con el botón `Mofidicar`:
+![confirmamos foto](media/12_anadir_imagen_3.png)
+![foto añadida](media/13_anadido.png)
 
 
 ### Filtrar Pokémon
+[Volver al índice](#índice)
+
+En el apartado del menú principal 'Búsqueda filtrada de Pokémon' podemos hacer una búsqueda a través de filtros que nos devolverán una lista de pokémon que cumplan esas condiciones. Es imprescindible añadir al menos uno de los tipos del pokémon para realizar el filtrado, y será posible añadir el segundo tipo y ordenar los resultados por nombre o id del pokémon, tanto de manera ascendente como descendente. 
+
+![busqueda de pokemon con filtros](media/15_buscar.png)
+![busqueda filtrada](media/15_buscar_2.png)
+
+Desde esta pantalla podemos hacer una nueva búsqueda filtrada tras cambiar los filtros y clicar `Aplicar filtros` o bien visualizar un pokémon de la lista seleccionándolo y clicando en el botón inferior `Ver pokemon` 
+
+![seleccionar](media/15_buscar_3.png)
+![visualizar](media/15_buscar_4.png)
+
+
 
 
 ### Búsqueda Ruta
+[Volver al índice](#índice)
+
 Podemos buscar la información de una ruta en concreto. Para ello, debemos introducir el nombre de la ruta, y seleccionar la región a la que pertenece, ya que puede haber varias rutas con el mismo nombre, siempre que sean de regiones distintas. Para lo segundo, se carga un combo box con las regiones que ya existen en la base de datos, aunque luego se pueden añadir a mayores.
 
 ![](media/16_ruta_001.png)
@@ -290,6 +484,7 @@ Finalmente, solo podremos registrar pokémon en una ruta si ya se han guardado p
 ![](media/17_pokemon_ruta_9.png)
 
 ### Filtrar Rutas
+[Volver al índice](#índice)
 
 Desde el menú principal también podemos solicitar un listado de las rutas que cumplan unos determinados criterios. En primer lugar, podemos filtrarlas por la región en la que se encuentran. Cómo al buscar una única ruta, se carga un combo box con las que ya existen en la base de datos, además de la opción de considerar todas las regiones.
 
@@ -320,8 +515,11 @@ Por ejemplo, pulsando siguiente vamos a la segunda ruta de la lista anterior.
 ![](media/20_listar_rutas_6.png)
 
 ### Otras funciones
+[Volver al índice](#índice)
 
 Salvo el menú principal, todas las demás ventanas tienen cuatro botones que permiten realizar funciones comunes.
+
+![menu superior](media/22_menu_superior.PNG)
 
 El botón volver permite acceder a la ventana inmediatamente anterior, manteniéndose la información que estaba cargada cuando esta llamó a la siguiente.
 
@@ -333,7 +531,7 @@ El botón volver al menú principal vuelve a la pantalla de inicio que se carga 
 
 El botón limpiar borra la información cargada en la interfaz en un determinado momento. Además, en algunas pantallas bloquea algunos botones, pues su funcionalidad solo tiene sentido si hay algo cargado en la pantalla.
 
-![]()
+![Limpiar](media/14_limpiar.png)
 
 Finalmente, el botón exportar permite generar un archivo tipo json con la información del objeto o la lista, según corresponda que se está mostrando en ese momento.
 
