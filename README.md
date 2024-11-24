@@ -33,6 +33,9 @@ ___
 ## Introducción
 [Volver al índice](#índice)
 
+Programa para la gestión y consulta de pokemons y rutas mediante una base de datos, correspondiente al proyecto de la Unidad 2 de las asignatura de Acceso a Datos.
+
+El usuario podrá, mediante la interfaz gráfica, crear, modificar y eliminar tanto pokémons como rutas, además de consultar la información de los ya creados en la base de datos, o solicitar una lista filtrada según unos determinados criterios. Por último, podrá exportar la información recuperada a archvios json.
 ___
 
 ## Manual técnico para desarrolladores
@@ -308,14 +311,14 @@ El proyecto permite exportar la información de los Pokémon y las rutas a forma
 ### Log in
 [Volver al índice](#índice)
 
-La funcionalidad de Log In se lleva a cabo en la clase `LogInManager.java` del paquete **auth**. Esta clase es utilizada para realizar la autenticación de usuarios contra una base de datos MySQL; maneja la conexión con la base de datos, autentica usuarios, registra nuevos usuarios y asegura que las contraseñas se almacenan y comparan de forma segura mediante hashing (usando el algoritmo SHA-256).
+La funcionalidad de Log In se lleva a cabo en la clase `LogInManager.java` del paquete **auth**. Esta clase es utilizada para realizar la autenticación de usuarios contra una base de datos MySQL (diferente a la del modelo de la aplicación); maneja la conexión con la base de datos, autentica usuarios, registra nuevos usuarios y asegura que las contraseñas se almacenan y comparan de forma segura mediante hashing (usando el algoritmo SHA-256).
 
 
 ## Manual de usuario
 [Volver al índice](#índice)
 
 ### Log In usuario
-Para acceder a nuestra aplicación, es necesario estar logueado o registrado, por lo que al abrir la aplicación, la primera ventana que verá el usuario será un menú de inicio de sesión como la que se muestra a continuación. Desde el mismo menú podrá registrarse en caso de que aún no lo haya hecho, o iniciar sesión si ya lo está.
+Para acceder a nuestra aplicación, es necesario estar logueado o registrado, por lo que al abrir la aplicación, la primera ventana que verá el usuario será un menú de inicio de sesión como la que se muestra a continuación. Desde el mismo menú podrá registrarse en caso de que aún no lo haya hecho, o iniciar sesión si ya consta en la base de datos.
 
 ![Log in](media/01_intro.png)
 
@@ -425,7 +428,7 @@ Desde esta pantalla podemos hacer una nueva búsqueda filtrada tras cambiar los 
 ### Búsqueda Ruta
 [Volver al índice](#índice)
 
-Podemos buscar la información de una ruta en concreto. Para ello, debemos introducir el nombre de la ruta, y seleccionar la región a la que pertenece, ya que puede haber varias rutas con el mismo nombre, siempre que sean de regiones distintas. Para lo segundo, se carga un combo box con las regiones que ya existen en la base de datos, aunque luego se pueden añadir a mayores.
+Podemos buscar también la información de una ruta en concreto. Para ello, debemos introducir el nombre de la ruta, y seleccionar la región a la que pertenece, ya que puede haber varias rutas con el mismo nombre, siempre que sean de regiones distintas. Para lo segundo, se carga un combo box con las regiones que ya existen en la base de datos, aunque luego se pueden añadir a mayores.
 
 ![](media/16_ruta_001.png)
 
@@ -454,7 +457,7 @@ Pulsando el botón borrar, la eliminaremos de la base de datos, y se nos vuelve 
 ![](media/18_crear_4.png)
 ![](media/19_borrar.png)
 
-Por otro lado, también desde la vista de rutas podremos gestionar los pokemons que se pueden encontrar en una determinada ruta. Para ello, tendremos que introducir el nombre del pokemon, el nivel mínimo y el nivel máximo.
+Por otro lado, también desde la vista de rutas podremos gestionar los pokemons que se pueden encontrar en una determinada ruta. Para añadirlo, tendremos que introducir el nombre del pokemon, y el nivel mínimo y el nivel máximo en el que se encuentran en la ruta.
 
 ![](media/17_pokemon_ruta_1.png)
 
@@ -482,6 +485,10 @@ El de la izquierda, como su nombre indica, nos permite acceder a la vista de pok
 Finalmente, solo podremos registrar pokémon en una ruta si ya se han guardado previamente en la base de datos. Por ejemplo, si tratamos de añadir a pidove, que no ha sido registrado en la base de datos, nos muestra el siguiente mensaje.
 
 ![](media/17_pokemon_ruta_9.png)
+
+Del mismo modo, tendremos un mensaje de error si el pokemon ya existe en la ruta, aunque los niveles sean diferentes.
+
+![](media/17_rutas_pokemon_final.png)
 
 ### Filtrar Rutas
 [Volver al índice](#índice)
@@ -523,11 +530,7 @@ Salvo el menú principal, todas las demás ventanas tienen cuatro botones que pe
 
 El botón volver permite acceder a la ventana inmediatamente anterior, manteniéndose la información que estaba cargada cuando esta llamó a la siguiente.
 
-![]()
-
 El botón volver al menú principal vuelve a la pantalla de inicio que se carga tras iniciar sesión de forma correcta.
-
-![]()
 
 El botón limpiar borra la información cargada en la interfaz en un determinado momento. Además, en algunas pantallas bloquea algunos botones, pues su funcionalidad solo tiene sentido si hay algo cargado en la pantalla.
 
@@ -548,9 +551,6 @@ Al crearlo, nos informa de que la exportación se ha realizado correctamente.
 Finalmente, si consultamos el archivo, vemos como la exportación se ha realizado de forma correcta.
 
 ![](media/21_Exportar_4.png)
-
-
-
 
 
 ## Reparto de tareas
